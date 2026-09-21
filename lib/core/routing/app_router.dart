@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/app_shell.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/habits/presentation/screens/habits_screen.dart';
+import '../../features/tasks/presentation/screens/tasks_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -16,7 +18,7 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/home',
               builder: (context, state) {
-                return const _PlaceholderScreen(title: 'Home');
+                return const HomeScreen();
               },
             ),
           ],
@@ -26,7 +28,7 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/habits',
               builder: (context, state) {
-                return const _PlaceholderScreen(title: 'Habits');
+                return const HabitsScreen();
               },
             ),
           ],
@@ -36,7 +38,7 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/tasks',
               builder: (context, state) {
-                return const _PlaceholderScreen(title: 'Tasks');
+                return const TasksScreen();
               },
             ),
           ],
@@ -45,14 +47,3 @@ final appRouter = GoRouter(
     ),
   ],
 );
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-  final String title;
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
-    );
-  }
-}

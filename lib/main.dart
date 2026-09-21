@@ -4,9 +4,5 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app/app.dart';
 
 void main() {
-  runApp(
-    const ProviderScope(
-      child: CoreLogApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: CoreLogApp()));
 }
