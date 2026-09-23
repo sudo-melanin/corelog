@@ -41,6 +41,16 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('active'),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -68,6 +78,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     id,
     name,
     description,
+    status,
     createdAt,
     updatedAt,
   ];
@@ -101,6 +112,12 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
           data['description']!,
           _descriptionMeta,
         ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -140,6 +157,10 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -161,12 +182,14 @@ class Project extends DataClass implements Insertable<Project> {
   final int id;
   final String name;
   final String? description;
+  final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Project({
     required this.id,
     required this.name,
     this.description,
+    required this.status,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -178,6 +201,7 @@ class Project extends DataClass implements Insertable<Project> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
+    map['status'] = Variable<String>(status);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -190,6 +214,7 @@ class Project extends DataClass implements Insertable<Project> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
+      status: Value(status),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -204,6 +229,7 @@ class Project extends DataClass implements Insertable<Project> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
+      status: serializer.fromJson<String>(json['status']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -215,6 +241,7 @@ class Project extends DataClass implements Insertable<Project> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
+      'status': serializer.toJson<String>(status),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -224,12 +251,14 @@ class Project extends DataClass implements Insertable<Project> {
     int? id,
     String? name,
     Value<String?> description = const Value.absent(),
+    String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Project(
     id: id ?? this.id,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
+    status: status ?? this.status,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -240,6 +269,7 @@ class Project extends DataClass implements Insertable<Project> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      status: data.status.present ? data.status.value : this.status,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -251,6 +281,7 @@ class Project extends DataClass implements Insertable<Project> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
+          ..write('status: $status, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -258,7 +289,8 @@ class Project extends DataClass implements Insertable<Project> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, description, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, name, description, status, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -266,6 +298,7 @@ class Project extends DataClass implements Insertable<Project> {
           other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
+          other.status == this.status &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -274,12 +307,14 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<int> id;
   final Value<String> name;
   final Value<String?> description;
+  final Value<String> status;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const ProjectsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
+    this.status = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -287,6 +322,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.id = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
+    this.status = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : name = Value(name),
@@ -296,6 +332,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? description,
+    Expression<String>? status,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -303,6 +340,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
+      if (status != null) 'status': status,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -312,6 +350,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<int>? id,
     Value<String>? name,
     Value<String?>? description,
+    Value<String>? status,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
@@ -319,6 +358,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -336,6 +376,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -351,6 +394,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
+          ..write('status: $status, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -2542,6 +2586,7 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       Value<String?> description,
+      Value<String> status,
       required DateTime createdAt,
       required DateTime updatedAt,
     });
@@ -2550,6 +2595,7 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String> name,
       Value<String?> description,
+      Value<String> status,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -2636,6 +2682,11 @@ class $$ProjectsTableFilterComposer
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2749,6 +2800,11 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2779,6 +2835,9 @@ class $$ProjectsTableAnnotationComposer
     column: $table.description,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -2897,12 +2956,14 @@ class $$ProjectsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => ProjectsCompanion(
                 id: id,
                 name: name,
                 description: description,
+                status: status,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -2911,12 +2972,14 @@ class $$ProjectsTableTableManager
                 Value<int> id = const Value.absent(),
                 required String name,
                 Value<String?> description = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
               }) => ProjectsCompanion.insert(
                 id: id,
                 name: name,
                 description: description,
+                status: status,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
