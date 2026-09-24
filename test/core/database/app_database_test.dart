@@ -31,21 +31,22 @@ void main() {
 });
 
   test('project can be inserted and read back', () async {
-    final now = DateTime.now();
+  final now = DateTime.now();
 
-    await database.into(database.projects).insert(
-      ProjectsCompanion.insert(
-        name: 'CoreLog',
-        description: const Value('CoreLog development'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-    );
+  await database.into(database.projects).insert(
+    ProjectsCompanion.insert(
+      name: 'CoreLog',
+      description: const Value('CoreLog development'),
+      createdAt: now,
+      updatedAt: now,
+    ),
+  );
 
-    final projects = await database.select(database.projects).get();
+  final projects = await database.select(database.projects).get();
 
-    expect(projects, hasLength(1));
-    expect(projects.first.name, 'CoreLog');
-    expect(projects.first.description, 'CoreLog development');
-  });
+  expect(projects, hasLength(1));
+  expect(projects.first.name, 'CoreLog');
+  expect(projects.first.description, 'CoreLog development');
+  expect(projects.first.status, 'active');
+});
 }
