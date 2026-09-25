@@ -85,10 +85,7 @@ class _CreateHabitDialogState
   void _setRepeatMode(bool isDaily) {
     setState(() {
       _isDaily = isDaily;
-
-      if (isDaily) {
-        _weekdayMask = 127;
-      }
+      _weekdayMask = isDaily ? 127 : 0;
     });
   }
 
@@ -210,6 +207,9 @@ class _CreateHabitDialogState
       return;
     }
 
+    ref
+    .read(habitOccurrenceNotifierProvider.notifier)
+    .refresh();
     Navigator.of(context).pop();
   }
 

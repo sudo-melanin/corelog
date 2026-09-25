@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/theme.dart';
+
 class HabitWeekdaySelector extends StatelessWidget {
   const HabitWeekdaySelector({
     required this.weekdayMask,
@@ -16,8 +18,8 @@ class HabitWeekdaySelector extends StatelessWidget {
     ('W', 3),
     ('T', 4),
     ('F', 5),
-    ('S', 6),
-    ('S', 7),
+    ('Sa', 6),
+    ('Su', 7),
   ];
 
   @override
@@ -33,11 +35,23 @@ class HabitWeekdaySelector extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
             child: ChoiceChip(
-              label: Text(label),
+              label: Text(
+                label,
+                style: 
+                TextStyle(
+                  color: selected ? Colors.black : AppColors.textPrimary,
+                  fontSize: 12,                  
+                ),
+              ),
               selected: selected,
               onSelected: (_) => onToggle(weekday),
               showCheckmark: false,
-            ),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
+              labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: selected ? Colors.black : null,
+              ),
+            )
           ),
         );
       }).toList(),

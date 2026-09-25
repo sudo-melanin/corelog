@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:corelog/core/theme/theme.dart';
 import 'package:corelog/features/habits/presentation/providers/providers.dart';
+import 'package:corelog/features/habits/presentation/utils/upcoming_habit_occurrence.dart';
 import 'package:corelog/features/habits/presentation/widgets/widgets.dart';
 
 class HabitsScreen extends ConsumerWidget {
@@ -11,6 +12,9 @@ class HabitsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final habitsAsync = ref.watch(habitNotifierProvider);
+    final occurrencesAsync = ref.watch(
+      habitOccurrenceNotifierProvider,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -30,25 +34,84 @@ class HabitsScreen extends ConsumerWidget {
               },
             ),
             data: (habits) {
-              if (habits.isEmpty) {
-                return const HabitEmptyState();
-              }
+              final upcoming = occurrencesAsync.when(
+                loading: () => <UpcomingHabitOccurrence>[],
+                error: (_, _) => <UpcomingHabitOccurrence>[],
+                data: (_) => ref
+                    .read(habitOccurrenceNotifierProvider.notifier)
+                    .upcomingOccurrences,
+              );
 
               return RefreshIndicator(
-                onRefresh: () {
-                  return ref
+                onRefresh: () async {
+                  await ref
                       .read(habitNotifierProvider.notifier)
                       .refresh();
+
+                  await ref
+                      .read(habitOccurrenceNotifierProvider.notifier)
+                      .refresh();
                 },
-                child: ListView.separated(
+                child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: habits.length,
-                  separatorBuilder: (_, _) => const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
-                  itemBuilder: (context, index) {
-                    return HabitCard(habit: habits[index]);
-                  },
+                  slivers: [
+                    if (upcoming.isNotEmpty) ...[
+                      SliverToBoxAdapter(
+                        child: UpcomingHabitOccurrences(
+                          occurrences: upcoming,
+                          onComplete: (item) {
+                            ref
+                                .read(
+                                  habitOccurrenceNotifierProvider
+                                      .notifier,
+                                )
+                                .completeOccurrence(
+                                  item.occurrence,
+                                );
+                          },
+                          onSkip: (item) {
+                            ref
+                                .read(
+                                  habitOccurrenceNotifierProvider
+                                      .notifier,
+                                )
+                                .skipOccurrence(
+                                  item.occurrence,
+                                );
+                          },
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: AppSpacing.xl),
+                      ),
+                    ],
+                    SliverToBoxAdapter(
+                      child: Text(
+                        'Habits',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.sm),
+                    ),
+                    if (habits.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: HabitEmptyState(),
+                      )
+                    else
+                      SliverList.separated(
+                        itemCount: habits.length,
+                        separatorBuilder: (_, _) => const SizedBox(
+                          height: AppSpacing.sm,
+                        ),
+                        itemBuilder: (context, index) {
+                          return HabitCard(
+                            habit: habits[index],
+                          );
+                        },
+                      ),
+                  ],
                 ),
               );
             },
@@ -65,6 +128,6 @@ class HabitsScreen extends ConsumerWidget {
   }
 
   String _errorMessage(Object error) {
-    return 'We could not load your habits. Please try again.';
+    return error.toString();
   }
 }

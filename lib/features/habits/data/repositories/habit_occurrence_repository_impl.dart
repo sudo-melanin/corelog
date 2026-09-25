@@ -124,6 +124,89 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
+  Future<Either<Failure, HabitOccurrence?>>
+      getOccurrenceByHabitAndDate(
+    int habitId,
+    DateTime date,
+  ) async {
+    try {
+      final startOfDay = DateTime(
+        date.year,
+        date.month,
+        date.day,
+      );
+
+      final startOfNextDay = startOfDay.add(
+        const Duration(days: 1),
+      );
+
+      final data = await (_database.select(_database.habitOccurrences)
+            ..where(
+              (table) =>
+                  table.habitId.equals(habitId) &
+                  table.scheduledDate.isBiggerOrEqualValue(
+                    startOfDay,
+                  ) &
+                  table.scheduledDate.isSmallerThanValue(
+                    startOfNextDay,
+                  ),
+            ))
+          .getSingleOrNull();
+
+      if (data == null) {
+        return const Right(null);
+      }
+
+      return Right(HabitOccurrenceModel.fromData(data));
+    } on DriftWrappedException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } on InvalidDataException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } on SqliteException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } catch (error) {
+      return Left(UnexpectedFailure(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<HabitOccurrence>>>
+      getUpcomingOccurrences({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    try {
+      final data = await (_database.select(
+        _database.habitOccurrences,
+      )
+            ..where(
+              (table) =>
+                  table.scheduledDate.isBiggerOrEqualValue(from) &
+                  table.scheduledDate.isSmallerThanValue(to),
+            )
+            ..orderBy([
+              (table) => OrderingTerm.asc(table.scheduledDate),
+            ]))
+          .get();
+
+      final occurrences = data
+          .map(HabitOccurrenceModel.fromData)
+          .map<HabitOccurrence>((model) => model)
+          .toList();
+
+      return Right(occurrences);
+    } on DriftWrappedException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } on InvalidDataException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } on SqliteException catch (error) {
+      return Left(DatabaseFailure(error.message));
+    } catch (error) {
+      return Left(UnexpectedFailure(error.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, HabitOccurrence>> updateOccurrence(
     HabitOccurrence occurrence,
   ) async {

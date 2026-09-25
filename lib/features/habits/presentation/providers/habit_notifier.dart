@@ -13,11 +13,11 @@ final habitNotifierProvider =
 );
 
 class HabitNotifier extends AsyncNotifier<List<Habit>> {
-  late final HabitRepository _repository;
+  HabitRepository get _repository =>
+    ref.read(habitRepositoryProvider);
 
   @override
   Future<List<Habit>> build() async {
-    _repository = ref.read(habitRepositoryProvider);
 
     final result = await _repository.getHabits();
 
