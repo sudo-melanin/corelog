@@ -11,6 +11,7 @@ class Habit extends Equatable {
     this.projectId,
     this.description,
     this.targetTime,
+    this.targetDuration,
   });
 
   final int id;
@@ -22,6 +23,7 @@ class Habit extends Equatable {
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final Duration? targetDuration;
 
   @override
   List<Object?> get props => [
@@ -34,5 +36,6 @@ class Habit extends Equatable {
         isActive,
         createdAt,
         updatedAt,
+        targetDuration,
       ];
 }

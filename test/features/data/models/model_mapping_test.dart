@@ -241,6 +241,7 @@ void main() {
               description: const Value('Plan the day'),
               weekdayMask: 31,
               targetTime: Value(targetTime),
+              targetDurationMinutes: const Value(60),
               isActive: const Value(true),
               createdAt: createdAt,
               updatedAt: updatedAt,
@@ -256,6 +257,7 @@ void main() {
       expect(model.description, 'Plan the day');
       expect(model.weekdayMask, 31);
       expect(model.targetTime, targetTime);
+      expect(model.targetDuration, const Duration(hours: 1));
       expect(model.isActive, isTrue);
       expect(model.createdAt, createdAt);
       expect(model.updatedAt, updatedAt);
@@ -272,6 +274,7 @@ void main() {
         description: 'Plan the day',
         weekdayMask: 31,
         targetTime: targetTime,
+        targetDuration: const Duration(minutes: 30),
         isActive: true,
         createdAt: now,
         updatedAt: now,
@@ -284,9 +287,30 @@ void main() {
       expect(companion.description.value, 'Plan the day');
       expect(companion.weekdayMask.value, 31);
       expect(companion.targetTime.value, targetTime);
+      expect(companion.targetDurationMinutes.value, 30);
       expect(companion.isActive.value, isTrue);
       expect(companion.createdAt.value, now);
       expect(companion.updatedAt.value, now);
+    });
+
+    test('toCompanion preserves nullable habit fields', () {
+      final now = DateTime(2026, 1, 1);
+
+      final model = HabitModel(
+        id: 1,
+        name: 'Unscheduled habit',
+        weekdayMask: 127,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      final companion = model.toCompanion();
+
+      expect(companion.projectId.value, isNull);
+      expect(companion.description.value, isNull);
+      expect(companion.targetTime.value, isNull);
+      expect(companion.targetDurationMinutes.value, isNull);
     });
   });
 

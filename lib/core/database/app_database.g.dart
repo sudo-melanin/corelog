@@ -1653,6 +1653,16 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _targetDurationMinutesMeta =
+      const VerificationMeta('targetDurationMinutes');
+  @override
+  late final GeneratedColumn<int> targetDurationMinutes = GeneratedColumn<int>(
+    'target_duration_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isActiveMeta = const VerificationMeta(
     'isActive',
   );
@@ -1698,6 +1708,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     description,
     weekdayMask,
     targetTime,
+    targetDurationMinutes,
     isActive,
     createdAt,
     updatedAt,
@@ -1757,6 +1768,15 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         targetTime.isAcceptableOrUnknown(data['target_time']!, _targetTimeMeta),
       );
     }
+    if (data.containsKey('target_duration_minutes')) {
+      context.handle(
+        _targetDurationMinutesMeta,
+        targetDurationMinutes.isAcceptableOrUnknown(
+          data['target_duration_minutes']!,
+          _targetDurationMinutesMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_active')) {
       context.handle(
         _isActiveMeta,
@@ -1812,6 +1832,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}target_time'],
       ),
+      targetDurationMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_duration_minutes'],
+      ),
       isActive: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
@@ -1840,6 +1864,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final String? description;
   final int weekdayMask;
   final DateTime? targetTime;
+  final int? targetDurationMinutes;
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -1850,6 +1875,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     this.description,
     required this.weekdayMask,
     this.targetTime,
+    this.targetDurationMinutes,
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
@@ -1868,6 +1894,9 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['weekday_mask'] = Variable<int>(weekdayMask);
     if (!nullToAbsent || targetTime != null) {
       map['target_time'] = Variable<DateTime>(targetTime);
+    }
+    if (!nullToAbsent || targetDurationMinutes != null) {
+      map['target_duration_minutes'] = Variable<int>(targetDurationMinutes);
     }
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -1889,6 +1918,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: targetTime == null && nullToAbsent
           ? const Value.absent()
           : Value(targetTime),
+      targetDurationMinutes: targetDurationMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetDurationMinutes),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -1907,6 +1939,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       description: serializer.fromJson<String?>(json['description']),
       weekdayMask: serializer.fromJson<int>(json['weekdayMask']),
       targetTime: serializer.fromJson<DateTime?>(json['targetTime']),
+      targetDurationMinutes: serializer.fromJson<int?>(
+        json['targetDurationMinutes'],
+      ),
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -1922,6 +1957,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'description': serializer.toJson<String?>(description),
       'weekdayMask': serializer.toJson<int>(weekdayMask),
       'targetTime': serializer.toJson<DateTime?>(targetTime),
+      'targetDurationMinutes': serializer.toJson<int?>(targetDurationMinutes),
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -1935,6 +1971,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     Value<String?> description = const Value.absent(),
     int? weekdayMask,
     Value<DateTime?> targetTime = const Value.absent(),
+    Value<int?> targetDurationMinutes = const Value.absent(),
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -1945,6 +1982,9 @@ class Habit extends DataClass implements Insertable<Habit> {
     description: description.present ? description.value : this.description,
     weekdayMask: weekdayMask ?? this.weekdayMask,
     targetTime: targetTime.present ? targetTime.value : this.targetTime,
+    targetDurationMinutes: targetDurationMinutes.present
+        ? targetDurationMinutes.value
+        : this.targetDurationMinutes,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -1963,6 +2003,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: data.targetTime.present
           ? data.targetTime.value
           : this.targetTime,
+      targetDurationMinutes: data.targetDurationMinutes.present
+          ? data.targetDurationMinutes.value
+          : this.targetDurationMinutes,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -1978,6 +2021,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
           ..write('targetTime: $targetTime, ')
+          ..write('targetDurationMinutes: $targetDurationMinutes, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -1993,6 +2037,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     description,
     weekdayMask,
     targetTime,
+    targetDurationMinutes,
     isActive,
     createdAt,
     updatedAt,
@@ -2007,6 +2052,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.description == this.description &&
           other.weekdayMask == this.weekdayMask &&
           other.targetTime == this.targetTime &&
+          other.targetDurationMinutes == this.targetDurationMinutes &&
           other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -2019,6 +2065,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<String?> description;
   final Value<int> weekdayMask;
   final Value<DateTime?> targetTime;
+  final Value<int?> targetDurationMinutes;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -2029,6 +2076,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.description = const Value.absent(),
     this.weekdayMask = const Value.absent(),
     this.targetTime = const Value.absent(),
+    this.targetDurationMinutes = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -2040,6 +2088,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.description = const Value.absent(),
     required int weekdayMask,
     this.targetTime = const Value.absent(),
+    this.targetDurationMinutes = const Value.absent(),
     this.isActive = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -2054,6 +2103,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? description,
     Expression<int>? weekdayMask,
     Expression<DateTime>? targetTime,
+    Expression<int>? targetDurationMinutes,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -2065,6 +2115,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (description != null) 'description': description,
       if (weekdayMask != null) 'weekday_mask': weekdayMask,
       if (targetTime != null) 'target_time': targetTime,
+      if (targetDurationMinutes != null)
+        'target_duration_minutes': targetDurationMinutes,
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -2078,6 +2130,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<String?>? description,
     Value<int>? weekdayMask,
     Value<DateTime?>? targetTime,
+    Value<int?>? targetDurationMinutes,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -2089,6 +2142,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       description: description ?? this.description,
       weekdayMask: weekdayMask ?? this.weekdayMask,
       targetTime: targetTime ?? this.targetTime,
+      targetDurationMinutes:
+          targetDurationMinutes ?? this.targetDurationMinutes,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -2116,6 +2171,11 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (targetTime.present) {
       map['target_time'] = Variable<DateTime>(targetTime.value);
     }
+    if (targetDurationMinutes.present) {
+      map['target_duration_minutes'] = Variable<int>(
+        targetDurationMinutes.value,
+      );
+    }
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
@@ -2137,6 +2197,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
           ..write('targetTime: $targetTime, ')
+          ..write('targetDurationMinutes: $targetDurationMinutes, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -4072,6 +4133,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<String?> description,
       required int weekdayMask,
       Value<DateTime?> targetTime,
+      Value<int?> targetDurationMinutes,
       Value<bool> isActive,
       required DateTime createdAt,
       required DateTime updatedAt,
@@ -4084,6 +4146,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<int> weekdayMask,
       Value<DateTime?> targetTime,
+      Value<int?> targetDurationMinutes,
       Value<bool> isActive,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -4162,6 +4225,11 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<DateTime> get targetTime => $composableBuilder(
     column: $table.targetTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4263,6 +4331,11 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isActive => $composableBuilder(
     column: $table.isActive,
     builder: (column) => ColumnOrderings(column),
@@ -4329,6 +4402,11 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get targetTime => $composableBuilder(
     column: $table.targetTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
     builder: (column) => column,
   );
 
@@ -4424,6 +4502,7 @@ class $$HabitsTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<int> weekdayMask = const Value.absent(),
                 Value<DateTime?> targetTime = const Value.absent(),
+                Value<int?> targetDurationMinutes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -4434,6 +4513,7 @@ class $$HabitsTableTableManager
                 description: description,
                 weekdayMask: weekdayMask,
                 targetTime: targetTime,
+                targetDurationMinutes: targetDurationMinutes,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -4446,6 +4526,7 @@ class $$HabitsTableTableManager
                 Value<String?> description = const Value.absent(),
                 required int weekdayMask,
                 Value<DateTime?> targetTime = const Value.absent(),
+                Value<int?> targetDurationMinutes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
@@ -4456,6 +4537,7 @@ class $$HabitsTableTableManager
                 description: description,
                 weekdayMask: weekdayMask,
                 targetTime: targetTime,
+                targetDurationMinutes: targetDurationMinutes,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

@@ -14,6 +14,7 @@ class HabitModel extends Habit {
     super.projectId,
     super.description,
     super.targetTime,
+    super.targetDuration,
   });
 
   factory HabitModel.fromData(db.Habit data) {
@@ -27,6 +28,10 @@ class HabitModel extends Habit {
       isActive: data.isActive,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
+      targetDuration: data.targetDurationMinutes == null 
+        ? null 
+        : Duration(
+            minutes: data.targetDurationMinutes!,),
     );
   }
 
@@ -40,6 +45,7 @@ class HabitModel extends Habit {
       isActive: Value(isActive),
       createdAt: createdAt,
       updatedAt: updatedAt,
+      targetDurationMinutes: Value(targetDuration?.inMinutes),
     );
   }
 }
