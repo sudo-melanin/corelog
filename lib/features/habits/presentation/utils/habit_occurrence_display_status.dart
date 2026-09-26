@@ -1,13 +1,7 @@
 import 'package:corelog/features/habits/domain/entities/habit_occurrence.dart';
 import 'package:corelog/features/habits/domain/entities/habit_occurrence_status.dart';
 
-enum HabitOccurrenceDisplayStatus {
-  upcoming,
-  due,
-  missed,
-  completed,
-  skipped,
-}
+enum HabitOccurrenceDisplayStatus { upcoming, due, missed, completed, skipped }
 
 HabitOccurrenceDisplayStatus getHabitOccurrenceDisplayStatus(
   HabitOccurrence occurrence, {

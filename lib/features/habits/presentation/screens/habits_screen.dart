@@ -12,21 +12,15 @@ class HabitsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final habitsAsync = ref.watch(habitNotifierProvider);
-    final occurrencesAsync = ref.watch(
-      habitOccurrenceNotifierProvider,
-    );
+    final occurrencesAsync = ref.watch(habitOccurrenceNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Habits'),
-      ),
+      appBar: AppBar(title: const Text('Habits')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: habitsAsync.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => HabitErrorState(
               message: _errorMessage(error),
               onRetry: () {
@@ -44,9 +38,7 @@ class HabitsScreen extends ConsumerWidget {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  await ref
-                      .read(habitNotifierProvider.notifier)
-                      .refresh();
+                  await ref.read(habitNotifierProvider.notifier).refresh();
 
                   await ref
                       .read(habitOccurrenceNotifierProvider.notifier)
@@ -61,23 +53,13 @@ class HabitsScreen extends ConsumerWidget {
                           occurrences: upcoming,
                           onComplete: (item) {
                             ref
-                                .read(
-                                  habitOccurrenceNotifierProvider
-                                      .notifier,
-                                )
-                                .completeOccurrence(
-                                  item.occurrence,
-                                );
+                                .read(habitOccurrenceNotifierProvider.notifier)
+                                .completeOccurrence(item.occurrence);
                           },
                           onSkip: (item) {
                             ref
-                                .read(
-                                  habitOccurrenceNotifierProvider
-                                      .notifier,
-                                )
-                                .skipOccurrence(
-                                  item.occurrence,
-                                );
+                                .read(habitOccurrenceNotifierProvider.notifier)
+                                .skipOccurrence(item.occurrence);
                           },
                         ),
                       ),
@@ -102,13 +84,10 @@ class HabitsScreen extends ConsumerWidget {
                     else
                       SliverList.separated(
                         itemCount: habits.length,
-                        separatorBuilder: (_, _) => const SizedBox(
-                          height: AppSpacing.sm,
-                        ),
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: AppSpacing.sm),
                         itemBuilder: (context, index) {
-                          return HabitCard(
-                            habit: habits[index],
-                          );
+                          return HabitCard(habit: habits[index]);
                         },
                       ),
                   ],

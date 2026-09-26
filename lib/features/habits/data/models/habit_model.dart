@@ -28,10 +28,9 @@ class HabitModel extends Habit {
       isActive: data.isActive,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
-      targetDuration: data.targetDurationMinutes == null 
-        ? null 
-        : Duration(
-            minutes: data.targetDurationMinutes!,),
+      targetDuration: data.targetDurationMinutes == null
+          ? null
+          : Duration(minutes: data.targetDurationMinutes!),
     );
   }
 

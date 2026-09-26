@@ -10,9 +10,7 @@ class CompleteHabitOccurrence {
 
   final HabitOccurrenceRepository _repository;
 
-  Future<Either<Failure, HabitOccurrence>> call(
-    HabitOccurrence occurrence,
-  ) {
+  Future<Either<Failure, HabitOccurrence>> call(HabitOccurrence occurrence) {
     final now = DateTime.now();
 
     final completedOccurrence = HabitOccurrence(

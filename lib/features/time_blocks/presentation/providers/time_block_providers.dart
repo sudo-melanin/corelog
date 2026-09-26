@@ -5,8 +5,7 @@ import 'package:corelog/features/time_blocks/data/repositories/time_block_reposi
 import 'package:corelog/features/time_blocks/domain/repositories/time_block_repository.dart';
 import 'package:corelog/features/time_blocks/domain/usecases/usecases.dart';
 
-final timeBlockRepositoryProvider =
-    Provider<TimeBlockRepository>((ref) {
+final timeBlockRepositoryProvider = Provider<TimeBlockRepository>((ref) {
   final database = ref.watch(databaseProvider);
 
   return TimeBlockRepositoryImpl(database);

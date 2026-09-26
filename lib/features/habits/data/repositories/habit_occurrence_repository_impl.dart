@@ -8,8 +8,7 @@ import 'package:corelog/features/habits/data/models/habit_occurrence_model.dart'
 import 'package:corelog/features/habits/domain/entities/habit_occurrence.dart';
 import 'package:corelog/features/habits/domain/repositories/habit_occurrence_repository.dart';
 
-class HabitOccurrenceRepositoryImpl
-    implements HabitOccurrenceRepository {
+class HabitOccurrenceRepositoryImpl implements HabitOccurrenceRepository {
   const HabitOccurrenceRepositoryImpl(this._database);
 
   final db.AppDatabase _database;
@@ -28,13 +27,13 @@ class HabitOccurrenceRepositoryImpl
         createdAt: occurrence.createdAt,
       );
 
-      final id = await _database.into(_database.habitOccurrences).insert(
-            model.toCompanion(),
-          );
+      final id = await _database
+          .into(_database.habitOccurrences)
+          .insert(model.toCompanion());
 
-      final data = await (_database.select(_database.habitOccurrences)
-            ..where((table) => table.id.equals(id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.habitOccurrences,
+      )..where((table) => table.id.equals(id))).getSingle();
 
       return Right(HabitOccurrenceModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -49,13 +48,11 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, HabitOccurrence?>> getOccurrenceById(
-    int id,
-  ) async {
+  Future<Either<Failure, HabitOccurrence?>> getOccurrenceById(int id) async {
     try {
-      final data = await (_database.select(_database.habitOccurrences)
-            ..where((table) => table.id.equals(id)))
-          .getSingleOrNull();
+      final data = await (_database.select(
+        _database.habitOccurrences,
+      )..where((table) => table.id.equals(id))).getSingleOrNull();
 
       if (data == null) {
         return const Right(null);
@@ -76,8 +73,7 @@ class HabitOccurrenceRepositoryImpl
   @override
   Future<Either<Failure, List<HabitOccurrence>>> getOccurrences() async {
     try {
-      final data =
-          await _database.select(_database.habitOccurrences).get();
+      final data = await _database.select(_database.habitOccurrences).get();
 
       final occurrences = data
           .map(HabitOccurrenceModel.fromData)
@@ -97,14 +93,13 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<HabitOccurrence>>>
-      getOccurrencesByHabit(
+  Future<Either<Failure, List<HabitOccurrence>>> getOccurrencesByHabit(
     int habitId,
   ) async {
     try {
-      final data = await (_database.select(_database.habitOccurrences)
-            ..where((table) => table.habitId.equals(habitId)))
-          .get();
+      final data = await (_database.select(
+        _database.habitOccurrences,
+      )..where((table) => table.habitId.equals(habitId))).get();
 
       final occurrences = data
           .map(HabitOccurrenceModel.fromData)
@@ -124,34 +119,23 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, HabitOccurrence?>>
-      getOccurrenceByHabitAndDate(
+  Future<Either<Failure, HabitOccurrence?>> getOccurrenceByHabitAndDate(
     int habitId,
     DateTime date,
   ) async {
     try {
-      final startOfDay = DateTime(
-        date.year,
-        date.month,
-        date.day,
-      );
+      final startOfDay = DateTime(date.year, date.month, date.day);
 
-      final startOfNextDay = startOfDay.add(
-        const Duration(days: 1),
-      );
+      final startOfNextDay = startOfDay.add(const Duration(days: 1));
 
-      final data = await (_database.select(_database.habitOccurrences)
-            ..where(
-              (table) =>
-                  table.habitId.equals(habitId) &
-                  table.scheduledDate.isBiggerOrEqualValue(
-                    startOfDay,
-                  ) &
-                  table.scheduledDate.isSmallerThanValue(
-                    startOfNextDay,
-                  ),
-            ))
-          .getSingleOrNull();
+      final data =
+          await (_database.select(_database.habitOccurrences)..where(
+                (table) =>
+                    table.habitId.equals(habitId) &
+                    table.scheduledDate.isBiggerOrEqualValue(startOfDay) &
+                    table.scheduledDate.isSmallerThanValue(startOfNextDay),
+              ))
+              .getSingleOrNull();
 
       if (data == null) {
         return const Right(null);
@@ -170,24 +154,20 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<HabitOccurrence>>>
-      getUpcomingOccurrences({
+  Future<Either<Failure, List<HabitOccurrence>>> getUpcomingOccurrences({
     required DateTime from,
     required DateTime to,
   }) async {
     try {
-      final data = await (_database.select(
-        _database.habitOccurrences,
-      )
-            ..where(
-              (table) =>
-                  table.scheduledDate.isBiggerOrEqualValue(from) &
-                  table.scheduledDate.isSmallerThanValue(to),
-            )
-            ..orderBy([
-              (table) => OrderingTerm.asc(table.scheduledDate),
-            ]))
-          .get();
+      final data =
+          await (_database.select(_database.habitOccurrences)
+                ..where(
+                  (table) =>
+                      table.scheduledDate.isBiggerOrEqualValue(from) &
+                      table.scheduledDate.isSmallerThanValue(to),
+                )
+                ..orderBy([(table) => OrderingTerm.asc(table.scheduledDate)]))
+              .get();
 
       final occurrences = data
           .map(HabitOccurrenceModel.fromData)
@@ -211,27 +191,26 @@ class HabitOccurrenceRepositoryImpl
     HabitOccurrence occurrence,
   ) async {
     try {
-      final updated = await (_database.update(_database.habitOccurrences)
-            ..where((table) => table.id.equals(occurrence.id)))
-          .write(
-        db.HabitOccurrencesCompanion(
-          habitId: Value(occurrence.habitId),
-          scheduledDate: Value(occurrence.scheduledDate),
-          completedAt: Value(occurrence.completedAt),
-          status: Value(occurrence.status.name),
-          createdAt: Value(occurrence.createdAt),
-        ),
-      );
+      final updated =
+          await (_database.update(
+            _database.habitOccurrences,
+          )..where((table) => table.id.equals(occurrence.id))).write(
+            db.HabitOccurrencesCompanion(
+              habitId: Value(occurrence.habitId),
+              scheduledDate: Value(occurrence.scheduledDate),
+              completedAt: Value(occurrence.completedAt),
+              status: Value(occurrence.status.name),
+              createdAt: Value(occurrence.createdAt),
+            ),
+          );
 
       if (updated == 0) {
-        return const Left(
-          DatabaseFailure('Habit occurrence not found.'),
-        );
+        return const Left(DatabaseFailure('Habit occurrence not found.'));
       }
 
-      final data = await (_database.select(_database.habitOccurrences)
-            ..where((table) => table.id.equals(occurrence.id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.habitOccurrences,
+      )..where((table) => table.id.equals(occurrence.id))).getSingle();
 
       return Right(HabitOccurrenceModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -246,18 +225,14 @@ class HabitOccurrenceRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteOccurrence(
-    int id,
-  ) async {
+  Future<Either<Failure, Unit>> deleteOccurrence(int id) async {
     try {
-      final deleted = await (_database.delete(_database.habitOccurrences)
-            ..where((table) => table.id.equals(id)))
-          .go();
+      final deleted = await (_database.delete(
+        _database.habitOccurrences,
+      )..where((table) => table.id.equals(id))).go();
 
       if (deleted == 0) {
-        return const Left(
-          DatabaseFailure('Habit occurrence not found.'),
-        );
+        return const Left(DatabaseFailure('Habit occurrence not found.'));
       }
 
       return const Right(unit);

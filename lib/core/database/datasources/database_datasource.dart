@@ -6,9 +6,7 @@ import '../../error/error.dart';
 import '../app_database.dart';
 
 abstract interface class DatabaseDataSource {
-  Future<Either<Failure, T>> transaction<T>(
-    Future<T> Function() action,
-  );
+  Future<Either<Failure, T>> transaction<T>(Future<T> Function() action);
 }
 
 class DriftDatabaseDataSource implements DatabaseDataSource {
@@ -17,9 +15,7 @@ class DriftDatabaseDataSource implements DatabaseDataSource {
   final AppDatabase _database;
 
   @override
-  Future<Either<Failure, T>> transaction<T>(
-    Future<T> Function() action,
-  ) async {
+  Future<Either<Failure, T>> transaction<T>(Future<T> Function() action) async {
     try {
       final result = await _database.transaction(action);
 

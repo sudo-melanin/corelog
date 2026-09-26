@@ -9,9 +9,7 @@ import 'habit_repeat_selector.dart';
 import 'habit_time_selector.dart';
 import 'habit_weekday_selector.dart';
 
-Future<void> showCreateHabitDialog(
-  BuildContext context,
-) async {
+Future<void> showCreateHabitDialog(BuildContext context) async {
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -28,12 +26,10 @@ class CreateHabitDialog extends ConsumerStatefulWidget {
   const CreateHabitDialog({super.key});
 
   @override
-  ConsumerState<CreateHabitDialog> createState() =>
-      _CreateHabitDialogState();
+  ConsumerState<CreateHabitDialog> createState() => _CreateHabitDialogState();
 }
 
-class _CreateHabitDialogState
-    extends ConsumerState<CreateHabitDialog> {
+class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _customDurationController;
@@ -66,11 +62,7 @@ class _CreateHabitDialogState
   Future<void> _selectTargetTime() async {
     final selectedTime = await showTimePicker(
       context: context,
-      initialTime: _targetTime ??
-          const TimeOfDay(
-            hour: 7,
-            minute: 0,
-          ),
+      initialTime: _targetTime ?? const TimeOfDay(hour: 7, minute: 0),
     );
 
     if (!mounted || selectedTime == null) {
@@ -121,9 +113,7 @@ class _CreateHabitDialogState
       return _selectedDurationMinutes;
     }
 
-    final value = int.tryParse(
-      _customDurationController.text.trim(),
-    );
+    final value = int.tryParse(_customDurationController.text.trim());
 
     if (value == null || value <= 0) {
       return null;
@@ -143,16 +133,12 @@ class _CreateHabitDialogState
     }
 
     if (_weekdayMask == 0) {
-      _showValidationMessage(
-        'Select at least one day for this habit.',
-      );
+      _showValidationMessage('Select at least one day for this habit.');
       return;
     }
 
     if (durationMinutes == null) {
-      _showValidationMessage(
-        'Enter a valid duration in minutes.',
-      );
+      _showValidationMessage('Enter a valid duration in minutes.');
       return;
     }
 
@@ -174,9 +160,7 @@ class _CreateHabitDialogState
       description: description.isEmpty ? null : description,
       weekdayMask: _weekdayMask,
       targetTime: targetTime,
-      targetDuration: Duration(
-        minutes: durationMinutes,
-      ),
+      targetDuration: Duration(minutes: durationMinutes),
       isActive: true,
       createdAt: now,
       updatedAt: now,
@@ -186,9 +170,7 @@ class _CreateHabitDialogState
       _isSaving = true;
     });
 
-    await ref
-        .read(habitNotifierProvider.notifier)
-        .createHabit(habit);
+    await ref.read(habitNotifierProvider.notifier).createHabit(habit);
 
     if (!mounted) {
       return;
@@ -207,16 +189,14 @@ class _CreateHabitDialogState
       return;
     }
 
-    ref
-    .read(habitOccurrenceNotifierProvider.notifier)
-    .refresh();
+    ref.read(habitOccurrenceNotifierProvider.notifier).refresh();
     Navigator.of(context).pop();
   }
 
   void _showValidationMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -235,7 +215,7 @@ class _CreateHabitDialogState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             const _SheetHandle(),
+              const _SheetHandle(),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 'New Habit',
@@ -263,21 +243,12 @@ class _CreateHabitDialogState
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Repeat',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Repeat', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.sm),
-              HabitRepeatSelector(
-                isDaily: _isDaily,
-                onChanged: _setRepeatMode,
-              ),
+              HabitRepeatSelector(isDaily: _isDaily, onChanged: _setRepeatMode),
               if (!_isDaily) ...[
                 const SizedBox(height: AppSpacing.lg),
-                Text(
-                  'Days',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('Days', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: AppSpacing.sm),
                 HabitWeekdaySelector(
                   weekdayMask: _weekdayMask,
@@ -295,10 +266,7 @@ class _CreateHabitDialogState
                 onSelect: _selectTargetTime,
               ),
               const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Duration',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Duration', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.sm),
               HabitDurationSelector(
                 selectedDurationMinutes: _selectedDurationMinutes,
@@ -338,9 +306,7 @@ class _CreateHabitDialogState
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Text('Create'),
                     ),
@@ -366,9 +332,7 @@ class _SheetHandle extends StatelessWidget {
         height: 4,
         decoration: BoxDecoration(
           color: AppColors.divider,
-          borderRadius: BorderRadius.circular(
-            AppRadius.sm,
-          ),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
       ),
     );

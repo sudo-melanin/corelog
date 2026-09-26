@@ -7,24 +7,18 @@ import 'package:corelog/features/habits/domain/repositories/habit_repository.dar
 
 import 'habit_providers.dart';
 
-final habitNotifierProvider =
-    AsyncNotifierProvider<HabitNotifier, List<Habit>>(
+final habitNotifierProvider = AsyncNotifierProvider<HabitNotifier, List<Habit>>(
   HabitNotifier.new,
 );
 
 class HabitNotifier extends AsyncNotifier<List<Habit>> {
-  HabitRepository get _repository =>
-    ref.read(habitRepositoryProvider);
+  HabitRepository get _repository => ref.read(habitRepositoryProvider);
 
   @override
   Future<List<Habit>> build() async {
-
     final result = await _repository.getHabits();
 
-    return result.fold(
-      (failure) => throw failure,
-      (habits) => habits,
-    );
+    return result.fold((failure) => throw failure, (habits) => habits);
   }
 
   Future<void> refresh() async {
@@ -33,21 +27,15 @@ class HabitNotifier extends AsyncNotifier<List<Habit>> {
   }
 
   Future<void> createHabit(Habit habit) async {
-    await _runMutation(
-      () => _repository.createHabit(habit),
-    );
+    await _runMutation(() => _repository.createHabit(habit));
   }
 
   Future<void> updateHabit(Habit habit) async {
-    await _runMutation(
-      () => _repository.updateHabit(habit),
-    );
+    await _runMutation(() => _repository.updateHabit(habit));
   }
 
   Future<void> deleteHabit(int id) async {
-    await _runMutation(
-      () => _repository.deleteHabit(id),
-    );
+    await _runMutation(() => _repository.deleteHabit(id));
   }
 
   Future<void> _runMutation<T>(
@@ -59,10 +47,7 @@ class HabitNotifier extends AsyncNotifier<List<Habit>> {
 
     await result.fold(
       (failure) async {
-        state = AsyncError(
-          failure.message,
-          StackTrace.current,
-        );
+        state = AsyncError(failure.message, StackTrace.current);
       },
       (_) async {
         await refresh();

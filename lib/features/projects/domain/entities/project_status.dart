@@ -1,5 +1,1 @@
-enum ProjectStatus {
-  active,
-  completed,
-  archived,
-}
+enum ProjectStatus { active, completed, archived }

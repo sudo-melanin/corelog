@@ -34,9 +34,9 @@ class HabitOccurrenceCard extends StatelessWidget {
                 item.habit.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.primary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: AppColors.primary),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
@@ -47,8 +47,8 @@ class HabitOccurrenceCard extends StatelessWidget {
               Text(
                 _formatTime(occurrence.scheduledDate),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               _StatusLabel(status: status),
@@ -70,10 +70,7 @@ class HabitOccurrenceCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   OutlinedButton.icon(
                     onPressed: () => onSkip(occurrence),
-                    icon: const Icon(
-                      Icons.skip_next_outlined,
-                      size: 18,
-                    ),
+                    icon: const Icon(Icons.skip_next_outlined, size: 18),
                     label: const Text('Skip'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -83,7 +80,7 @@ class HabitOccurrenceCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -104,9 +101,7 @@ class HabitOccurrenceCard extends StatelessWidget {
 }
 
 class _StatusLabel extends StatelessWidget {
-  const _StatusLabel({
-    required this.status,
-  });
+  const _StatusLabel({required this.status});
 
   final HabitOccurrenceDisplayStatus status;
 
@@ -114,9 +109,7 @@ class _StatusLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _label,
-      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: _color,
-          ),
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: _color),
     );
   }
 

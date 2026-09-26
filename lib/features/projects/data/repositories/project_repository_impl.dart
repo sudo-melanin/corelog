@@ -14,9 +14,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
   final db.AppDatabase _database;
 
   @override
-  Future<Either<Failure, Project>> createProject(
-    Project project,
-  ) async {
+  Future<Either<Failure, Project>> createProject(Project project) async {
     try {
       final model = ProjectModel(
         id: project.id,
@@ -27,13 +25,13 @@ class ProjectRepositoryImpl implements ProjectRepository {
         updatedAt: project.updatedAt,
       );
 
-      final id = await _database.into(_database.projects).insert(
-            model.toCompanion(),
-          );
+      final id = await _database
+          .into(_database.projects)
+          .insert(model.toCompanion());
 
-      final data = await (_database.select(_database.projects)
-            ..where((table) => table.id.equals(id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.projects,
+      )..where((table) => table.id.equals(id))).getSingle();
 
       return Right(ProjectModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -48,13 +46,11 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<Either<Failure, Project?>> getProjectById(
-    int id,
-  ) async {
+  Future<Either<Failure, Project?>> getProjectById(int id) async {
     try {
-      final data = await (_database.select(_database.projects)
-            ..where((table) => table.id.equals(id)))
-          .getSingleOrNull();
+      final data = await (_database.select(
+        _database.projects,
+      )..where((table) => table.id.equals(id))).getSingleOrNull();
 
       if (data == null) {
         return const Right(null);
@@ -95,31 +91,28 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<Either<Failure, Project>> updateProject(
-    Project project,
-  ) async {
+  Future<Either<Failure, Project>> updateProject(Project project) async {
     try {
-      final updated = await (_database.update(_database.projects)
-            ..where((table) => table.id.equals(project.id)))
-          .write(
-        db.ProjectsCompanion(
-          name: Value(project.name),
-          description: Value(project.description),
-          status: Value(project.status.name),
-          createdAt: Value(project.createdAt),
-          updatedAt: Value(project.updatedAt),
-        ),
-      );
+      final updated =
+          await (_database.update(
+            _database.projects,
+          )..where((table) => table.id.equals(project.id))).write(
+            db.ProjectsCompanion(
+              name: Value(project.name),
+              description: Value(project.description),
+              status: Value(project.status.name),
+              createdAt: Value(project.createdAt),
+              updatedAt: Value(project.updatedAt),
+            ),
+          );
 
       if (updated == 0) {
-        return const Left(
-          DatabaseFailure('Project not found.'),
-        );
+        return const Left(DatabaseFailure('Project not found.'));
       }
 
-      final data = await (_database.select(_database.projects)
-            ..where((table) => table.id.equals(project.id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.projects,
+      )..where((table) => table.id.equals(project.id))).getSingle();
 
       return Right(ProjectModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -134,18 +127,14 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteProject(
-    int id,
-  ) async {
+  Future<Either<Failure, Unit>> deleteProject(int id) async {
     try {
-      final deleted = await (_database.delete(_database.projects)
-            ..where((table) => table.id.equals(id)))
-          .go();
+      final deleted = await (_database.delete(
+        _database.projects,
+      )..where((table) => table.id.equals(id))).go();
 
       if (deleted == 0) {
-        return const Left(
-          DatabaseFailure('Project not found.'),
-        );
+        return const Left(DatabaseFailure('Project not found.'));
       }
 
       return const Right(unit);

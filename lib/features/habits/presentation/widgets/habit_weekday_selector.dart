@@ -37,10 +37,9 @@ class HabitWeekdaySelector extends StatelessWidget {
             child: ChoiceChip(
               label: Text(
                 label,
-                style: 
-                TextStyle(
+                style: TextStyle(
                   color: selected ? Colors.black : AppColors.textPrimary,
-                  fontSize: 12,                  
+                  fontSize: 12,
                 ),
               ),
               selected: selected,
@@ -51,7 +50,7 @@ class HabitWeekdaySelector extends StatelessWidget {
               labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: selected ? Colors.black : null,
               ),
-            )
+            ),
           ),
         );
       }).toList(),

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-String formatHabitTime(
-  BuildContext context,
-  TimeOfDay? time,
-) {
+String formatHabitTime(BuildContext context, TimeOfDay? time) {
   if (time == null) {
     return 'Not set';
   }

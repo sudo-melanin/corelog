@@ -7,9 +7,7 @@ class TaskEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('No tasks yet'),
-    );
+    return const Center(child: Text('No tasks yet'));
   }
 }
 
@@ -31,15 +29,9 @@ class TaskErrorState extends StatelessWidget {
         children: [
           const Text('Something went wrong'),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-          ),
+          Text(message, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          FilledButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
     );

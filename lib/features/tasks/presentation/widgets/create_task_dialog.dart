@@ -6,10 +6,7 @@ import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
 import 'package:corelog/features/tasks/presentation/providers/providers.dart';
 
-Future<void> showCreateTaskDialog(
-  BuildContext context,
-  WidgetRef ref,
-) async {
+Future<void> showCreateTaskDialog(BuildContext context, WidgetRef ref) async {
   await showDialog<void>(
     context: context,
     builder: (_) {
@@ -22,12 +19,10 @@ class CreateTaskDialog extends ConsumerStatefulWidget {
   const CreateTaskDialog({super.key});
 
   @override
-  ConsumerState<CreateTaskDialog> createState() =>
-      _CreateTaskDialogState();
+  ConsumerState<CreateTaskDialog> createState() => _CreateTaskDialogState();
 }
 
-class _CreateTaskDialogState
-    extends ConsumerState<CreateTaskDialog> {
+class _CreateTaskDialogState extends ConsumerState<CreateTaskDialog> {
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
 
@@ -117,10 +112,7 @@ class _CreateTaskDialogState
           },
           child: const Text('Cancel'),
         ),
-        FilledButton(
-          onPressed: _createTask,
-          child: const Text('Create'),
-        ),
+        FilledButton(onPressed: _createTask, child: const Text('Create')),
       ],
     );
   }

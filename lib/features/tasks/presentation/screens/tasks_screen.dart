@@ -13,16 +13,12 @@ class TasksScreen extends ConsumerWidget {
     final tasksAsync = ref.watch(taskNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tasks'),
-      ),
+      appBar: AppBar(title: const Text('Tasks')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: tasksAsync.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => TaskErrorState(
               message: _errorMessage(error),
               onRetry: () {
@@ -36,16 +32,13 @@ class TasksScreen extends ConsumerWidget {
 
               return RefreshIndicator(
                 onRefresh: () {
-                  return ref
-                      .read(taskNotifierProvider.notifier)
-                      .refresh();
+                  return ref.read(taskNotifierProvider.notifier).refresh();
                 },
                 child: ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: tasks.length,
-                  separatorBuilder: (_, _) => const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     return TaskCard(task: tasks[index]);
                   },

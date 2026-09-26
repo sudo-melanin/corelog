@@ -13,15 +13,17 @@ final habitRepositoryProvider = Provider<HabitRepository>((ref) {
   return HabitRepositoryImpl(database);
 });
 
-final habitOccurrenceRepositoryProvider =
-    Provider<HabitOccurrenceRepository>((ref) {
+final habitOccurrenceRepositoryProvider = Provider<HabitOccurrenceRepository>((
+  ref,
+) {
   final database = ref.watch(databaseProvider);
 
   return HabitOccurrenceRepositoryImpl(database);
 });
 
-final completeHabitOccurrenceProvider =
-    Provider<CompleteHabitOccurrence>((ref) {
+final completeHabitOccurrenceProvider = Provider<CompleteHabitOccurrence>((
+  ref,
+) {
   final repository = ref.watch(habitOccurrenceRepositoryProvider);
 
   return CompleteHabitOccurrence(repository);
@@ -33,11 +35,11 @@ final skipHabitOccurrenceProvider = Provider<SkipHabitOccurrence>((ref) {
   return SkipHabitOccurrence(repository);
 });
 
-final generateHabitOccurrencesProvider =
-    Provider<GenerateHabitOccurrences>((ref) {
+final generateHabitOccurrencesProvider = Provider<GenerateHabitOccurrences>((
+  ref,
+) {
   final habitRepository = ref.watch(habitRepositoryProvider);
-  final occurrenceRepository =
-      ref.watch(habitOccurrenceRepositoryProvider);
+  final occurrenceRepository = ref.watch(habitOccurrenceRepositoryProvider);
 
   return GenerateHabitOccurrences(
     habitRepository: habitRepository,

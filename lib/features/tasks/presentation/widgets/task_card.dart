@@ -5,10 +5,7 @@ import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
 
 class TaskCard extends StatelessWidget {
-  const TaskCard({
-    required this.task,
-    super.key,
-  });
+  const TaskCard({required this.task, super.key});
 
   final Task task;
 
@@ -29,9 +26,9 @@ class TaskCard extends StatelessWidget {
                 task.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.primary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: AppColors.primary),
               ),
               if (task.description != null) ...[
                 const SizedBox(height: AppSpacing.xs),
@@ -40,8 +37,8 @@ class TaskCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
               const SizedBox(height: AppSpacing.md),
@@ -55,10 +52,7 @@ class TaskCard extends StatelessWidget {
 }
 
 class TaskStatusChip extends StatelessWidget {
-  const TaskStatusChip({
-    required this.status,
-    super.key,
-  });
+  const TaskStatusChip({required this.status, super.key});
 
   final TaskStatus status;
 

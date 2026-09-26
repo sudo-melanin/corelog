@@ -4,10 +4,7 @@ import 'package:corelog/core/theme/theme.dart';
 import 'package:corelog/features/habits/domain/entities/habit.dart';
 
 class HabitCard extends StatelessWidget {
-  const HabitCard({
-    required this.habit,
-    super.key,
-  });
+  const HabitCard({required this.habit, super.key});
 
   final Habit habit;
 
@@ -26,9 +23,9 @@ class HabitCard extends StatelessWidget {
                     habit.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppColors.primary,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: AppColors.primary),
                   ),
                   if (habit.description != null) ...[
                     const SizedBox(height: AppSpacing.xs),
@@ -37,8 +34,8 @@ class HabitCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                   if (habit.targetTime != null) ...[
@@ -46,8 +43,8 @@ class HabitCard extends StatelessWidget {
                     Text(
                       _formatTime(habit.targetTime!),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ],
@@ -70,9 +67,7 @@ class HabitCard extends StatelessWidget {
 }
 
 class _ActivityIndicator extends StatelessWidget {
-  const _ActivityIndicator({
-    required this.isActive,
-  });
+  const _ActivityIndicator({required this.isActive});
 
   final bool isActive;
 

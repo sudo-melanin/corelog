@@ -20,13 +20,9 @@ class HabitTimeSelector extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onSelect,
         icon: const Icon(Icons.schedule_outlined),
-        label: Text(
-          formatHabitTime(context, targetTime),
-        ),
+        label: Text(formatHabitTime(context, targetTime)),
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.md,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         ),
       ),
     );

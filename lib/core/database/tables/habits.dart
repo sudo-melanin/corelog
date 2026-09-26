@@ -5,8 +5,7 @@ import 'projects.dart';
 class Habits extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get projectId =>
-      integer().nullable().references(Projects, #id)();
+  IntColumn get projectId => integer().nullable().references(Projects, #id)();
 
   TextColumn get name => text()();
 
@@ -16,11 +15,9 @@ class Habits extends Table {
 
   DateTimeColumn get targetTime => dateTime().nullable()();
 
-  IntColumn get targetDurationMinutes =>
-      integer().nullable()();
+  IntColumn get targetDurationMinutes => integer().nullable()();
 
-  BoolColumn get isActive =>
-      boolean().withDefault(const Constant(true))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 
   DateTimeColumn get createdAt => dateTime()();
 

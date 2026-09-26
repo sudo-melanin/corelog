@@ -10,19 +10,18 @@ class CompleteTimeBlock {
 
   final TimeBlockRepository _repository;
 
-  Future<Either<Failure, TimeBlock>> call(
-    TimeBlock timeBlock,
-  ) {
+  Future<Either<Failure, TimeBlock>> call(TimeBlock timeBlock) {
     final now = DateTime.now();
 
     final completedTimeBlock = TimeBlock(
       id: timeBlock.id,
-      projectId: timeBlock.projectId,
+      habitOccurrenceId: timeBlock.habitOccurrenceId,
       taskId: timeBlock.taskId,
       plannedStart: timeBlock.plannedStart,
       plannedEnd: timeBlock.plannedEnd,
       actualStart: timeBlock.actualStart,
       actualEnd: now,
+      description: timeBlock.description,
       status: TimeBlockStatus.completed,
       createdAt: timeBlock.createdAt,
       updatedAt: now,

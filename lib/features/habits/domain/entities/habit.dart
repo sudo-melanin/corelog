@@ -27,15 +27,15 @@ class Habit extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        projectId,
-        name,
-        description,
-        weekdayMask,
-        targetTime,
-        isActive,
-        createdAt,
-        updatedAt,
-        targetDuration,
-      ];
+    id,
+    projectId,
+    name,
+    description,
+    weekdayMask,
+    targetTime,
+    isActive,
+    createdAt,
+    updatedAt,
+    targetDuration,
+  ];
 }

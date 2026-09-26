@@ -26,19 +26,14 @@ class UpcomingHabitOccurrences extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Upcoming',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('Upcoming', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
         SizedBox(
           height: 210,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: occurrences.length,
-            separatorBuilder: (_, _) => const SizedBox(
-              width: AppSpacing.sm,
-            ),
+            separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
             itemBuilder: (context, index) {
               final item = occurrences[index];
 

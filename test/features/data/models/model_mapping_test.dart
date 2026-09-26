@@ -166,7 +166,7 @@ void main() {
 
       await database.into(database.timeBlocks).insert(
             TimeBlocksCompanion.insert(
-              projectId: 1,
+              habitOccurrenceId: 1,
               taskId: const Value(2),
               plannedStart: plannedStart,
               plannedEnd: plannedEnd,
@@ -182,7 +182,7 @@ void main() {
       final model = TimeBlockModel.fromData(data);
 
       expect(model.id, data.id);
-      expect(model.projectId, 1);
+      expect(model.habitOccurrenceId, 1);
       expect(model.taskId, 2);
       expect(model.plannedStart, plannedStart);
       expect(model.plannedEnd, plannedEnd);
@@ -203,7 +203,7 @@ void main() {
 
       final model = TimeBlockModel(
         id: 1,
-        projectId: 2,
+        habitOccurrenceId: 2,
         taskId: 3,
         plannedStart: plannedStart,
         plannedEnd: plannedEnd,
@@ -216,7 +216,7 @@ void main() {
 
       final companion = model.toCompanion();
 
-      expect(companion.projectId.value, 2);
+      expect(companion.habitOccurrenceId.value, 2);
       expect(companion.taskId.value, 3);
       expect(companion.plannedStart.value, plannedStart);
       expect(companion.plannedEnd.value, plannedEnd);

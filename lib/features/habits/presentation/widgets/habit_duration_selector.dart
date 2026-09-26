@@ -20,32 +20,27 @@ class HabitDurationSelector extends StatelessWidget {
       children: [
         _DurationOption(
           label: '15 min',
-          selected: !isCustomDuration &&
-              selectedDurationMinutes == 15,
+          selected: !isCustomDuration && selectedDurationMinutes == 15,
           onTap: () => onSelect(15),
         ),
         _DurationOption(
           label: '30 min',
-          selected: !isCustomDuration &&
-              selectedDurationMinutes == 30,
+          selected: !isCustomDuration && selectedDurationMinutes == 30,
           onTap: () => onSelect(30),
         ),
         _DurationOption(
           label: '45 min',
-          selected: !isCustomDuration &&
-              selectedDurationMinutes == 45,
+          selected: !isCustomDuration && selectedDurationMinutes == 45,
           onTap: () => onSelect(45),
         ),
         _DurationOption(
           label: '1 hour',
-          selected: !isCustomDuration &&
-              selectedDurationMinutes == 60,
+          selected: !isCustomDuration && selectedDurationMinutes == 60,
           onTap: () => onSelect(60),
         ),
         _DurationOption(
           label: '1h 30m',
-          selected: !isCustomDuration &&
-              selectedDurationMinutes == 90,
+          selected: !isCustomDuration && selectedDurationMinutes == 90,
           onTap: () => onSelect(90),
         ),
         _DurationOption(

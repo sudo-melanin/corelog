@@ -5,7 +5,7 @@ import 'time_block_status.dart';
 class TimeBlock extends Equatable {
   const TimeBlock({
     required this.id,
-    required this.projectId,
+    required this.habitOccurrenceId,
     required this.plannedStart,
     required this.plannedEnd,
     required this.status,
@@ -14,10 +14,11 @@ class TimeBlock extends Equatable {
     this.taskId,
     this.actualStart,
     this.actualEnd,
+    this.description,
   });
 
   final int id;
-  final int projectId;
+  final int habitOccurrenceId;
   final int? taskId;
   final DateTime plannedStart;
   final DateTime plannedEnd;
@@ -26,18 +27,20 @@ class TimeBlock extends Equatable {
   final TimeBlockStatus status;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? description;
 
   @override
   List<Object?> get props => [
-        id,
-        projectId,
-        taskId,
-        plannedStart,
-        plannedEnd,
-        actualStart,
-        actualEnd,
-        status,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    habitOccurrenceId,
+    taskId,
+    plannedStart,
+    plannedEnd,
+    actualStart,
+    actualEnd,
+    status,
+    createdAt,
+    updatedAt,
+    description,
+  ];
 }

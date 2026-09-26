@@ -10,17 +10,16 @@ class SkipTimeBlock {
 
   final TimeBlockRepository _repository;
 
-  Future<Either<Failure, TimeBlock>> call(
-    TimeBlock timeBlock,
-  ) {
+  Future<Either<Failure, TimeBlock>> call(TimeBlock timeBlock) {
     final skippedTimeBlock = TimeBlock(
       id: timeBlock.id,
-      projectId: timeBlock.projectId,
+      habitOccurrenceId: timeBlock.habitOccurrenceId,
       taskId: timeBlock.taskId,
       plannedStart: timeBlock.plannedStart,
       plannedEnd: timeBlock.plannedEnd,
       actualStart: timeBlock.actualStart,
       actualEnd: timeBlock.actualEnd,
+      description: timeBlock.description,
       status: TimeBlockStatus.skipped,
       createdAt: timeBlock.createdAt,
       updatedAt: DateTime.now(),

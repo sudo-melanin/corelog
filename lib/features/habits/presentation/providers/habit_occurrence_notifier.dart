@@ -14,16 +14,14 @@ import 'habit_providers.dart';
 
 final habitOccurrenceNotifierProvider =
     AsyncNotifierProvider<HabitOccurrenceNotifier, List<HabitOccurrence>>(
-  HabitOccurrenceNotifier.new,
-);
+      HabitOccurrenceNotifier.new,
+    );
 
-class HabitOccurrenceNotifier
-    extends AsyncNotifier<List<HabitOccurrence>> {
+class HabitOccurrenceNotifier extends AsyncNotifier<List<HabitOccurrence>> {
   HabitOccurrenceRepository get _repository =>
       ref.read(habitOccurrenceRepositoryProvider);
 
-  HabitRepository get _habitRepository =>
-      ref.read(habitRepositoryProvider);
+  HabitRepository get _habitRepository => ref.read(habitRepositoryProvider);
 
   GenerateHabitOccurrences get _generateOccurrences =>
       ref.read(generateHabitOccurrencesProvider);
@@ -51,10 +49,7 @@ class HabitOccurrenceNotifier
 
     final habitsResult = await _habitRepository.getHabits();
 
-    _habits = habitsResult.fold(
-      (failure) => throw failure,
-      (habits) => habits,
-    );
+    _habits = habitsResult.fold((failure) => throw failure, (habits) => habits);
 
     final result = await _repository.getOccurrences();
 
@@ -65,11 +60,10 @@ class HabitOccurrenceNotifier
   }
 
   List<UpcomingHabitOccurrence> get upcomingOccurrences {
-    final habitsById = {
-      for (final habit in _habits) habit.id: habit,
-    };
+    final habitsById = {for (final habit in _habits) habit.id: habit};
 
-    final upcoming = state.valueOrNull
+    final upcoming =
+        state.valueOrNull
             ?.where(
               (occurrence) =>
                   occurrence.status == HabitOccurrenceStatus.pending,
@@ -91,9 +85,8 @@ class HabitOccurrenceNotifier
         [];
 
     upcoming.sort(
-      (a, b) => a.occurrence.scheduledDate.compareTo(
-        b.occurrence.scheduledDate,
-      ),
+      (a, b) =>
+          a.occurrence.scheduledDate.compareTo(b.occurrence.scheduledDate),
     );
 
     return upcoming.take(5).toList();
@@ -104,42 +97,24 @@ class HabitOccurrenceNotifier
     state = await AsyncValue.guard(build);
   }
 
-  Future<void> createOccurrence(
-    HabitOccurrence occurrence,
-  ) async {
-    await _runMutation(
-      () => _repository.createOccurrence(occurrence),
-    );
+  Future<void> createOccurrence(HabitOccurrence occurrence) async {
+    await _runMutation(() => _repository.createOccurrence(occurrence));
   }
 
-  Future<void> updateOccurrence(
-    HabitOccurrence occurrence,
-  ) async {
-    await _runMutation(
-      () => _repository.updateOccurrence(occurrence),
-    );
+  Future<void> updateOccurrence(HabitOccurrence occurrence) async {
+    await _runMutation(() => _repository.updateOccurrence(occurrence));
   }
 
   Future<void> deleteOccurrence(int id) async {
-    await _runMutation(
-      () => _repository.deleteOccurrence(id),
-    );
+    await _runMutation(() => _repository.deleteOccurrence(id));
   }
 
-  Future<void> completeOccurrence(
-    HabitOccurrence occurrence,
-  ) async {
-    await _runMutation(
-      () => _completeOccurrence(occurrence),
-    );
+  Future<void> completeOccurrence(HabitOccurrence occurrence) async {
+    await _runMutation(() => _completeOccurrence(occurrence));
   }
 
-  Future<void> skipOccurrence(
-    HabitOccurrence occurrence,
-  ) async {
-    await _runMutation(
-      () => _skipOccurrence(occurrence),
-    );
+  Future<void> skipOccurrence(HabitOccurrence occurrence) async {
+    await _runMutation(() => _skipOccurrence(occurrence));
   }
 
   Future<void> _runMutation<T>(
@@ -151,10 +126,7 @@ class HabitOccurrenceNotifier
 
     await result.fold(
       (failure) async {
-        state = AsyncError(
-          failure.message,
-          StackTrace.current,
-        );
+        state = AsyncError(failure.message, StackTrace.current);
       },
       (_) async {
         await refresh();

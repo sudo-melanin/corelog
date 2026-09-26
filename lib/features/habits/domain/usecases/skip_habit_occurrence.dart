@@ -10,9 +10,7 @@ class SkipHabitOccurrence {
 
   final HabitOccurrenceRepository _repository;
 
-  Future<Either<Failure, HabitOccurrence>> call(
-    HabitOccurrence occurrence,
-  ) {
+  Future<Either<Failure, HabitOccurrence>> call(HabitOccurrence occurrence) {
     final skippedOccurrence = HabitOccurrence(
       id: occurrence.id,
       habitId: occurrence.habitId,

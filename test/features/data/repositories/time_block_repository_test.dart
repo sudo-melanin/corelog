@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -72,17 +73,43 @@ void main() {
     );
   }
 
+  Future<int> createHabitOccurrence({
+    required DateTime scheduledDate,
+  }) async {
+    final habitId = await database.into(database.habits).insert(
+          db.HabitsCompanion.insert(
+            name: 'Test habit',
+            weekdayMask: 127,
+            isActive: const Value(true),
+            createdAt: scheduledDate,
+            updatedAt: scheduledDate,
+          ),
+        );
+
+    return database.into(database.habitOccurrences).insert(
+          db.HabitOccurrencesCompanion.insert(
+            habitId: habitId,
+            scheduledDate: scheduledDate,
+            status: 'pending',
+            createdAt: scheduledDate,
+          ),
+        );
+  }
+
   TimeBlock createTimeBlock({
-    required int projectId,
+    required int habitOccurrenceId,
     int? taskId,
+    DateTime? plannedStart,
+    DateTime? plannedEnd,
     String status = 'planned',
+    int? id,
   }) {
-    final start = DateTime(2026, 1, 1, 10);
-    final end = DateTime(2026, 1, 1, 11);
+    final start = plannedStart ?? DateTime(2026, 1, 1, 10);
+    final end = plannedEnd ?? DateTime(2026, 1, 1, 11);
 
     return TimeBlock(
-      id: 0,
-      projectId: projectId,
+      id: id ?? 0,
+      habitOccurrenceId: habitOccurrenceId,
       taskId: taskId,
       plannedStart: start,
       plannedEnd: end,
@@ -95,27 +122,31 @@ void main() {
   }
 
   test('createTimeBlock creates and returns a time block', () async {
-    final project = await createProject();
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
+    );
 
     final result = await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+      createTimeBlock(habitOccurrenceId: occurrenceId),
     );
 
     result.match(
       (failure) => fail(failure.message),
       (timeBlock) {
         expect(timeBlock.id, greaterThan(0));
-        expect(timeBlock.projectId, project.id);
+        expect(timeBlock.habitOccurrenceId, occurrenceId);
         expect(timeBlock.status, TimeBlockStatus.planned);
       },
     );
   });
 
   test('getTimeBlockById returns the time block when it exists', () async {
-    final project = await createProject();
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
+    );
 
     final created = await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+      createTimeBlock(habitOccurrenceId: occurrenceId),
     );
 
     final timeBlock = created.match(
@@ -130,7 +161,7 @@ void main() {
       (found) {
         expect(found, isNotNull);
         expect(found!.id, timeBlock.id);
-        expect(found.projectId, project.id);
+        expect(found.habitOccurrenceId, occurrenceId);
       },
     );
   });
@@ -145,14 +176,16 @@ void main() {
   });
 
   test('getTimeBlocks returns all time blocks', () async {
-    final project = await createProject();
-
-    await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
     );
 
     await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+      createTimeBlock(habitOccurrenceId: occurrenceId),
+    );
+
+    await repository.createTimeBlock(
+      createTimeBlock(habitOccurrenceId: occurrenceId),
     );
 
     final result = await repository.getTimeBlocks();
@@ -163,60 +196,65 @@ void main() {
     );
   });
 
-  test('getTimeBlocksByProject returns only blocks for the project',
-      () async {
-    final firstProject = await createProject();
+  test(
+    'getTimeBlocksByHabitOccurrence returns only blocks for the occurrence',
+    () async {
+      final firstOccurrenceId = await createHabitOccurrence(
+        scheduledDate: DateTime(2026, 1, 1),
+      );
 
-    final secondProjectResult = await projectRepository.createProject(
-      Project(
-        id: 0,
-        name: 'FitLink',
-        description: null,
-        status: ProjectStatus.active,
-        createdAt: DateTime(2026, 1, 1, 10),
-        updatedAt: DateTime(2026, 1, 1, 10),
-      ),
-    );
+      final secondOccurrenceId = await createHabitOccurrence(
+        scheduledDate: DateTime(2026, 1, 2),
+      );
 
-    final secondProject = secondProjectResult.match(
-      (failure) => throw TestFailure(failure.message),
-      (project) => project,
-    );
+      await repository.createTimeBlock(
+        createTimeBlock(
+          habitOccurrenceId: firstOccurrenceId,
+        ),
+      );
 
-    await repository.createTimeBlock(
-      createTimeBlock(projectId: firstProject.id),
-    );
+      await repository.createTimeBlock(
+        createTimeBlock(
+          habitOccurrenceId: secondOccurrenceId,
+        ),
+      );
 
-    await repository.createTimeBlock(
-      createTimeBlock(projectId: secondProject.id),
-    );
+      final result = await repository.getTimeBlocksByHabitOccurrence(
+        firstOccurrenceId,
+      );
 
-    final result = await repository.getTimeBlocksByProject(firstProject.id);
-
-    result.match(
-      (failure) => fail(failure.message),
-      (timeBlocks) {
-        expect(timeBlocks, hasLength(1));
-        expect(timeBlocks.first.projectId, firstProject.id);
-      },
-    );
-  });
+      result.match(
+        (failure) => fail(failure.message),
+        (timeBlocks) {
+          expect(timeBlocks, hasLength(1));
+          expect(
+            timeBlocks.first.habitOccurrenceId,
+            firstOccurrenceId,
+          );
+        },
+      );
+    },
+  );
 
   test('getTimeBlocksByTask returns only blocks for the task', () async {
     final project = await createProject();
     final firstTask = await createTask(project.id);
     final secondTask = await createTask(project.id);
 
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
+    );
+
     await repository.createTimeBlock(
       createTimeBlock(
-        projectId: project.id,
+        habitOccurrenceId: occurrenceId,
         taskId: firstTask.id,
       ),
     );
 
     await repository.createTimeBlock(
       createTimeBlock(
-        projectId: project.id,
+        habitOccurrenceId: occurrenceId,
         taskId: secondTask.id,
       ),
     );
@@ -233,10 +271,12 @@ void main() {
   });
 
   test('updateTimeBlock updates and returns the time block', () async {
-    final project = await createProject();
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
+    );
 
     final created = await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+      createTimeBlock(habitOccurrenceId: occurrenceId),
     );
 
     final timeBlock = created.match(
@@ -246,7 +286,7 @@ void main() {
 
     final updated = TimeBlock(
       id: timeBlock.id,
-      projectId: timeBlock.projectId,
+      habitOccurrenceId: timeBlock.habitOccurrenceId,
       taskId: null,
       plannedStart: DateTime(2026, 1, 1, 11),
       plannedEnd: DateTime(2026, 1, 1, 12),
@@ -266,6 +306,10 @@ void main() {
         expect(timeBlock.status, TimeBlockStatus.completed);
         expect(timeBlock.actualStart, updated.actualStart);
         expect(timeBlock.actualEnd, updated.actualEnd);
+        expect(
+          timeBlock.habitOccurrenceId,
+          occurrenceId,
+        );
       },
     );
   });
@@ -274,7 +318,7 @@ void main() {
     final result = await repository.updateTimeBlock(
       TimeBlock(
         id: 999,
-        projectId: 1,
+        habitOccurrenceId: 1,
         plannedStart: DateTime(2026, 1, 1, 10),
         plannedEnd: DateTime(2026, 1, 1, 11),
         status: TimeBlockStatus.planned,
@@ -290,10 +334,12 @@ void main() {
   });
 
   test('deleteTimeBlock deletes an existing time block', () async {
-    final project = await createProject();
+    final occurrenceId = await createHabitOccurrence(
+      scheduledDate: DateTime(2026, 1, 1),
+    );
 
     final created = await repository.createTimeBlock(
-      createTimeBlock(projectId: project.id),
+      createTimeBlock(habitOccurrenceId: occurrenceId),
     );
 
     final timeBlock = created.match(
@@ -324,4 +370,62 @@ void main() {
       (_) => fail('Expected deleteTimeBlock to fail.'),
     );
   });
+
+  test(
+    'getTimeBlocksByDate returns only blocks scheduled for the given date '
+    'in planned start order',
+    () async {
+      final firstOccurrenceId = await createHabitOccurrence(
+        scheduledDate: DateTime(2026, 9, 25),
+      );
+
+      final secondOccurrenceId = await createHabitOccurrence(
+        scheduledDate: DateTime(2026, 9, 25),
+      );
+
+      final otherDayOccurrenceId = await createHabitOccurrence(
+        scheduledDate: DateTime(2026, 9, 26),
+      );
+
+      final firstBlock = createTimeBlock(
+        id: 1,
+        habitOccurrenceId: firstOccurrenceId,
+        plannedStart: DateTime(2026, 9, 25, 14),
+        plannedEnd: DateTime(2026, 9, 25, 15),
+      );
+
+      final secondBlock = createTimeBlock(
+        id: 2,
+        habitOccurrenceId: secondOccurrenceId,
+        plannedStart: DateTime(2026, 9, 25, 9),
+        plannedEnd: DateTime(2026, 9, 25, 10),
+      );
+
+      final otherDayBlock = createTimeBlock(
+        id: 3,
+        habitOccurrenceId: otherDayOccurrenceId,
+        plannedStart: DateTime(2026, 9, 26, 9),
+        plannedEnd: DateTime(2026, 9, 26, 10),
+      );
+
+      await repository.createTimeBlock(firstBlock);
+      await repository.createTimeBlock(secondBlock);
+      await repository.createTimeBlock(otherDayBlock);
+
+      final result = await repository.getTimeBlocksByDate(
+        DateTime(2026, 9, 25, 18),
+      );
+
+      expect(result.isRight(), isTrue);
+
+      result.match(
+        (_) => fail('Expected time blocks'),
+        (timeBlocks) {
+          expect(timeBlocks, hasLength(2));
+          expect(timeBlocks[0].id, equals(2));
+          expect(timeBlocks[1].id, equals(1));
+        },
+      );
+    },
+  );
 }
