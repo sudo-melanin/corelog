@@ -5,9 +5,11 @@ import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
 
 class TaskCard extends StatelessWidget {
-  const TaskCard({required this.task, super.key});
+  const TaskCard({required this.task, required this.onComplete, required this.onReopen, super.key});
 
   final Task task;
+  final VoidCallback onComplete;
+  final VoidCallback onReopen;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,25 @@ class TaskCard extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: AppSpacing.md),
-              TaskStatusChip(status: task.status),
+              Row(
+                children: [
+                  TaskStatusChip(status: task.status),
+                  const Spacer(),
+                  if (task.status == TaskStatus.pending ||
+                      task.status == TaskStatus.inProgress)
+                    IconButton(
+                      tooltip: 'Complete task',
+                      onPressed: onComplete,
+                      icon: const Icon(Icons.check),
+                    ),
+                  if (task.status == TaskStatus.completed)
+                    IconButton(
+                      tooltip: 'Reopen task',
+                      onPressed: onReopen,
+                      icon: const Icon(Icons.undo),
+                    ),
+                ],
+              ),
             ],
           ),
         ),

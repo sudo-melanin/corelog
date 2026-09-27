@@ -18,7 +18,7 @@ class TasksScreen extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: tasksAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const TaskLoadingState(),
             error: (error, _) => TaskErrorState(
               message: _errorMessage(error),
               onRetry: () {
@@ -40,7 +40,39 @@ class TasksScreen extends ConsumerWidget {
                   separatorBuilder: (_, _) =>
                       const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
-                    return TaskCard(task: tasks[index]);
+                    return TaskCard(
+                      task: tasks[index],
+                      onComplete: () async {
+                        final success = await ref
+                            .read(taskNotifierProvider.notifier)
+                            .completeTask(tasks[index]);
+
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Task completed.' : 'Could not complete task.',
+                              ),
+                            ),
+                          );
+                      },
+                      onReopen: () async {
+                        await ref
+                            .read(taskNotifierProvider.notifier)
+                            .reopenTask(tasks[index]);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(content: Text('Task reopened.')),
+                            );
+                        }
+                      },
+                    );
                   },
                 ),
               );

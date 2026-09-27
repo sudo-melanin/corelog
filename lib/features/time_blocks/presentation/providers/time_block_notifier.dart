@@ -33,10 +33,9 @@ class TimeBlockNotifier extends AsyncNotifier<List<TimeBlock>> {
   SkipTimeBlock get _skipTimeBlock => ref.read(skipTimeBlockProvider);
 
   HabitOccurrenceRepository get _habitOccurrenceRepository =>
-    ref.read(habitOccurrenceRepositoryProvider);
+      ref.read(habitOccurrenceRepositoryProvider);
 
-HabitRepository get _habitRepository =>
-    ref.read(habitRepositoryProvider);
+  HabitRepository get _habitRepository => ref.read(habitRepositoryProvider);
 
   @override
   Future<List<TimeBlock>> build() async {
@@ -45,21 +44,15 @@ HabitRepository get _habitRepository =>
     return result.fold((failure) => throw failure, (timeBlocks) => timeBlocks);
   }
 
-  Future<List<TimeBlockTimelineItem>> loadTimeline(
-  DateTime date,
-) async {
-  final result = await _repository.getTimeBlocksByDate(date);
+  Future<List<TimeBlockTimelineItem>> loadTimeline(DateTime date) async {
+    final result = await _repository.getTimeBlocksByDate(date);
 
-  return result.fold(
-    (failure) => throw failure,
-    (timeBlocks) async {
+    return result.fold((failure) => throw failure, (timeBlocks) async {
       final items = <TimeBlockTimelineItem>[];
 
       for (final timeBlock in timeBlocks) {
-        final occurrenceResult =
-            await _habitOccurrenceRepository.getOccurrenceById(
-          timeBlock.habitOccurrenceId,
-        );
+        final occurrenceResult = await _habitOccurrenceRepository
+            .getOccurrenceById(timeBlock.habitOccurrenceId);
 
         final occurrence = occurrenceResult.fold(
           (failure) => throw failure,
@@ -90,10 +83,7 @@ HabitRepository get _habitRepository =>
             timeBlock.taskId!,
           );
 
-          task = taskResult.fold(
-            (failure) => throw failure,
-            (task) => task,
-          );
+          task = taskResult.fold((failure) => throw failure, (task) => task);
         }
 
         items.add(
@@ -107,9 +97,8 @@ HabitRepository get _habitRepository =>
       }
 
       return items;
-    },
-  );
-}
+    });
+  }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
@@ -128,32 +117,39 @@ HabitRepository get _habitRepository =>
     await _runMutation(() => _repository.deleteTimeBlock(id));
   }
 
-  Future<void> startTimeBlock(TimeBlock timeBlock) async {
-    await _runMutation(() => _startTimeBlock(timeBlock));
+  Future<bool> startTimeBlock(TimeBlock timeBlock) {
+    return _runMutation(() => _startTimeBlock(timeBlock));
   }
 
-  Future<void> completeTimeBlock(TimeBlock timeBlock) async {
-    await _runMutation(() => _completeTimeBlock(timeBlock));
+  Future<bool> completeTimeBlock(TimeBlock timeBlock) {
+    return _runMutation(() => _completeTimeBlock(timeBlock));
   }
 
-  Future<void> skipTimeBlock(TimeBlock timeBlock) async {
-    await _runMutation(() => _skipTimeBlock(timeBlock));
+  Future<bool> skipTimeBlock(TimeBlock timeBlock) {
+    return _runMutation(() => _skipTimeBlock(timeBlock));
   }
 
-  Future<void> _runMutation<T>(
+  Future<bool> _runMutation<T>(
     Future<Either<Failure, T>> Function() action,
   ) async {
     state = const AsyncLoading();
 
-    final result = await action();
+    try {
+      final result = await action();
 
-    await result.fold(
-      (failure) async {
-        state = AsyncError(failure.message, StackTrace.current);
-      },
-      (_) async {
-        await refresh();
-      },
-    );
+      return result.fold(
+        (failure) {
+          state = AsyncError(failure, StackTrace.current);
+          return false;
+        },
+        (_) async {
+          await refresh();
+          return true;
+        },
+      );
+    } catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return false;
+    }
   }
 }

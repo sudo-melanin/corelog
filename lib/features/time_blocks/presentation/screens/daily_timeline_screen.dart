@@ -81,10 +81,8 @@ class _DailyTimelineScreenState extends ConsumerState<DailyTimelineScreen> {
 
                           return TimelineCard(
                             item: item,
-                            onTap: () => showTimeBlockDetailsSheet(
-                              context,
-                              item: item,
-                            ),
+                            onTap: () =>
+                                showTimeBlockDetailsSheet(context, item: item),
 
                             onStart: () => _startTimeBlock(item.timeBlock),
                             onComplete: () =>
@@ -137,29 +135,44 @@ class _DailyTimelineScreenState extends ConsumerState<DailyTimelineScreen> {
   }
 
   Future<void> _startTimeBlock(TimeBlock item) async {
-    await ref.read(timeBlockNotifierProvider.notifier).startTimeBlock(item);
+    final success = await ref
+        .read(timeBlockNotifierProvider.notifier)
+        .startTimeBlock(item);
 
     if (!mounted) return;
 
-    _showActionFeedback('Time block started.');
+    _showActionFeedback(
+      success ? 'Time block started.' : 'Could not start time block.',
+    );
+
     setState(() {});
   }
 
   Future<void> _completeTimeBlock(TimeBlock item) async {
-    await ref.read(timeBlockNotifierProvider.notifier).completeTimeBlock(item);
+    final success = await ref
+        .read(timeBlockNotifierProvider.notifier)
+        .completeTimeBlock(item);
 
     if (!mounted) return;
 
-    _showActionFeedback('Time block completed.');
+    _showActionFeedback(
+      success ? 'Time block completed.' : 'Could not complete time block.',
+    );
+
     setState(() {});
   }
 
   Future<void> _skipTimeBlock(TimeBlock item) async {
-    await ref.read(timeBlockNotifierProvider.notifier).skipTimeBlock(item);
+    final success = await ref
+        .read(timeBlockNotifierProvider.notifier)
+        .skipTimeBlock(item);
 
     if (!mounted) return;
 
-    _showActionFeedback('Time block skipped.');
+    _showActionFeedback(
+      success ? 'Time block skipped.' : 'Could not skip time block.',
+    );
+
     setState(() {});
   }
 

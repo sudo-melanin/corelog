@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:corelog/core/theme/theme.dart';
 
+class TaskLoadingState extends StatelessWidget {
+  const TaskLoadingState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}
+
 class TaskEmptyState extends StatelessWidget {
   const TaskEmptyState({super.key});
 

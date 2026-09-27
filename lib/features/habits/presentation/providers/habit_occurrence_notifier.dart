@@ -109,28 +109,35 @@ class HabitOccurrenceNotifier extends AsyncNotifier<List<HabitOccurrence>> {
     await _runMutation(() => _repository.deleteOccurrence(id));
   }
 
-  Future<void> completeOccurrence(HabitOccurrence occurrence) async {
-    await _runMutation(() => _completeOccurrence(occurrence));
+  Future<bool> completeOccurrence(HabitOccurrence occurrence) {
+    return _runMutation(() => _completeOccurrence(occurrence));
   }
 
-  Future<void> skipOccurrence(HabitOccurrence occurrence) async {
-    await _runMutation(() => _skipOccurrence(occurrence));
+  Future<bool> skipOccurrence(HabitOccurrence occurrence) {
+    return _runMutation(() => _skipOccurrence(occurrence));
   }
 
-  Future<void> _runMutation<T>(
+  Future<bool> _runMutation<T>(
     Future<Either<Failure, T>> Function() action,
   ) async {
     state = const AsyncLoading();
 
-    final result = await action();
+    try {
+      final result = await action();
 
-    await result.fold(
-      (failure) async {
-        state = AsyncError(failure.message, StackTrace.current);
-      },
-      (_) async {
-        await refresh();
-      },
-    );
+      return result.fold(
+        (failure) {
+          state = AsyncError(failure, StackTrace.current);
+          return false;
+        },
+        (_) async {
+          await refresh();
+          return true;
+        },
+      );
+    } catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      return false;
+    }
   }
 }

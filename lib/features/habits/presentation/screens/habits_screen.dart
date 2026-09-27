@@ -20,7 +20,7 @@ class HabitsScreen extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: habitsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const HabitLoadingState(),
             error: (error, _) => HabitErrorState(
               message: _errorMessage(error),
               onRetry: () {
@@ -51,15 +51,43 @@ class HabitsScreen extends ConsumerWidget {
                       SliverToBoxAdapter(
                         child: UpcomingHabitOccurrences(
                           occurrences: upcoming,
-                          onComplete: (item) {
-                            ref
+                          onComplete: (item) async {
+                            final success = await ref
                                 .read(habitOccurrenceNotifierProvider.notifier)
                                 .completeOccurrence(item.occurrence);
+
+                            if (!context.mounted) return;
+
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    success
+                                        ? 'Habit occurrence completed.'
+                                        : 'Could not complete habit occurrence.',
+                                  ),
+                                ),
+                              );
                           },
-                          onSkip: (item) {
-                            ref
+                          onSkip: (item) async {
+                            final success = await ref
                                 .read(habitOccurrenceNotifierProvider.notifier)
                                 .skipOccurrence(item.occurrence);
+
+                            if (!context.mounted) return;
+
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    success
+                                        ? 'Habit occurrence skipped.'
+                                        : 'Could not skip habit occurrence.',
+                                  ),
+                                ),
+                              );
                           },
                         ),
                       ),

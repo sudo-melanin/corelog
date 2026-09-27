@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:corelog/core/theme/theme.dart';
 
+class HabitLoadingState extends StatelessWidget {
+  const HabitLoadingState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}
+
 class HabitEmptyState extends StatelessWidget {
   const HabitEmptyState({super.key});
 

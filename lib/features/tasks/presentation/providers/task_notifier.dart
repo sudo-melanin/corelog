@@ -43,15 +43,15 @@ class TaskNotifier extends AsyncNotifier<List<Task>> {
     await _runMutation(() => _repository.deleteTask(id));
   }
 
-  Future<void> completeTask(Task task) async {
-    await _runMutation(() => _completeTask(task));
+  Future<bool> completeTask(Task task) {
+    return _runMutation(() => _completeTask(task));
   }
 
-  Future<void> reopenTask(Task task) async {
-    await _runMutation(() => _reopenTask(task));
+  Future<bool> reopenTask(Task task) {
+    return _runMutation(() => _reopenTask(task));
   }
 
-  Future<void> _runMutation<T>(
+  Future<bool> _runMutation<T>(
     Future<Either<Failure, T>> Function() action,
   ) async {
     state = const AsyncLoading();
@@ -59,16 +59,19 @@ class TaskNotifier extends AsyncNotifier<List<Task>> {
     try {
       final result = await action();
 
-      await result.fold(
-        (failure) async {
+      return result.fold(
+        (failure) {
           state = AsyncError(failure, StackTrace.current);
+          return false;
         },
         (_) async {
           await refresh();
+          return true;
         },
       );
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
+      return false;
     }
   }
 }
