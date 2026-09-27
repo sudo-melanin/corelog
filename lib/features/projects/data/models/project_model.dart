@@ -35,4 +35,3 @@ class ProjectModel extends Project {
     );
   }
 }
-

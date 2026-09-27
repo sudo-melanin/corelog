@@ -14,9 +14,7 @@ class HabitRepositoryImpl implements HabitRepository {
   final db.AppDatabase _database;
 
   @override
-  Future<Either<Failure, Habit>> createHabit(
-    Habit habit,
-  ) async {
+  Future<Either<Failure, Habit>> createHabit(Habit habit) async {
     try {
       final model = HabitModel(
         id: habit.id,
@@ -30,13 +28,13 @@ class HabitRepositoryImpl implements HabitRepository {
         updatedAt: habit.updatedAt,
       );
 
-      final id = await _database.into(_database.habits).insert(
-            model.toCompanion(),
-          );
+      final id = await _database
+          .into(_database.habits)
+          .insert(model.toCompanion());
 
-      final data = await (_database.select(_database.habits)
-            ..where((table) => table.id.equals(id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.habits,
+      )..where((table) => table.id.equals(id))).getSingle();
 
       return Right(HabitModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -51,13 +49,11 @@ class HabitRepositoryImpl implements HabitRepository {
   }
 
   @override
-  Future<Either<Failure, Habit?>> getHabitById(
-    int id,
-  ) async {
+  Future<Either<Failure, Habit?>> getHabitById(int id) async {
     try {
-      final data = await (_database.select(_database.habits)
-            ..where((table) => table.id.equals(id)))
-          .getSingleOrNull();
+      final data = await (_database.select(
+        _database.habits,
+      )..where((table) => table.id.equals(id))).getSingleOrNull();
 
       if (data == null) {
         return const Right(null);
@@ -98,34 +94,31 @@ class HabitRepositoryImpl implements HabitRepository {
   }
 
   @override
-  Future<Either<Failure, Habit>> updateHabit(
-    Habit habit,
-  ) async {
+  Future<Either<Failure, Habit>> updateHabit(Habit habit) async {
     try {
-      final updated = await (_database.update(_database.habits)
-            ..where((table) => table.id.equals(habit.id)))
-          .write(
-        db.HabitsCompanion(
-          projectId: Value(habit.projectId),
-          name: Value(habit.name),
-          description: Value(habit.description),
-          weekdayMask: Value(habit.weekdayMask),
-          targetTime: Value(habit.targetTime),
-          isActive: Value(habit.isActive),
-          createdAt: Value(habit.createdAt),
-          updatedAt: Value(habit.updatedAt),
-        ),
-      );
+      final updated =
+          await (_database.update(
+            _database.habits,
+          )..where((table) => table.id.equals(habit.id))).write(
+            db.HabitsCompanion(
+              projectId: Value(habit.projectId),
+              name: Value(habit.name),
+              description: Value(habit.description),
+              weekdayMask: Value(habit.weekdayMask),
+              targetTime: Value(habit.targetTime),
+              isActive: Value(habit.isActive),
+              createdAt: Value(habit.createdAt),
+              updatedAt: Value(habit.updatedAt),
+            ),
+          );
 
       if (updated == 0) {
-        return const Left(
-          DatabaseFailure('Habit not found.'),
-        );
+        return const Left(DatabaseFailure('Habit not found.'));
       }
 
-      final data = await (_database.select(_database.habits)
-            ..where((table) => table.id.equals(habit.id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.habits,
+      )..where((table) => table.id.equals(habit.id))).getSingle();
 
       return Right(HabitModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -140,18 +133,14 @@ class HabitRepositoryImpl implements HabitRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteHabit(
-    int id,
-  ) async {
+  Future<Either<Failure, Unit>> deleteHabit(int id) async {
     try {
-      final deleted = await (_database.delete(_database.habits)
-            ..where((table) => table.id.equals(id)))
-          .go();
+      final deleted = await (_database.delete(
+        _database.habits,
+      )..where((table) => table.id.equals(id))).go();
 
       if (deleted == 0) {
-        return const Left(
-          DatabaseFailure('Habit not found.'),
-        );
+        return const Left(DatabaseFailure('Habit not found.'));
       }
 
       return const Right(unit);

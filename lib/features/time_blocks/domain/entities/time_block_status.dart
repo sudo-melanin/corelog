@@ -1,6 +1,1 @@
-enum TimeBlockStatus {
-  planned,
-  inProgress,
-  completed,
-  skipped,
-}
+enum TimeBlockStatus { planned, inProgress, completed, skipped }

@@ -964,621 +964,6 @@ class TasksCompanion extends UpdateCompanion<Task> {
   }
 }
 
-class $TimeBlocksTable extends TimeBlocks
-    with TableInfo<$TimeBlocksTable, TimeBlock> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $TimeBlocksTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
-  );
-  @override
-  late final GeneratedColumn<int> projectId = GeneratedColumn<int>(
-    'project_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id)',
-    ),
-  );
-  static const VerificationMeta _taskIdMeta = const VerificationMeta('taskId');
-  @override
-  late final GeneratedColumn<int> taskId = GeneratedColumn<int>(
-    'task_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES tasks (id)',
-    ),
-  );
-  static const VerificationMeta _plannedStartMeta = const VerificationMeta(
-    'plannedStart',
-  );
-  @override
-  late final GeneratedColumn<DateTime> plannedStart = GeneratedColumn<DateTime>(
-    'planned_start',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _plannedEndMeta = const VerificationMeta(
-    'plannedEnd',
-  );
-  @override
-  late final GeneratedColumn<DateTime> plannedEnd = GeneratedColumn<DateTime>(
-    'planned_end',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _actualStartMeta = const VerificationMeta(
-    'actualStart',
-  );
-  @override
-  late final GeneratedColumn<DateTime> actualStart = GeneratedColumn<DateTime>(
-    'actual_start',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _actualEndMeta = const VerificationMeta(
-    'actualEnd',
-  );
-  @override
-  late final GeneratedColumn<DateTime> actualEnd = GeneratedColumn<DateTime>(
-    'actual_end',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    projectId,
-    taskId,
-    plannedStart,
-    plannedEnd,
-    actualStart,
-    actualEnd,
-    status,
-    createdAt,
-    updatedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'time_blocks';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<TimeBlock> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('project_id')) {
-      context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_projectIdMeta);
-    }
-    if (data.containsKey('task_id')) {
-      context.handle(
-        _taskIdMeta,
-        taskId.isAcceptableOrUnknown(data['task_id']!, _taskIdMeta),
-      );
-    }
-    if (data.containsKey('planned_start')) {
-      context.handle(
-        _plannedStartMeta,
-        plannedStart.isAcceptableOrUnknown(
-          data['planned_start']!,
-          _plannedStartMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_plannedStartMeta);
-    }
-    if (data.containsKey('planned_end')) {
-      context.handle(
-        _plannedEndMeta,
-        plannedEnd.isAcceptableOrUnknown(data['planned_end']!, _plannedEndMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_plannedEndMeta);
-    }
-    if (data.containsKey('actual_start')) {
-      context.handle(
-        _actualStartMeta,
-        actualStart.isAcceptableOrUnknown(
-          data['actual_start']!,
-          _actualStartMeta,
-        ),
-      );
-    }
-    if (data.containsKey('actual_end')) {
-      context.handle(
-        _actualEndMeta,
-        actualEnd.isAcceptableOrUnknown(data['actual_end']!, _actualEndMeta),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_statusMeta);
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  TimeBlock map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TimeBlock(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      projectId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}project_id'],
-      )!,
-      taskId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}task_id'],
-      ),
-      plannedStart: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}planned_start'],
-      )!,
-      plannedEnd: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}planned_end'],
-      )!,
-      actualStart: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}actual_start'],
-      ),
-      actualEnd: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}actual_end'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-    );
-  }
-
-  @override
-  $TimeBlocksTable createAlias(String alias) {
-    return $TimeBlocksTable(attachedDatabase, alias);
-  }
-}
-
-class TimeBlock extends DataClass implements Insertable<TimeBlock> {
-  final int id;
-  final int projectId;
-  final int? taskId;
-  final DateTime plannedStart;
-  final DateTime plannedEnd;
-  final DateTime? actualStart;
-  final DateTime? actualEnd;
-  final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  const TimeBlock({
-    required this.id,
-    required this.projectId,
-    this.taskId,
-    required this.plannedStart,
-    required this.plannedEnd,
-    this.actualStart,
-    this.actualEnd,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['project_id'] = Variable<int>(projectId);
-    if (!nullToAbsent || taskId != null) {
-      map['task_id'] = Variable<int>(taskId);
-    }
-    map['planned_start'] = Variable<DateTime>(plannedStart);
-    map['planned_end'] = Variable<DateTime>(plannedEnd);
-    if (!nullToAbsent || actualStart != null) {
-      map['actual_start'] = Variable<DateTime>(actualStart);
-    }
-    if (!nullToAbsent || actualEnd != null) {
-      map['actual_end'] = Variable<DateTime>(actualEnd);
-    }
-    map['status'] = Variable<String>(status);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    return map;
-  }
-
-  TimeBlocksCompanion toCompanion(bool nullToAbsent) {
-    return TimeBlocksCompanion(
-      id: Value(id),
-      projectId: Value(projectId),
-      taskId: taskId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(taskId),
-      plannedStart: Value(plannedStart),
-      plannedEnd: Value(plannedEnd),
-      actualStart: actualStart == null && nullToAbsent
-          ? const Value.absent()
-          : Value(actualStart),
-      actualEnd: actualEnd == null && nullToAbsent
-          ? const Value.absent()
-          : Value(actualEnd),
-      status: Value(status),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-    );
-  }
-
-  factory TimeBlock.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TimeBlock(
-      id: serializer.fromJson<int>(json['id']),
-      projectId: serializer.fromJson<int>(json['projectId']),
-      taskId: serializer.fromJson<int?>(json['taskId']),
-      plannedStart: serializer.fromJson<DateTime>(json['plannedStart']),
-      plannedEnd: serializer.fromJson<DateTime>(json['plannedEnd']),
-      actualStart: serializer.fromJson<DateTime?>(json['actualStart']),
-      actualEnd: serializer.fromJson<DateTime?>(json['actualEnd']),
-      status: serializer.fromJson<String>(json['status']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'projectId': serializer.toJson<int>(projectId),
-      'taskId': serializer.toJson<int?>(taskId),
-      'plannedStart': serializer.toJson<DateTime>(plannedStart),
-      'plannedEnd': serializer.toJson<DateTime>(plannedEnd),
-      'actualStart': serializer.toJson<DateTime?>(actualStart),
-      'actualEnd': serializer.toJson<DateTime?>(actualEnd),
-      'status': serializer.toJson<String>(status),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-    };
-  }
-
-  TimeBlock copyWith({
-    int? id,
-    int? projectId,
-    Value<int?> taskId = const Value.absent(),
-    DateTime? plannedStart,
-    DateTime? plannedEnd,
-    Value<DateTime?> actualStart = const Value.absent(),
-    Value<DateTime?> actualEnd = const Value.absent(),
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) => TimeBlock(
-    id: id ?? this.id,
-    projectId: projectId ?? this.projectId,
-    taskId: taskId.present ? taskId.value : this.taskId,
-    plannedStart: plannedStart ?? this.plannedStart,
-    plannedEnd: plannedEnd ?? this.plannedEnd,
-    actualStart: actualStart.present ? actualStart.value : this.actualStart,
-    actualEnd: actualEnd.present ? actualEnd.value : this.actualEnd,
-    status: status ?? this.status,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-  );
-  TimeBlock copyWithCompanion(TimeBlocksCompanion data) {
-    return TimeBlock(
-      id: data.id.present ? data.id.value : this.id,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      taskId: data.taskId.present ? data.taskId.value : this.taskId,
-      plannedStart: data.plannedStart.present
-          ? data.plannedStart.value
-          : this.plannedStart,
-      plannedEnd: data.plannedEnd.present
-          ? data.plannedEnd.value
-          : this.plannedEnd,
-      actualStart: data.actualStart.present
-          ? data.actualStart.value
-          : this.actualStart,
-      actualEnd: data.actualEnd.present ? data.actualEnd.value : this.actualEnd,
-      status: data.status.present ? data.status.value : this.status,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TimeBlock(')
-          ..write('id: $id, ')
-          ..write('projectId: $projectId, ')
-          ..write('taskId: $taskId, ')
-          ..write('plannedStart: $plannedStart, ')
-          ..write('plannedEnd: $plannedEnd, ')
-          ..write('actualStart: $actualStart, ')
-          ..write('actualEnd: $actualEnd, ')
-          ..write('status: $status, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    projectId,
-    taskId,
-    plannedStart,
-    plannedEnd,
-    actualStart,
-    actualEnd,
-    status,
-    createdAt,
-    updatedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is TimeBlock &&
-          other.id == this.id &&
-          other.projectId == this.projectId &&
-          other.taskId == this.taskId &&
-          other.plannedStart == this.plannedStart &&
-          other.plannedEnd == this.plannedEnd &&
-          other.actualStart == this.actualStart &&
-          other.actualEnd == this.actualEnd &&
-          other.status == this.status &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
-}
-
-class TimeBlocksCompanion extends UpdateCompanion<TimeBlock> {
-  final Value<int> id;
-  final Value<int> projectId;
-  final Value<int?> taskId;
-  final Value<DateTime> plannedStart;
-  final Value<DateTime> plannedEnd;
-  final Value<DateTime?> actualStart;
-  final Value<DateTime?> actualEnd;
-  final Value<String> status;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  const TimeBlocksCompanion({
-    this.id = const Value.absent(),
-    this.projectId = const Value.absent(),
-    this.taskId = const Value.absent(),
-    this.plannedStart = const Value.absent(),
-    this.plannedEnd = const Value.absent(),
-    this.actualStart = const Value.absent(),
-    this.actualEnd = const Value.absent(),
-    this.status = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-  });
-  TimeBlocksCompanion.insert({
-    this.id = const Value.absent(),
-    required int projectId,
-    this.taskId = const Value.absent(),
-    required DateTime plannedStart,
-    required DateTime plannedEnd,
-    this.actualStart = const Value.absent(),
-    this.actualEnd = const Value.absent(),
-    required String status,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : projectId = Value(projectId),
-       plannedStart = Value(plannedStart),
-       plannedEnd = Value(plannedEnd),
-       status = Value(status),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<TimeBlock> custom({
-    Expression<int>? id,
-    Expression<int>? projectId,
-    Expression<int>? taskId,
-    Expression<DateTime>? plannedStart,
-    Expression<DateTime>? plannedEnd,
-    Expression<DateTime>? actualStart,
-    Expression<DateTime>? actualEnd,
-    Expression<String>? status,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (projectId != null) 'project_id': projectId,
-      if (taskId != null) 'task_id': taskId,
-      if (plannedStart != null) 'planned_start': plannedStart,
-      if (plannedEnd != null) 'planned_end': plannedEnd,
-      if (actualStart != null) 'actual_start': actualStart,
-      if (actualEnd != null) 'actual_end': actualEnd,
-      if (status != null) 'status': status,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-    });
-  }
-
-  TimeBlocksCompanion copyWith({
-    Value<int>? id,
-    Value<int>? projectId,
-    Value<int?>? taskId,
-    Value<DateTime>? plannedStart,
-    Value<DateTime>? plannedEnd,
-    Value<DateTime?>? actualStart,
-    Value<DateTime?>? actualEnd,
-    Value<String>? status,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-  }) {
-    return TimeBlocksCompanion(
-      id: id ?? this.id,
-      projectId: projectId ?? this.projectId,
-      taskId: taskId ?? this.taskId,
-      plannedStart: plannedStart ?? this.plannedStart,
-      plannedEnd: plannedEnd ?? this.plannedEnd,
-      actualStart: actualStart ?? this.actualStart,
-      actualEnd: actualEnd ?? this.actualEnd,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (projectId.present) {
-      map['project_id'] = Variable<int>(projectId.value);
-    }
-    if (taskId.present) {
-      map['task_id'] = Variable<int>(taskId.value);
-    }
-    if (plannedStart.present) {
-      map['planned_start'] = Variable<DateTime>(plannedStart.value);
-    }
-    if (plannedEnd.present) {
-      map['planned_end'] = Variable<DateTime>(plannedEnd.value);
-    }
-    if (actualStart.present) {
-      map['actual_start'] = Variable<DateTime>(actualStart.value);
-    }
-    if (actualEnd.present) {
-      map['actual_end'] = Variable<DateTime>(actualEnd.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TimeBlocksCompanion(')
-          ..write('id: $id, ')
-          ..write('projectId: $projectId, ')
-          ..write('taskId: $taskId, ')
-          ..write('plannedStart: $plannedStart, ')
-          ..write('plannedEnd: $plannedEnd, ')
-          ..write('actualStart: $actualStart, ')
-          ..write('actualEnd: $actualEnd, ')
-          ..write('status: $status, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1653,6 +1038,16 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _targetDurationMinutesMeta =
+      const VerificationMeta('targetDurationMinutes');
+  @override
+  late final GeneratedColumn<int> targetDurationMinutes = GeneratedColumn<int>(
+    'target_duration_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isActiveMeta = const VerificationMeta(
     'isActive',
   );
@@ -1698,6 +1093,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     description,
     weekdayMask,
     targetTime,
+    targetDurationMinutes,
     isActive,
     createdAt,
     updatedAt,
@@ -1757,6 +1153,15 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         targetTime.isAcceptableOrUnknown(data['target_time']!, _targetTimeMeta),
       );
     }
+    if (data.containsKey('target_duration_minutes')) {
+      context.handle(
+        _targetDurationMinutesMeta,
+        targetDurationMinutes.isAcceptableOrUnknown(
+          data['target_duration_minutes']!,
+          _targetDurationMinutesMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_active')) {
       context.handle(
         _isActiveMeta,
@@ -1812,6 +1217,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}target_time'],
       ),
+      targetDurationMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_duration_minutes'],
+      ),
       isActive: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
@@ -1840,6 +1249,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final String? description;
   final int weekdayMask;
   final DateTime? targetTime;
+  final int? targetDurationMinutes;
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -1850,6 +1260,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     this.description,
     required this.weekdayMask,
     this.targetTime,
+    this.targetDurationMinutes,
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
@@ -1868,6 +1279,9 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['weekday_mask'] = Variable<int>(weekdayMask);
     if (!nullToAbsent || targetTime != null) {
       map['target_time'] = Variable<DateTime>(targetTime);
+    }
+    if (!nullToAbsent || targetDurationMinutes != null) {
+      map['target_duration_minutes'] = Variable<int>(targetDurationMinutes);
     }
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -1889,6 +1303,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: targetTime == null && nullToAbsent
           ? const Value.absent()
           : Value(targetTime),
+      targetDurationMinutes: targetDurationMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetDurationMinutes),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -1907,6 +1324,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       description: serializer.fromJson<String?>(json['description']),
       weekdayMask: serializer.fromJson<int>(json['weekdayMask']),
       targetTime: serializer.fromJson<DateTime?>(json['targetTime']),
+      targetDurationMinutes: serializer.fromJson<int?>(
+        json['targetDurationMinutes'],
+      ),
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -1922,6 +1342,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'description': serializer.toJson<String?>(description),
       'weekdayMask': serializer.toJson<int>(weekdayMask),
       'targetTime': serializer.toJson<DateTime?>(targetTime),
+      'targetDurationMinutes': serializer.toJson<int?>(targetDurationMinutes),
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -1935,6 +1356,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     Value<String?> description = const Value.absent(),
     int? weekdayMask,
     Value<DateTime?> targetTime = const Value.absent(),
+    Value<int?> targetDurationMinutes = const Value.absent(),
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -1945,6 +1367,9 @@ class Habit extends DataClass implements Insertable<Habit> {
     description: description.present ? description.value : this.description,
     weekdayMask: weekdayMask ?? this.weekdayMask,
     targetTime: targetTime.present ? targetTime.value : this.targetTime,
+    targetDurationMinutes: targetDurationMinutes.present
+        ? targetDurationMinutes.value
+        : this.targetDurationMinutes,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -1963,6 +1388,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: data.targetTime.present
           ? data.targetTime.value
           : this.targetTime,
+      targetDurationMinutes: data.targetDurationMinutes.present
+          ? data.targetDurationMinutes.value
+          : this.targetDurationMinutes,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -1978,6 +1406,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
           ..write('targetTime: $targetTime, ')
+          ..write('targetDurationMinutes: $targetDurationMinutes, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -1993,6 +1422,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     description,
     weekdayMask,
     targetTime,
+    targetDurationMinutes,
     isActive,
     createdAt,
     updatedAt,
@@ -2007,6 +1437,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.description == this.description &&
           other.weekdayMask == this.weekdayMask &&
           other.targetTime == this.targetTime &&
+          other.targetDurationMinutes == this.targetDurationMinutes &&
           other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -2019,6 +1450,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<String?> description;
   final Value<int> weekdayMask;
   final Value<DateTime?> targetTime;
+  final Value<int?> targetDurationMinutes;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -2029,6 +1461,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.description = const Value.absent(),
     this.weekdayMask = const Value.absent(),
     this.targetTime = const Value.absent(),
+    this.targetDurationMinutes = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -2040,6 +1473,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.description = const Value.absent(),
     required int weekdayMask,
     this.targetTime = const Value.absent(),
+    this.targetDurationMinutes = const Value.absent(),
     this.isActive = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -2054,6 +1488,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? description,
     Expression<int>? weekdayMask,
     Expression<DateTime>? targetTime,
+    Expression<int>? targetDurationMinutes,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -2065,6 +1500,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (description != null) 'description': description,
       if (weekdayMask != null) 'weekday_mask': weekdayMask,
       if (targetTime != null) 'target_time': targetTime,
+      if (targetDurationMinutes != null)
+        'target_duration_minutes': targetDurationMinutes,
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -2078,6 +1515,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<String?>? description,
     Value<int>? weekdayMask,
     Value<DateTime?>? targetTime,
+    Value<int?>? targetDurationMinutes,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -2089,6 +1527,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       description: description ?? this.description,
       weekdayMask: weekdayMask ?? this.weekdayMask,
       targetTime: targetTime ?? this.targetTime,
+      targetDurationMinutes:
+          targetDurationMinutes ?? this.targetDurationMinutes,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -2116,6 +1556,11 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (targetTime.present) {
       map['target_time'] = Variable<DateTime>(targetTime.value);
     }
+    if (targetDurationMinutes.present) {
+      map['target_duration_minutes'] = Variable<int>(
+        targetDurationMinutes.value,
+      );
+    }
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
@@ -2137,6 +1582,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
           ..write('targetTime: $targetTime, ')
+          ..write('targetDurationMinutes: $targetDurationMinutes, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -2558,16 +2004,690 @@ class HabitOccurrencesCompanion extends UpdateCompanion<HabitOccurrence> {
   }
 }
 
+class $TimeBlocksTable extends TimeBlocks
+    with TableInfo<$TimeBlocksTable, TimeBlock> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TimeBlocksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _habitOccurrenceIdMeta = const VerificationMeta(
+    'habitOccurrenceId',
+  );
+  @override
+  late final GeneratedColumn<int> habitOccurrenceId = GeneratedColumn<int>(
+    'habit_occurrence_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES habit_occurrences (id)',
+    ),
+  );
+  static const VerificationMeta _taskIdMeta = const VerificationMeta('taskId');
+  @override
+  late final GeneratedColumn<int> taskId = GeneratedColumn<int>(
+    'task_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES tasks (id)',
+    ),
+  );
+  static const VerificationMeta _plannedStartMeta = const VerificationMeta(
+    'plannedStart',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedStart = GeneratedColumn<DateTime>(
+    'planned_start',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _plannedEndMeta = const VerificationMeta(
+    'plannedEnd',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedEnd = GeneratedColumn<DateTime>(
+    'planned_end',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actualStartMeta = const VerificationMeta(
+    'actualStart',
+  );
+  @override
+  late final GeneratedColumn<DateTime> actualStart = GeneratedColumn<DateTime>(
+    'actual_start',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _actualEndMeta = const VerificationMeta(
+    'actualEnd',
+  );
+  @override
+  late final GeneratedColumn<DateTime> actualEnd = GeneratedColumn<DateTime>(
+    'actual_end',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    habitOccurrenceId,
+    taskId,
+    plannedStart,
+    plannedEnd,
+    actualStart,
+    actualEnd,
+    status,
+    createdAt,
+    updatedAt,
+    description,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'time_blocks';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TimeBlock> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('habit_occurrence_id')) {
+      context.handle(
+        _habitOccurrenceIdMeta,
+        habitOccurrenceId.isAcceptableOrUnknown(
+          data['habit_occurrence_id']!,
+          _habitOccurrenceIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_habitOccurrenceIdMeta);
+    }
+    if (data.containsKey('task_id')) {
+      context.handle(
+        _taskIdMeta,
+        taskId.isAcceptableOrUnknown(data['task_id']!, _taskIdMeta),
+      );
+    }
+    if (data.containsKey('planned_start')) {
+      context.handle(
+        _plannedStartMeta,
+        plannedStart.isAcceptableOrUnknown(
+          data['planned_start']!,
+          _plannedStartMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_plannedStartMeta);
+    }
+    if (data.containsKey('planned_end')) {
+      context.handle(
+        _plannedEndMeta,
+        plannedEnd.isAcceptableOrUnknown(data['planned_end']!, _plannedEndMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_plannedEndMeta);
+    }
+    if (data.containsKey('actual_start')) {
+      context.handle(
+        _actualStartMeta,
+        actualStart.isAcceptableOrUnknown(
+          data['actual_start']!,
+          _actualStartMeta,
+        ),
+      );
+    }
+    if (data.containsKey('actual_end')) {
+      context.handle(
+        _actualEndMeta,
+        actualEnd.isAcceptableOrUnknown(data['actual_end']!, _actualEndMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TimeBlock map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TimeBlock(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      habitOccurrenceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}habit_occurrence_id'],
+      )!,
+      taskId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}task_id'],
+      ),
+      plannedStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_start'],
+      )!,
+      plannedEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_end'],
+      )!,
+      actualStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}actual_start'],
+      ),
+      actualEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}actual_end'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+    );
+  }
+
+  @override
+  $TimeBlocksTable createAlias(String alias) {
+    return $TimeBlocksTable(attachedDatabase, alias);
+  }
+}
+
+class TimeBlock extends DataClass implements Insertable<TimeBlock> {
+  final int id;
+  final int habitOccurrenceId;
+  final int? taskId;
+  final DateTime plannedStart;
+  final DateTime plannedEnd;
+  final DateTime? actualStart;
+  final DateTime? actualEnd;
+  final String status;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? description;
+  const TimeBlock({
+    required this.id,
+    required this.habitOccurrenceId,
+    this.taskId,
+    required this.plannedStart,
+    required this.plannedEnd,
+    this.actualStart,
+    this.actualEnd,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+    this.description,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['habit_occurrence_id'] = Variable<int>(habitOccurrenceId);
+    if (!nullToAbsent || taskId != null) {
+      map['task_id'] = Variable<int>(taskId);
+    }
+    map['planned_start'] = Variable<DateTime>(plannedStart);
+    map['planned_end'] = Variable<DateTime>(plannedEnd);
+    if (!nullToAbsent || actualStart != null) {
+      map['actual_start'] = Variable<DateTime>(actualStart);
+    }
+    if (!nullToAbsent || actualEnd != null) {
+      map['actual_end'] = Variable<DateTime>(actualEnd);
+    }
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    return map;
+  }
+
+  TimeBlocksCompanion toCompanion(bool nullToAbsent) {
+    return TimeBlocksCompanion(
+      id: Value(id),
+      habitOccurrenceId: Value(habitOccurrenceId),
+      taskId: taskId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(taskId),
+      plannedStart: Value(plannedStart),
+      plannedEnd: Value(plannedEnd),
+      actualStart: actualStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(actualStart),
+      actualEnd: actualEnd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(actualEnd),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+    );
+  }
+
+  factory TimeBlock.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TimeBlock(
+      id: serializer.fromJson<int>(json['id']),
+      habitOccurrenceId: serializer.fromJson<int>(json['habitOccurrenceId']),
+      taskId: serializer.fromJson<int?>(json['taskId']),
+      plannedStart: serializer.fromJson<DateTime>(json['plannedStart']),
+      plannedEnd: serializer.fromJson<DateTime>(json['plannedEnd']),
+      actualStart: serializer.fromJson<DateTime?>(json['actualStart']),
+      actualEnd: serializer.fromJson<DateTime?>(json['actualEnd']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      description: serializer.fromJson<String?>(json['description']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'habitOccurrenceId': serializer.toJson<int>(habitOccurrenceId),
+      'taskId': serializer.toJson<int?>(taskId),
+      'plannedStart': serializer.toJson<DateTime>(plannedStart),
+      'plannedEnd': serializer.toJson<DateTime>(plannedEnd),
+      'actualStart': serializer.toJson<DateTime?>(actualStart),
+      'actualEnd': serializer.toJson<DateTime?>(actualEnd),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'description': serializer.toJson<String?>(description),
+    };
+  }
+
+  TimeBlock copyWith({
+    int? id,
+    int? habitOccurrenceId,
+    Value<int?> taskId = const Value.absent(),
+    DateTime? plannedStart,
+    DateTime? plannedEnd,
+    Value<DateTime?> actualStart = const Value.absent(),
+    Value<DateTime?> actualEnd = const Value.absent(),
+    String? status,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<String?> description = const Value.absent(),
+  }) => TimeBlock(
+    id: id ?? this.id,
+    habitOccurrenceId: habitOccurrenceId ?? this.habitOccurrenceId,
+    taskId: taskId.present ? taskId.value : this.taskId,
+    plannedStart: plannedStart ?? this.plannedStart,
+    plannedEnd: plannedEnd ?? this.plannedEnd,
+    actualStart: actualStart.present ? actualStart.value : this.actualStart,
+    actualEnd: actualEnd.present ? actualEnd.value : this.actualEnd,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    description: description.present ? description.value : this.description,
+  );
+  TimeBlock copyWithCompanion(TimeBlocksCompanion data) {
+    return TimeBlock(
+      id: data.id.present ? data.id.value : this.id,
+      habitOccurrenceId: data.habitOccurrenceId.present
+          ? data.habitOccurrenceId.value
+          : this.habitOccurrenceId,
+      taskId: data.taskId.present ? data.taskId.value : this.taskId,
+      plannedStart: data.plannedStart.present
+          ? data.plannedStart.value
+          : this.plannedStart,
+      plannedEnd: data.plannedEnd.present
+          ? data.plannedEnd.value
+          : this.plannedEnd,
+      actualStart: data.actualStart.present
+          ? data.actualStart.value
+          : this.actualStart,
+      actualEnd: data.actualEnd.present ? data.actualEnd.value : this.actualEnd,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeBlock(')
+          ..write('id: $id, ')
+          ..write('habitOccurrenceId: $habitOccurrenceId, ')
+          ..write('taskId: $taskId, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
+          ..write('actualStart: $actualStart, ')
+          ..write('actualEnd: $actualEnd, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('description: $description')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    habitOccurrenceId,
+    taskId,
+    plannedStart,
+    plannedEnd,
+    actualStart,
+    actualEnd,
+    status,
+    createdAt,
+    updatedAt,
+    description,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TimeBlock &&
+          other.id == this.id &&
+          other.habitOccurrenceId == this.habitOccurrenceId &&
+          other.taskId == this.taskId &&
+          other.plannedStart == this.plannedStart &&
+          other.plannedEnd == this.plannedEnd &&
+          other.actualStart == this.actualStart &&
+          other.actualEnd == this.actualEnd &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.description == this.description);
+}
+
+class TimeBlocksCompanion extends UpdateCompanion<TimeBlock> {
+  final Value<int> id;
+  final Value<int> habitOccurrenceId;
+  final Value<int?> taskId;
+  final Value<DateTime> plannedStart;
+  final Value<DateTime> plannedEnd;
+  final Value<DateTime?> actualStart;
+  final Value<DateTime?> actualEnd;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String?> description;
+  const TimeBlocksCompanion({
+    this.id = const Value.absent(),
+    this.habitOccurrenceId = const Value.absent(),
+    this.taskId = const Value.absent(),
+    this.plannedStart = const Value.absent(),
+    this.plannedEnd = const Value.absent(),
+    this.actualStart = const Value.absent(),
+    this.actualEnd = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.description = const Value.absent(),
+  });
+  TimeBlocksCompanion.insert({
+    this.id = const Value.absent(),
+    required int habitOccurrenceId,
+    this.taskId = const Value.absent(),
+    required DateTime plannedStart,
+    required DateTime plannedEnd,
+    this.actualStart = const Value.absent(),
+    this.actualEnd = const Value.absent(),
+    required String status,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.description = const Value.absent(),
+  }) : habitOccurrenceId = Value(habitOccurrenceId),
+       plannedStart = Value(plannedStart),
+       plannedEnd = Value(plannedEnd),
+       status = Value(status),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TimeBlock> custom({
+    Expression<int>? id,
+    Expression<int>? habitOccurrenceId,
+    Expression<int>? taskId,
+    Expression<DateTime>? plannedStart,
+    Expression<DateTime>? plannedEnd,
+    Expression<DateTime>? actualStart,
+    Expression<DateTime>? actualEnd,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? description,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (habitOccurrenceId != null) 'habit_occurrence_id': habitOccurrenceId,
+      if (taskId != null) 'task_id': taskId,
+      if (plannedStart != null) 'planned_start': plannedStart,
+      if (plannedEnd != null) 'planned_end': plannedEnd,
+      if (actualStart != null) 'actual_start': actualStart,
+      if (actualEnd != null) 'actual_end': actualEnd,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (description != null) 'description': description,
+    });
+  }
+
+  TimeBlocksCompanion copyWith({
+    Value<int>? id,
+    Value<int>? habitOccurrenceId,
+    Value<int?>? taskId,
+    Value<DateTime>? plannedStart,
+    Value<DateTime>? plannedEnd,
+    Value<DateTime?>? actualStart,
+    Value<DateTime?>? actualEnd,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String?>? description,
+  }) {
+    return TimeBlocksCompanion(
+      id: id ?? this.id,
+      habitOccurrenceId: habitOccurrenceId ?? this.habitOccurrenceId,
+      taskId: taskId ?? this.taskId,
+      plannedStart: plannedStart ?? this.plannedStart,
+      plannedEnd: plannedEnd ?? this.plannedEnd,
+      actualStart: actualStart ?? this.actualStart,
+      actualEnd: actualEnd ?? this.actualEnd,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      description: description ?? this.description,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (habitOccurrenceId.present) {
+      map['habit_occurrence_id'] = Variable<int>(habitOccurrenceId.value);
+    }
+    if (taskId.present) {
+      map['task_id'] = Variable<int>(taskId.value);
+    }
+    if (plannedStart.present) {
+      map['planned_start'] = Variable<DateTime>(plannedStart.value);
+    }
+    if (plannedEnd.present) {
+      map['planned_end'] = Variable<DateTime>(plannedEnd.value);
+    }
+    if (actualStart.present) {
+      map['actual_start'] = Variable<DateTime>(actualStart.value);
+    }
+    if (actualEnd.present) {
+      map['actual_end'] = Variable<DateTime>(actualEnd.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeBlocksCompanion(')
+          ..write('id: $id, ')
+          ..write('habitOccurrenceId: $habitOccurrenceId, ')
+          ..write('taskId: $taskId, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
+          ..write('actualStart: $actualStart, ')
+          ..write('actualEnd: $actualEnd, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('description: $description')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $TasksTable tasks = $TasksTable(this);
-  late final $TimeBlocksTable timeBlocks = $TimeBlocksTable(this);
   late final $HabitsTable habits = $HabitsTable(this);
   late final $HabitOccurrencesTable habitOccurrences = $HabitOccurrencesTable(
     this,
   );
+  late final $TimeBlocksTable timeBlocks = $TimeBlocksTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2575,9 +2695,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     projects,
     tasks,
-    timeBlocks,
     habits,
     habitOccurrences,
+    timeBlocks,
   ];
 }
 
@@ -2618,24 +2738,6 @@ final class $$ProjectsTableReferences
     ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_tasksRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$TimeBlocksTable, List<TimeBlock>>
-  _timeBlocksRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.timeBlocks,
-    aliasName: 'projects__id__time_blocks__project_id',
-  );
-
-  $$TimeBlocksTableProcessedTableManager get timeBlocksRefs {
-    final manager = $$TimeBlocksTableTableManager(
-      $_db,
-      $_db.timeBlocks,
-    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_timeBlocksRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2716,31 +2818,6 @@ class $$ProjectsTableFilterComposer
           }) => $$TasksTableFilterComposer(
             $db: $db,
             $table: $db.tasks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> timeBlocksRefs(
-    Expression<bool> Function($$TimeBlocksTableFilterComposer f) f,
-  ) {
-    final $$TimeBlocksTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.timeBlocks,
-      getReferencedColumn: (t) => t.projectId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TimeBlocksTableFilterComposer(
-            $db: $db,
-            $table: $db.timeBlocks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2870,31 +2947,6 @@ class $$ProjectsTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> timeBlocksRefs<T extends Object>(
-    Expression<T> Function($$TimeBlocksTableAnnotationComposer a) f,
-  ) {
-    final $$TimeBlocksTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.timeBlocks,
-      getReferencedColumn: (t) => t.projectId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TimeBlocksTableAnnotationComposer(
-            $db: $db,
-            $table: $db.timeBlocks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
   Expression<T> habitsRefs<T extends Object>(
     Expression<T> Function($$HabitsTableAnnotationComposer a) f,
   ) {
@@ -2934,11 +2986,7 @@ class $$ProjectsTableTableManager
           $$ProjectsTableUpdateCompanionBuilder,
           (Project, $$ProjectsTableReferences),
           Project,
-          PrefetchHooks Function({
-            bool tasksRefs,
-            bool timeBlocksRefs,
-            bool habitsRefs,
-          })
+          PrefetchHooks Function({bool tasksRefs, bool habitsRefs})
         > {
   $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
     : super(
@@ -2991,89 +3039,42 @@ class $$ProjectsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback:
-              ({
-                tasksRefs = false,
-                timeBlocksRefs = false,
-                habitsRefs = false,
-              }) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (tasksRefs) db.tasks,
-                    if (timeBlocksRefs) db.timeBlocks,
-                    if (habitsRefs) db.habits,
-                  ],
-                  addJoins: null,
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (tasksRefs)
-                        await $_getPrefetchedData<
-                          Project,
-                          $ProjectsTable,
-                          Task
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
-                              ._tasksRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).tasksRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (timeBlocksRefs)
-                        await $_getPrefetchedData<
-                          Project,
-                          $ProjectsTable,
-                          TimeBlock
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
-                              ._timeBlocksRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).timeBlocksRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (habitsRefs)
-                        await $_getPrefetchedData<
-                          Project,
-                          $ProjectsTable,
-                          Habit
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
-                              ._habitsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).habitsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
+          prefetchHooksCallback: ({tasksRefs = false, habitsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (tasksRefs) db.tasks,
+                if (habitsRefs) db.habits,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (tasksRefs)
+                    await $_getPrefetchedData<Project, $ProjectsTable, Task>(
+                      currentTable: table,
+                      referencedTable: $$ProjectsTableReferences
+                          ._tasksRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$ProjectsTableReferences(db, table, p0).tasksRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.projectId == item.id),
+                      typedResults: items,
+                    ),
+                  if (habitsRefs)
+                    await $_getPrefetchedData<Project, $ProjectsTable, Habit>(
+                      currentTable: table,
+                      referencedTable: $$ProjectsTableReferences
+                          ._habitsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$ProjectsTableReferences(db, table, p0).habitsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.projectId == item.id),
+                      typedResults: items,
+                    ),
+                ];
               },
+            );
+          },
         ),
       );
 }
@@ -3090,11 +3091,7 @@ typedef $$ProjectsTableProcessedTableManager =
       $$ProjectsTableUpdateCompanionBuilder,
       (Project, $$ProjectsTableReferences),
       Project,
-      PrefetchHooks Function({
-        bool tasksRefs,
-        bool timeBlocksRefs,
-        bool habitsRefs,
-      })
+      PrefetchHooks Function({bool tasksRefs, bool habitsRefs})
     >;
 typedef $$TasksTableCreateCompanionBuilder =
     TasksCompanion Function({
@@ -3566,504 +3563,6 @@ typedef $$TasksTableProcessedTableManager =
       Task,
       PrefetchHooks Function({bool projectId, bool timeBlocksRefs})
     >;
-typedef $$TimeBlocksTableCreateCompanionBuilder =
-    TimeBlocksCompanion Function({
-      Value<int> id,
-      required int projectId,
-      Value<int?> taskId,
-      required DateTime plannedStart,
-      required DateTime plannedEnd,
-      Value<DateTime?> actualStart,
-      Value<DateTime?> actualEnd,
-      required String status,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-    });
-typedef $$TimeBlocksTableUpdateCompanionBuilder =
-    TimeBlocksCompanion Function({
-      Value<int> id,
-      Value<int> projectId,
-      Value<int?> taskId,
-      Value<DateTime> plannedStart,
-      Value<DateTime> plannedEnd,
-      Value<DateTime?> actualStart,
-      Value<DateTime?> actualEnd,
-      Value<String> status,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-    });
-
-final class $$TimeBlocksTableReferences
-    extends BaseReferences<_$AppDatabase, $TimeBlocksTable, TimeBlock> {
-  $$TimeBlocksTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias('time_blocks__project_id__projects__id');
-
-  $$ProjectsTableProcessedTableManager get projectId {
-    final $_column = $_itemColumn<int>('project_id')!;
-
-    final manager = $$ProjectsTableTableManager(
-      $_db,
-      $_db.projects,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static $TasksTable _taskIdTable(_$AppDatabase db) =>
-      db.tasks.createAlias('time_blocks__task_id__tasks__id');
-
-  $$TasksTableProcessedTableManager? get taskId {
-    final $_column = $_itemColumn<int>('task_id');
-    if ($_column == null) return null;
-    final manager = $$TasksTableTableManager(
-      $_db,
-      $_db.tasks,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_taskIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $$TimeBlocksTableFilterComposer
-    extends Composer<_$AppDatabase, $TimeBlocksTable> {
-  $$TimeBlocksTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get plannedStart => $composableBuilder(
-    column: $table.plannedStart,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get plannedEnd => $composableBuilder(
-    column: $table.plannedEnd,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get actualStart => $composableBuilder(
-    column: $table.actualStart,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get actualEnd => $composableBuilder(
-    column: $table.actualEnd,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $$ProjectsTableFilterComposer get projectId {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
-            $db: $db,
-            $table: $db.projects,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$TasksTableFilterComposer get taskId {
-    final $$TasksTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.taskId,
-      referencedTable: $db.tasks,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TasksTableFilterComposer(
-            $db: $db,
-            $table: $db.tasks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$TimeBlocksTableOrderingComposer
-    extends Composer<_$AppDatabase, $TimeBlocksTable> {
-  $$TimeBlocksTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get plannedStart => $composableBuilder(
-    column: $table.plannedStart,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get plannedEnd => $composableBuilder(
-    column: $table.plannedEnd,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get actualStart => $composableBuilder(
-    column: $table.actualStart,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get actualEnd => $composableBuilder(
-    column: $table.actualEnd,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $$ProjectsTableOrderingComposer get projectId {
-    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableOrderingComposer(
-            $db: $db,
-            $table: $db.projects,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$TasksTableOrderingComposer get taskId {
-    final $$TasksTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.taskId,
-      referencedTable: $db.tasks,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TasksTableOrderingComposer(
-            $db: $db,
-            $table: $db.tasks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$TimeBlocksTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TimeBlocksTable> {
-  $$TimeBlocksTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get plannedStart => $composableBuilder(
-    column: $table.plannedStart,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get plannedEnd => $composableBuilder(
-    column: $table.plannedEnd,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get actualStart => $composableBuilder(
-    column: $table.actualStart,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get actualEnd =>
-      $composableBuilder(column: $table.actualEnd, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  $$ProjectsTableAnnotationComposer get projectId {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.projects,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$TasksTableAnnotationComposer get taskId {
-    final $$TasksTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.taskId,
-      referencedTable: $db.tasks,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TasksTableAnnotationComposer(
-            $db: $db,
-            $table: $db.tasks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$TimeBlocksTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $TimeBlocksTable,
-          TimeBlock,
-          $$TimeBlocksTableFilterComposer,
-          $$TimeBlocksTableOrderingComposer,
-          $$TimeBlocksTableAnnotationComposer,
-          $$TimeBlocksTableCreateCompanionBuilder,
-          $$TimeBlocksTableUpdateCompanionBuilder,
-          (TimeBlock, $$TimeBlocksTableReferences),
-          TimeBlock,
-          PrefetchHooks Function({bool projectId, bool taskId})
-        > {
-  $$TimeBlocksTableTableManager(_$AppDatabase db, $TimeBlocksTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$TimeBlocksTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$TimeBlocksTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$TimeBlocksTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<int> projectId = const Value.absent(),
-                Value<int?> taskId = const Value.absent(),
-                Value<DateTime> plannedStart = const Value.absent(),
-                Value<DateTime> plannedEnd = const Value.absent(),
-                Value<DateTime?> actualStart = const Value.absent(),
-                Value<DateTime?> actualEnd = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-              }) => TimeBlocksCompanion(
-                id: id,
-                projectId: projectId,
-                taskId: taskId,
-                plannedStart: plannedStart,
-                plannedEnd: plannedEnd,
-                actualStart: actualStart,
-                actualEnd: actualEnd,
-                status: status,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required int projectId,
-                Value<int?> taskId = const Value.absent(),
-                required DateTime plannedStart,
-                required DateTime plannedEnd,
-                Value<DateTime?> actualStart = const Value.absent(),
-                Value<DateTime?> actualEnd = const Value.absent(),
-                required String status,
-                required DateTime createdAt,
-                required DateTime updatedAt,
-              }) => TimeBlocksCompanion.insert(
-                id: id,
-                projectId: projectId,
-                taskId: taskId,
-                plannedStart: plannedStart,
-                plannedEnd: plannedEnd,
-                actualStart: actualStart,
-                actualEnd: actualEnd,
-                status: status,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable<$TimeBlocksTable, TimeBlock>(table),
-                  $$TimeBlocksTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback: ({projectId = false, taskId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (projectId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.projectId,
-                                referencedTable: $$TimeBlocksTableReferences
-                                    ._projectIdTable(db),
-                                referencedColumn: $$TimeBlocksTableReferences
-                                    ._projectIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-                    if (taskId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.taskId,
-                                referencedTable: $$TimeBlocksTableReferences
-                                    ._taskIdTable(db),
-                                referencedColumn: $$TimeBlocksTableReferences
-                                    ._taskIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-
-                    return state;
-                  },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
-        ),
-      );
-}
-
-typedef $$TimeBlocksTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $TimeBlocksTable,
-      TimeBlock,
-      $$TimeBlocksTableFilterComposer,
-      $$TimeBlocksTableOrderingComposer,
-      $$TimeBlocksTableAnnotationComposer,
-      $$TimeBlocksTableCreateCompanionBuilder,
-      $$TimeBlocksTableUpdateCompanionBuilder,
-      (TimeBlock, $$TimeBlocksTableReferences),
-      TimeBlock,
-      PrefetchHooks Function({bool projectId, bool taskId})
-    >;
 typedef $$HabitsTableCreateCompanionBuilder =
     HabitsCompanion Function({
       Value<int> id,
@@ -4072,6 +3571,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<String?> description,
       required int weekdayMask,
       Value<DateTime?> targetTime,
+      Value<int?> targetDurationMinutes,
       Value<bool> isActive,
       required DateTime createdAt,
       required DateTime updatedAt,
@@ -4084,6 +3584,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<int> weekdayMask,
       Value<DateTime?> targetTime,
+      Value<int?> targetDurationMinutes,
       Value<bool> isActive,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -4162,6 +3663,11 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<DateTime> get targetTime => $composableBuilder(
     column: $table.targetTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4263,6 +3769,11 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isActive => $composableBuilder(
     column: $table.isActive,
     builder: (column) => ColumnOrderings(column),
@@ -4329,6 +3840,11 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get targetTime => $composableBuilder(
     column: $table.targetTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetDurationMinutes => $composableBuilder(
+    column: $table.targetDurationMinutes,
     builder: (column) => column,
   );
 
@@ -4424,6 +3940,7 @@ class $$HabitsTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<int> weekdayMask = const Value.absent(),
                 Value<DateTime?> targetTime = const Value.absent(),
+                Value<int?> targetDurationMinutes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -4434,6 +3951,7 @@ class $$HabitsTableTableManager
                 description: description,
                 weekdayMask: weekdayMask,
                 targetTime: targetTime,
+                targetDurationMinutes: targetDurationMinutes,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -4446,6 +3964,7 @@ class $$HabitsTableTableManager
                 Value<String?> description = const Value.absent(),
                 required int weekdayMask,
                 Value<DateTime?> targetTime = const Value.absent(),
+                Value<int?> targetDurationMinutes = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
@@ -4456,6 +3975,7 @@ class $$HabitsTableTableManager
                 description: description,
                 weekdayMask: weekdayMask,
                 targetTime: targetTime,
+                targetDurationMinutes: targetDurationMinutes,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -4596,6 +4116,24 @@ final class $$HabitOccurrencesTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$TimeBlocksTable, List<TimeBlock>>
+  _timeBlocksRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.timeBlocks,
+    aliasName: 'habit_occurrences__id__time_blocks__habit_occurrence_id',
+  );
+
+  $$TimeBlocksTableProcessedTableManager get timeBlocksRefs {
+    final manager = $$TimeBlocksTableTableManager(
+      $_db,
+      $_db.timeBlocks,
+    ).filter((f) => f.habitOccurrenceId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_timeBlocksRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$HabitOccurrencesTableFilterComposer
@@ -4653,6 +4191,31 @@ class $$HabitOccurrencesTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> timeBlocksRefs(
+    Expression<bool> Function($$TimeBlocksTableFilterComposer f) f,
+  ) {
+    final $$TimeBlocksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.timeBlocks,
+      getReferencedColumn: (t) => t.habitOccurrenceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TimeBlocksTableFilterComposer(
+            $db: $db,
+            $table: $db.timeBlocks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -4764,6 +4327,31 @@ class $$HabitOccurrencesTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> timeBlocksRefs<T extends Object>(
+    Expression<T> Function($$TimeBlocksTableAnnotationComposer a) f,
+  ) {
+    final $$TimeBlocksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.timeBlocks,
+      getReferencedColumn: (t) => t.habitOccurrenceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TimeBlocksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.timeBlocks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$HabitOccurrencesTableTableManager
@@ -4779,7 +4367,7 @@ class $$HabitOccurrencesTableTableManager
           $$HabitOccurrencesTableUpdateCompanionBuilder,
           (HabitOccurrence, $$HabitOccurrencesTableReferences),
           HabitOccurrence,
-          PrefetchHooks Function({bool habitId})
+          PrefetchHooks Function({bool habitId, bool timeBlocksRefs})
         > {
   $$HabitOccurrencesTableTableManager(
     _$AppDatabase db,
@@ -4834,10 +4422,10 @@ class $$HabitOccurrencesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({habitId = false}) {
+          prefetchHooksCallback: ({habitId = false, timeBlocksRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [],
+              explicitlyWatchedTables: [if (timeBlocksRefs) db.timeBlocks],
               addJoins:
                   <
                     T extends TableManagerState<
@@ -4873,7 +4461,29 @@ class $$HabitOccurrencesTableTableManager
                     return state;
                   },
               getPrefetchedDataCallback: (items) async {
-                return [];
+                return [
+                  if (timeBlocksRefs)
+                    await $_getPrefetchedData<
+                      HabitOccurrence,
+                      $HabitOccurrencesTable,
+                      TimeBlock
+                    >(
+                      currentTable: table,
+                      referencedTable: $$HabitOccurrencesTableReferences
+                          ._timeBlocksRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$HabitOccurrencesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).timeBlocksRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.habitOccurrenceId == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
               },
             );
           },
@@ -4893,7 +4503,527 @@ typedef $$HabitOccurrencesTableProcessedTableManager =
       $$HabitOccurrencesTableUpdateCompanionBuilder,
       (HabitOccurrence, $$HabitOccurrencesTableReferences),
       HabitOccurrence,
-      PrefetchHooks Function({bool habitId})
+      PrefetchHooks Function({bool habitId, bool timeBlocksRefs})
+    >;
+typedef $$TimeBlocksTableCreateCompanionBuilder =
+    TimeBlocksCompanion Function({
+      Value<int> id,
+      required int habitOccurrenceId,
+      Value<int?> taskId,
+      required DateTime plannedStart,
+      required DateTime plannedEnd,
+      Value<DateTime?> actualStart,
+      Value<DateTime?> actualEnd,
+      required String status,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<String?> description,
+    });
+typedef $$TimeBlocksTableUpdateCompanionBuilder =
+    TimeBlocksCompanion Function({
+      Value<int> id,
+      Value<int> habitOccurrenceId,
+      Value<int?> taskId,
+      Value<DateTime> plannedStart,
+      Value<DateTime> plannedEnd,
+      Value<DateTime?> actualStart,
+      Value<DateTime?> actualEnd,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<String?> description,
+    });
+
+final class $$TimeBlocksTableReferences
+    extends BaseReferences<_$AppDatabase, $TimeBlocksTable, TimeBlock> {
+  $$TimeBlocksTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $HabitOccurrencesTable _habitOccurrenceIdTable(_$AppDatabase db) => db
+      .habitOccurrences
+      .createAlias('time_blocks__habit_occurrence_id__habit_occurrences__id');
+
+  $$HabitOccurrencesTableProcessedTableManager get habitOccurrenceId {
+    final $_column = $_itemColumn<int>('habit_occurrence_id')!;
+
+    final manager = $$HabitOccurrencesTableTableManager(
+      $_db,
+      $_db.habitOccurrences,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_habitOccurrenceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $TasksTable _taskIdTable(_$AppDatabase db) =>
+      db.tasks.createAlias('time_blocks__task_id__tasks__id');
+
+  $$TasksTableProcessedTableManager? get taskId {
+    final $_column = $_itemColumn<int>('task_id');
+    if ($_column == null) return null;
+    final manager = $$TasksTableTableManager(
+      $_db,
+      $_db.tasks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_taskIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$TimeBlocksTableFilterComposer
+    extends Composer<_$AppDatabase, $TimeBlocksTable> {
+  $$TimeBlocksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get actualStart => $composableBuilder(
+    column: $table.actualStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get actualEnd => $composableBuilder(
+    column: $table.actualEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$HabitOccurrencesTableFilterComposer get habitOccurrenceId {
+    final $$HabitOccurrencesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.habitOccurrenceId,
+      referencedTable: $db.habitOccurrences,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitOccurrencesTableFilterComposer(
+            $db: $db,
+            $table: $db.habitOccurrences,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TasksTableFilterComposer get taskId {
+    final $$TasksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableFilterComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TimeBlocksTableOrderingComposer
+    extends Composer<_$AppDatabase, $TimeBlocksTable> {
+  $$TimeBlocksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get actualStart => $composableBuilder(
+    column: $table.actualStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get actualEnd => $composableBuilder(
+    column: $table.actualEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$HabitOccurrencesTableOrderingComposer get habitOccurrenceId {
+    final $$HabitOccurrencesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.habitOccurrenceId,
+      referencedTable: $db.habitOccurrences,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitOccurrencesTableOrderingComposer(
+            $db: $db,
+            $table: $db.habitOccurrences,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TasksTableOrderingComposer get taskId {
+    final $$TasksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableOrderingComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TimeBlocksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TimeBlocksTable> {
+  $$TimeBlocksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get actualStart => $composableBuilder(
+    column: $table.actualStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get actualEnd =>
+      $composableBuilder(column: $table.actualEnd, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  $$HabitOccurrencesTableAnnotationComposer get habitOccurrenceId {
+    final $$HabitOccurrencesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.habitOccurrenceId,
+      referencedTable: $db.habitOccurrences,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitOccurrencesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.habitOccurrences,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TasksTableAnnotationComposer get taskId {
+    final $$TasksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TimeBlocksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TimeBlocksTable,
+          TimeBlock,
+          $$TimeBlocksTableFilterComposer,
+          $$TimeBlocksTableOrderingComposer,
+          $$TimeBlocksTableAnnotationComposer,
+          $$TimeBlocksTableCreateCompanionBuilder,
+          $$TimeBlocksTableUpdateCompanionBuilder,
+          (TimeBlock, $$TimeBlocksTableReferences),
+          TimeBlock,
+          PrefetchHooks Function({bool habitOccurrenceId, bool taskId})
+        > {
+  $$TimeBlocksTableTableManager(_$AppDatabase db, $TimeBlocksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TimeBlocksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TimeBlocksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TimeBlocksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> habitOccurrenceId = const Value.absent(),
+                Value<int?> taskId = const Value.absent(),
+                Value<DateTime> plannedStart = const Value.absent(),
+                Value<DateTime> plannedEnd = const Value.absent(),
+                Value<DateTime?> actualStart = const Value.absent(),
+                Value<DateTime?> actualEnd = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+              }) => TimeBlocksCompanion(
+                id: id,
+                habitOccurrenceId: habitOccurrenceId,
+                taskId: taskId,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
+                actualStart: actualStart,
+                actualEnd: actualEnd,
+                status: status,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                description: description,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int habitOccurrenceId,
+                Value<int?> taskId = const Value.absent(),
+                required DateTime plannedStart,
+                required DateTime plannedEnd,
+                Value<DateTime?> actualStart = const Value.absent(),
+                Value<DateTime?> actualEnd = const Value.absent(),
+                required String status,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<String?> description = const Value.absent(),
+              }) => TimeBlocksCompanion.insert(
+                id: id,
+                habitOccurrenceId: habitOccurrenceId,
+                taskId: taskId,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
+                actualStart: actualStart,
+                actualEnd: actualEnd,
+                status: status,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                description: description,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TimeBlocksTable, TimeBlock>(table),
+                  $$TimeBlocksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({habitOccurrenceId = false, taskId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (habitOccurrenceId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.habitOccurrenceId,
+                                referencedTable: $$TimeBlocksTableReferences
+                                    ._habitOccurrenceIdTable(db),
+                                referencedColumn: $$TimeBlocksTableReferences
+                                    ._habitOccurrenceIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (taskId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.taskId,
+                                referencedTable: $$TimeBlocksTableReferences
+                                    ._taskIdTable(db),
+                                referencedColumn: $$TimeBlocksTableReferences
+                                    ._taskIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$TimeBlocksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TimeBlocksTable,
+      TimeBlock,
+      $$TimeBlocksTableFilterComposer,
+      $$TimeBlocksTableOrderingComposer,
+      $$TimeBlocksTableAnnotationComposer,
+      $$TimeBlocksTableCreateCompanionBuilder,
+      $$TimeBlocksTableUpdateCompanionBuilder,
+      (TimeBlock, $$TimeBlocksTableReferences),
+      TimeBlock,
+      PrefetchHooks Function({bool habitOccurrenceId, bool taskId})
     >;
 
 class $AppDatabaseManager {
@@ -4903,10 +5033,10 @@ class $AppDatabaseManager {
       $$ProjectsTableTableManager(_db, _db.projects);
   $$TasksTableTableManager get tasks =>
       $$TasksTableTableManager(_db, _db.tasks);
-  $$TimeBlocksTableTableManager get timeBlocks =>
-      $$TimeBlocksTableTableManager(_db, _db.timeBlocks);
   $$HabitsTableTableManager get habits =>
       $$HabitsTableTableManager(_db, _db.habits);
   $$HabitOccurrencesTableTableManager get habitOccurrences =>
       $$HabitOccurrencesTableTableManager(_db, _db.habitOccurrences);
+  $$TimeBlocksTableTableManager get timeBlocks =>
+      $$TimeBlocksTableTableManager(_db, _db.timeBlocks);
 }

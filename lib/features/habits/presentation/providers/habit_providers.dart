@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:corelog/core/database/database.dart';
-import 'package:corelog/features/habits/data/repositories/habit_repository_impl.dart';
 import 'package:corelog/features/habits/data/repositories/habit_occurrence_repository_impl.dart';
+import 'package:corelog/features/habits/data/repositories/habit_repository_impl.dart';
 import 'package:corelog/features/habits/domain/repositories/habit_occurrence_repository.dart';
 import 'package:corelog/features/habits/domain/repositories/habit_repository.dart';
 import 'package:corelog/features/habits/domain/usecases/usecases.dart';
@@ -13,15 +13,17 @@ final habitRepositoryProvider = Provider<HabitRepository>((ref) {
   return HabitRepositoryImpl(database);
 });
 
-final habitOccurrenceRepositoryProvider =
-    Provider<HabitOccurrenceRepository>((ref) {
+final habitOccurrenceRepositoryProvider = Provider<HabitOccurrenceRepository>((
+  ref,
+) {
   final database = ref.watch(databaseProvider);
 
   return HabitOccurrenceRepositoryImpl(database);
 });
 
-final completeHabitOccurrenceProvider =
-    Provider<CompleteHabitOccurrence>((ref) {
+final completeHabitOccurrenceProvider = Provider<CompleteHabitOccurrence>((
+  ref,
+) {
   final repository = ref.watch(habitOccurrenceRepositoryProvider);
 
   return CompleteHabitOccurrence(repository);
@@ -31,4 +33,16 @@ final skipHabitOccurrenceProvider = Provider<SkipHabitOccurrence>((ref) {
   final repository = ref.watch(habitOccurrenceRepositoryProvider);
 
   return SkipHabitOccurrence(repository);
+});
+
+final generateHabitOccurrencesProvider = Provider<GenerateHabitOccurrences>((
+  ref,
+) {
+  final habitRepository = ref.watch(habitRepositoryProvider);
+  final occurrenceRepository = ref.watch(habitOccurrenceRepositoryProvider);
+
+  return GenerateHabitOccurrences(
+    habitRepository: habitRepository,
+    occurrenceRepository: occurrenceRepository,
+  );
 });

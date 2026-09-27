@@ -23,7 +23,7 @@ void main() {
   registerFallbackValue(
     TimeBlock(
       id: 0,
-      projectId: 0,
+      habitOccurrenceId: 0,
       plannedStart: DateTime(2026),
       plannedEnd: DateTime(2026, 1, 1, 1),
       status: TimeBlockStatus.planned,
@@ -51,7 +51,7 @@ void main() {
   }) {
     return TimeBlock(
       id: 1,
-      projectId: 2,
+      habitOccurrenceId: 2,
       taskId: 3,
       plannedStart: plannedStart,
       plannedEnd: plannedEnd,

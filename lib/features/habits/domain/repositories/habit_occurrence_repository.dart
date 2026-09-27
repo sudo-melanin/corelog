@@ -8,9 +8,7 @@ abstract interface class HabitOccurrenceRepository {
     HabitOccurrence occurrence,
   );
 
-  Future<Either<Failure, HabitOccurrence?>> getOccurrenceById(
-    int id,
-  );
+  Future<Either<Failure, HabitOccurrence?>> getOccurrenceById(int id);
 
   Future<Either<Failure, List<HabitOccurrence>>> getOccurrences();
 
@@ -18,11 +16,19 @@ abstract interface class HabitOccurrenceRepository {
     int habitId,
   );
 
+  Future<Either<Failure, HabitOccurrence?>> getOccurrenceByHabitAndDate(
+    int habitId,
+    DateTime date,
+  );
+
+  Future<Either<Failure, List<HabitOccurrence>>> getUpcomingOccurrences({
+    required DateTime from,
+    required DateTime to,
+  });
+
   Future<Either<Failure, HabitOccurrence>> updateOccurrence(
     HabitOccurrence occurrence,
   );
 
-  Future<Either<Failure, Unit>> deleteOccurrence(
-    int id,
-  );
+  Future<Either<Failure, Unit>> deleteOccurrence(int id);
 }

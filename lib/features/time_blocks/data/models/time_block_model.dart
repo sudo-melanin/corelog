@@ -7,7 +7,7 @@ import 'package:corelog/features/time_blocks/domain/entities/time_block_status.d
 class TimeBlockModel extends TimeBlock {
   const TimeBlockModel({
     required super.id,
-    required super.projectId,
+    required super.habitOccurrenceId,
     required super.plannedStart,
     required super.plannedEnd,
     required super.status,
@@ -16,12 +16,13 @@ class TimeBlockModel extends TimeBlock {
     super.taskId,
     super.actualStart,
     super.actualEnd,
+    super.description,
   });
 
   factory TimeBlockModel.fromData(db.TimeBlock data) {
     return TimeBlockModel(
       id: data.id,
-      projectId: data.projectId,
+      habitOccurrenceId: data.habitOccurrenceId,
       taskId: data.taskId,
       plannedStart: data.plannedStart,
       plannedEnd: data.plannedEnd,
@@ -30,12 +31,13 @@ class TimeBlockModel extends TimeBlock {
       status: TimeBlockStatus.values.byName(data.status),
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
+      description: data.description,
     );
   }
 
   db.TimeBlocksCompanion toCompanion() {
     return db.TimeBlocksCompanion.insert(
-      projectId: projectId,
+      habitOccurrenceId: habitOccurrenceId,
       taskId: Value(taskId),
       plannedStart: plannedStart,
       plannedEnd: plannedEnd,
@@ -44,6 +46,7 @@ class TimeBlockModel extends TimeBlock {
       status: status.name,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      description: Value(description),
     );
   }
 }

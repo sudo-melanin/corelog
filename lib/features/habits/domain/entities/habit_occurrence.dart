@@ -21,11 +21,11 @@ class HabitOccurrence extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        habitId,
-        scheduledDate,
-        completedAt,
-        status,
-        createdAt,
-      ];
+    id,
+    habitId,
+    scheduledDate,
+    completedAt,
+    status,
+    createdAt,
+  ];
 }

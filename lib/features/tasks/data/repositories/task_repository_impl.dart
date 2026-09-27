@@ -14,9 +14,7 @@ class TaskRepositoryImpl implements TaskRepository {
   final db.AppDatabase _database;
 
   @override
-  Future<Either<Failure, Task>> createTask(
-    Task task,
-  ) async {
+  Future<Either<Failure, Task>> createTask(Task task) async {
     try {
       final model = TaskModel(
         id: task.id,
@@ -30,13 +28,13 @@ class TaskRepositoryImpl implements TaskRepository {
         updatedAt: task.updatedAt,
       );
 
-      final id = await _database.into(_database.tasks).insert(
-            model.toCompanion(),
-          );
+      final id = await _database
+          .into(_database.tasks)
+          .insert(model.toCompanion());
 
-      final data = await (_database.select(_database.tasks)
-            ..where((table) => table.id.equals(id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.tasks,
+      )..where((table) => table.id.equals(id))).getSingle();
 
       return Right(TaskModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -51,13 +49,11 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, Task?>> getTaskById(
-    int id,
-  ) async {
+  Future<Either<Failure, Task?>> getTaskById(int id) async {
     try {
-      final data = await (_database.select(_database.tasks)
-            ..where((table) => table.id.equals(id)))
-          .getSingleOrNull();
+      final data = await (_database.select(
+        _database.tasks,
+      )..where((table) => table.id.equals(id))).getSingleOrNull();
 
       if (data == null) {
         return const Right(null);
@@ -98,13 +94,11 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, List<Task>>> getTasksByProject(
-    int projectId,
-  ) async {
+  Future<Either<Failure, List<Task>>> getTasksByProject(int projectId) async {
     try {
-      final data = await (_database.select(_database.tasks)
-            ..where((table) => table.projectId.equals(projectId)))
-          .get();
+      final data = await (_database.select(
+        _database.tasks,
+      )..where((table) => table.projectId.equals(projectId))).get();
 
       final tasks = data
           .map(TaskModel.fromData)
@@ -124,34 +118,31 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, Task>> updateTask(
-    Task task,
-  ) async {
+  Future<Either<Failure, Task>> updateTask(Task task) async {
     try {
-      final updated = await (_database.update(_database.tasks)
-            ..where((table) => table.id.equals(task.id)))
-          .write(
-        db.TasksCompanion(
-          projectId: Value(task.projectId),
-          title: Value(task.title),
-          description: Value(task.description),
-          status: Value(task.status.name),
-          dueDate: Value(task.dueDate),
-          completedAt: Value(task.completedAt),
-          createdAt: Value(task.createdAt),
-          updatedAt: Value(task.updatedAt),
-        ),
-      );
+      final updated =
+          await (_database.update(
+            _database.tasks,
+          )..where((table) => table.id.equals(task.id))).write(
+            db.TasksCompanion(
+              projectId: Value(task.projectId),
+              title: Value(task.title),
+              description: Value(task.description),
+              status: Value(task.status.name),
+              dueDate: Value(task.dueDate),
+              completedAt: Value(task.completedAt),
+              createdAt: Value(task.createdAt),
+              updatedAt: Value(task.updatedAt),
+            ),
+          );
 
       if (updated == 0) {
-        return const Left(
-          DatabaseFailure('Task not found.'),
-        );
+        return const Left(DatabaseFailure('Task not found.'));
       }
 
-      final data = await (_database.select(_database.tasks)
-            ..where((table) => table.id.equals(task.id)))
-          .getSingle();
+      final data = await (_database.select(
+        _database.tasks,
+      )..where((table) => table.id.equals(task.id))).getSingle();
 
       return Right(TaskModel.fromData(data));
     } on DriftWrappedException catch (error) {
@@ -166,18 +157,14 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteTask(
-    int id,
-  ) async {
+  Future<Either<Failure, Unit>> deleteTask(int id) async {
     try {
-      final deleted = await (_database.delete(_database.tasks)
-            ..where((table) => table.id.equals(id)))
-          .go();
+      final deleted = await (_database.delete(
+        _database.tasks,
+      )..where((table) => table.id.equals(id))).go();
 
       if (deleted == 0) {
-        return const Left(
-          DatabaseFailure('Task not found.'),
-        );
+        return const Left(DatabaseFailure('Task not found.'));
       }
 
       return const Right(unit);

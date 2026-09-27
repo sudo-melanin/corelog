@@ -1,5 +1,1 @@
-enum HabitOccurrenceStatus {
-  pending,
-  completed,
-  skipped,
-}
+enum HabitOccurrenceStatus { pending, completed, skipped }
