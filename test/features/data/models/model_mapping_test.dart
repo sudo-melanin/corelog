@@ -161,7 +161,7 @@ void main() {
 
       await database.into(database.habits).insert(
             HabitsCompanion.insert(
-              projectId: const Value(1),
+              activityId: const Value(1),
               name: 'Morning planning',
               description: const Value('Plan the day'),
               weekdayMask: 31,
@@ -177,7 +177,7 @@ void main() {
       final model = HabitModel.fromData(data);
 
       expect(model.id, data.id);
-      expect(model.projectId, 1);
+      expect(model.activityId, 1);
       expect(model.name, 'Morning planning');
       expect(model.description, 'Plan the day');
       expect(model.weekdayMask, 31);
@@ -194,7 +194,7 @@ void main() {
 
       final model = HabitModel(
         id: 1,
-        projectId: 2,
+        activityId: 2,
         name: 'Morning planning',
         description: 'Plan the day',
         weekdayMask: 31,
@@ -207,7 +207,7 @@ void main() {
 
       final companion = model.toCompanion();
 
-      expect(companion.projectId.value, 2);
+      expect(companion.activityId.value, 2);
       expect(companion.name.value, 'Morning planning');
       expect(companion.description.value, 'Plan the day');
       expect(companion.weekdayMask.value, 31);
@@ -232,7 +232,7 @@ void main() {
 
       final companion = model.toCompanion();
 
-      expect(companion.projectId.value, isNull);
+      expect(companion.activityId.value, isNull);
       expect(companion.description.value, isNull);
       expect(companion.targetTime.value, isNull);
       expect(companion.targetDurationMinutes.value, isNull);

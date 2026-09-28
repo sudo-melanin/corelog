@@ -1389,18 +1389,18 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
+  static const VerificationMeta _activityIdMeta = const VerificationMeta(
+    'activityId',
   );
   @override
-  late final GeneratedColumn<int> projectId = GeneratedColumn<int>(
-    'project_id',
+  late final GeneratedColumn<int> activityId = GeneratedColumn<int>(
+    'activity_id',
     aliasedName,
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id)',
+      'REFERENCES activities (id)',
     ),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
@@ -1495,7 +1495,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    projectId,
+    activityId,
     name,
     description,
     weekdayMask,
@@ -1520,10 +1520,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('project_id')) {
+    if (data.containsKey('activity_id')) {
       context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+        _activityIdMeta,
+        activityId.isAcceptableOrUnknown(data['activity_id']!, _activityIdMeta),
       );
     }
     if (data.containsKey('name')) {
@@ -1604,9 +1604,9 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      projectId: attachedDatabase.typeMapping.read(
+      activityId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}project_id'],
+        data['${effectivePrefix}activity_id'],
       ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1651,7 +1651,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
 
 class Habit extends DataClass implements Insertable<Habit> {
   final int id;
-  final int? projectId;
+  final int? activityId;
   final String name;
   final String? description;
   final int weekdayMask;
@@ -1662,7 +1662,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final DateTime updatedAt;
   const Habit({
     required this.id,
-    this.projectId,
+    this.activityId,
     required this.name,
     this.description,
     required this.weekdayMask,
@@ -1676,8 +1676,8 @@ class Habit extends DataClass implements Insertable<Habit> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<int>(projectId);
+    if (!nullToAbsent || activityId != null) {
+      map['activity_id'] = Variable<int>(activityId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
@@ -1699,9 +1699,9 @@ class Habit extends DataClass implements Insertable<Habit> {
   HabitsCompanion toCompanion(bool nullToAbsent) {
     return HabitsCompanion(
       id: Value(id),
-      projectId: projectId == null && nullToAbsent
+      activityId: activityId == null && nullToAbsent
           ? const Value.absent()
-          : Value(projectId),
+          : Value(activityId),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -1726,7 +1726,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Habit(
       id: serializer.fromJson<int>(json['id']),
-      projectId: serializer.fromJson<int?>(json['projectId']),
+      activityId: serializer.fromJson<int?>(json['activityId']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       weekdayMask: serializer.fromJson<int>(json['weekdayMask']),
@@ -1744,7 +1744,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'projectId': serializer.toJson<int?>(projectId),
+      'activityId': serializer.toJson<int?>(activityId),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'weekdayMask': serializer.toJson<int>(weekdayMask),
@@ -1758,7 +1758,7 @@ class Habit extends DataClass implements Insertable<Habit> {
 
   Habit copyWith({
     int? id,
-    Value<int?> projectId = const Value.absent(),
+    Value<int?> activityId = const Value.absent(),
     String? name,
     Value<String?> description = const Value.absent(),
     int? weekdayMask,
@@ -1769,7 +1769,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     DateTime? updatedAt,
   }) => Habit(
     id: id ?? this.id,
-    projectId: projectId.present ? projectId.value : this.projectId,
+    activityId: activityId.present ? activityId.value : this.activityId,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
     weekdayMask: weekdayMask ?? this.weekdayMask,
@@ -1784,7 +1784,9 @@ class Habit extends DataClass implements Insertable<Habit> {
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
       id: data.id.present ? data.id.value : this.id,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      activityId: data.activityId.present
+          ? data.activityId.value
+          : this.activityId,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
           ? data.description.value
@@ -1808,7 +1810,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   String toString() {
     return (StringBuffer('Habit(')
           ..write('id: $id, ')
-          ..write('projectId: $projectId, ')
+          ..write('activityId: $activityId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
@@ -1824,7 +1826,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   @override
   int get hashCode => Object.hash(
     id,
-    projectId,
+    activityId,
     name,
     description,
     weekdayMask,
@@ -1839,7 +1841,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       identical(this, other) ||
       (other is Habit &&
           other.id == this.id &&
-          other.projectId == this.projectId &&
+          other.activityId == this.activityId &&
           other.name == this.name &&
           other.description == this.description &&
           other.weekdayMask == this.weekdayMask &&
@@ -1852,7 +1854,7 @@ class Habit extends DataClass implements Insertable<Habit> {
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<int> id;
-  final Value<int?> projectId;
+  final Value<int?> activityId;
   final Value<String> name;
   final Value<String?> description;
   final Value<int> weekdayMask;
@@ -1863,7 +1865,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<DateTime> updatedAt;
   const HabitsCompanion({
     this.id = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.activityId = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.weekdayMask = const Value.absent(),
@@ -1875,7 +1877,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.activityId = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     required int weekdayMask,
@@ -1890,7 +1892,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
        updatedAt = Value(updatedAt);
   static Insertable<Habit> custom({
     Expression<int>? id,
-    Expression<int>? projectId,
+    Expression<int>? activityId,
     Expression<String>? name,
     Expression<String>? description,
     Expression<int>? weekdayMask,
@@ -1902,7 +1904,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (projectId != null) 'project_id': projectId,
+      if (activityId != null) 'activity_id': activityId,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (weekdayMask != null) 'weekday_mask': weekdayMask,
@@ -1917,7 +1919,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
 
   HabitsCompanion copyWith({
     Value<int>? id,
-    Value<int?>? projectId,
+    Value<int?>? activityId,
     Value<String>? name,
     Value<String?>? description,
     Value<int>? weekdayMask,
@@ -1929,7 +1931,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
-      projectId: projectId ?? this.projectId,
+      activityId: activityId ?? this.activityId,
       name: name ?? this.name,
       description: description ?? this.description,
       weekdayMask: weekdayMask ?? this.weekdayMask,
@@ -1948,8 +1950,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (projectId.present) {
-      map['project_id'] = Variable<int>(projectId.value);
+    if (activityId.present) {
+      map['activity_id'] = Variable<int>(activityId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -1984,7 +1986,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   String toString() {
     return (StringBuffer('HabitsCompanion(')
           ..write('id: $id, ')
-          ..write('projectId: $projectId, ')
+          ..write('activityId: $activityId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('weekdayMask: $weekdayMask, ')
@@ -2453,30 +2455,6 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<DateTime> updatedAt,
     });
 
-final class $$ProjectsTableReferences
-    extends BaseReferences<_$AppDatabase, $ProjectsTable, Project> {
-  $$ProjectsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$HabitsTable, List<Habit>> _habitsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.habits,
-    aliasName: 'projects__id__habits__project_id',
-  );
-
-  $$HabitsTableProcessedTableManager get habitsRefs {
-    final manager = $$HabitsTableTableManager(
-      $_db,
-      $_db.habits,
-    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_habitsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
 class $$ProjectsTableFilterComposer
     extends Composer<_$AppDatabase, $ProjectsTable> {
   $$ProjectsTableFilterComposer({
@@ -2515,31 +2493,6 @@ class $$ProjectsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
-
-  Expression<bool> habitsRefs(
-    Expression<bool> Function($$HabitsTableFilterComposer f) f,
-  ) {
-    final $$HabitsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.habits,
-      getReferencedColumn: (t) => t.projectId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HabitsTableFilterComposer(
-            $db: $db,
-            $table: $db.habits,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
 }
 
 class $$ProjectsTableOrderingComposer
@@ -2610,31 +2563,6 @@ class $$ProjectsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  Expression<T> habitsRefs<T extends Object>(
-    Expression<T> Function($$HabitsTableAnnotationComposer a) f,
-  ) {
-    final $$HabitsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.habits,
-      getReferencedColumn: (t) => t.projectId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HabitsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.habits,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
 }
 
 class $$ProjectsTableTableManager
@@ -2648,9 +2576,9 @@ class $$ProjectsTableTableManager
           $$ProjectsTableAnnotationComposer,
           $$ProjectsTableCreateCompanionBuilder,
           $$ProjectsTableUpdateCompanionBuilder,
-          (Project, $$ProjectsTableReferences),
+          (Project, BaseReferences<_$AppDatabase, $ProjectsTable, Project>),
           Project,
-          PrefetchHooks Function({bool habitsRefs})
+          PrefetchHooks Function()
         > {
   $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
     : super(
@@ -2699,32 +2627,15 @@ class $$ProjectsTableTableManager
               .map(
                 (e) => (
                   e.readTable<$ProjectsTable, Project>(table),
-                  $$ProjectsTableReferences(db, table, e),
+                  BaseReferences<_$AppDatabase, $ProjectsTable, Project>(
+                    db,
+                    table,
+                    e,
+                  ),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({habitsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (habitsRefs) db.habits],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (habitsRefs)
-                    await $_getPrefetchedData<Project, $ProjectsTable, Habit>(
-                      currentTable: table,
-                      referencedTable: $$ProjectsTableReferences
-                          ._habitsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$ProjectsTableReferences(db, table, p0).habitsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.projectId == item.id),
-                      typedResults: items,
-                    ),
-                ];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ),
       );
 }
@@ -2739,9 +2650,9 @@ typedef $$ProjectsTableProcessedTableManager =
       $$ProjectsTableAnnotationComposer,
       $$ProjectsTableCreateCompanionBuilder,
       $$ProjectsTableUpdateCompanionBuilder,
-      (Project, $$ProjectsTableReferences),
+      (Project, BaseReferences<_$AppDatabase, $ProjectsTable, Project>),
       Project,
-      PrefetchHooks Function({bool habitsRefs})
+      PrefetchHooks Function()
     >;
 typedef $$ActivitiesTableCreateCompanionBuilder =
     ActivitiesCompanion Function({
@@ -2780,6 +2691,25 @@ final class $$ActivitiesTableReferences
     ).filter((f) => f.activityId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_tasksRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$HabitsTable, List<Habit>> _habitsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.habits,
+    aliasName: 'activities__id__habits__activity_id',
+  );
+
+  $$HabitsTableProcessedTableManager get habitsRefs {
+    final manager = $$HabitsTableTableManager(
+      $_db,
+      $_db.habits,
+    ).filter((f) => f.activityId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_habitsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2841,6 +2771,31 @@ class $$ActivitiesTableFilterComposer
           }) => $$TasksTableFilterComposer(
             $db: $db,
             $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> habitsRefs(
+    Expression<bool> Function($$HabitsTableFilterComposer f) f,
+  ) {
+    final $$HabitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.habits,
+      getReferencedColumn: (t) => t.activityId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitsTableFilterComposer(
+            $db: $db,
+            $table: $db.habits,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2944,6 +2899,31 @@ class $$ActivitiesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> habitsRefs<T extends Object>(
+    Expression<T> Function($$HabitsTableAnnotationComposer a) f,
+  ) {
+    final $$HabitsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.habits,
+      getReferencedColumn: (t) => t.activityId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.habits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ActivitiesTableTableManager
@@ -2959,7 +2939,7 @@ class $$ActivitiesTableTableManager
           $$ActivitiesTableUpdateCompanionBuilder,
           (Activity, $$ActivitiesTableReferences),
           Activity,
-          PrefetchHooks Function({bool tasksRefs})
+          PrefetchHooks Function({bool tasksRefs, bool habitsRefs})
         > {
   $$ActivitiesTableTableManager(_$AppDatabase db, $ActivitiesTable table)
     : super(
@@ -3012,10 +2992,13 @@ class $$ActivitiesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({tasksRefs = false}) {
+          prefetchHooksCallback: ({tasksRefs = false, habitsRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (tasksRefs) db.tasks],
+              explicitlyWatchedTables: [
+                if (tasksRefs) db.tasks,
+                if (habitsRefs) db.habits,
+              ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
                 return [
@@ -3026,6 +3009,21 @@ class $$ActivitiesTableTableManager
                           ._tasksRefsTable(db),
                       managerFromTypedResult: (p0) =>
                           $$ActivitiesTableReferences(db, table, p0).tasksRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.activityId == item.id),
+                      typedResults: items,
+                    ),
+                  if (habitsRefs)
+                    await $_getPrefetchedData<
+                      Activity,
+                      $ActivitiesTable,
+                      Habit
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ActivitiesTableReferences
+                          ._habitsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$ActivitiesTableReferences(db, table, p0).habitsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
                           referencedItems.where((e) => e.activityId == item.id),
                       typedResults: items,
@@ -3050,7 +3048,7 @@ typedef $$ActivitiesTableProcessedTableManager =
       $$ActivitiesTableUpdateCompanionBuilder,
       (Activity, $$ActivitiesTableReferences),
       Activity,
-      PrefetchHooks Function({bool tasksRefs})
+      PrefetchHooks Function({bool tasksRefs, bool habitsRefs})
     >;
 typedef $$TasksTableCreateCompanionBuilder =
     TasksCompanion Function({
@@ -3445,7 +3443,7 @@ typedef $$TasksTableProcessedTableManager =
 typedef $$HabitsTableCreateCompanionBuilder =
     HabitsCompanion Function({
       Value<int> id,
-      Value<int?> projectId,
+      Value<int?> activityId,
       required String name,
       Value<String?> description,
       required int weekdayMask,
@@ -3458,7 +3456,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
       Value<int> id,
-      Value<int?> projectId,
+      Value<int?> activityId,
       Value<String> name,
       Value<String?> description,
       Value<int> weekdayMask,
@@ -3473,17 +3471,17 @@ final class $$HabitsTableReferences
     extends BaseReferences<_$AppDatabase, $HabitsTable, Habit> {
   $$HabitsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias('habits__project_id__projects__id');
+  static $ActivitiesTable _activityIdTable(_$AppDatabase db) =>
+      db.activities.createAlias('habits__activity_id__activities__id');
 
-  $$ProjectsTableProcessedTableManager? get projectId {
-    final $_column = $_itemColumn<int>('project_id');
+  $$ActivitiesTableProcessedTableManager? get activityId {
+    final $_column = $_itemColumn<int>('activity_id');
     if ($_column == null) return null;
-    final manager = $$ProjectsTableTableManager(
+    final manager = $$ActivitiesTableTableManager(
       $_db,
-      $_db.projects,
+      $_db.activities,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_activityIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -3565,20 +3563,20 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$ProjectsTableFilterComposer get projectId {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+  $$ActivitiesTableFilterComposer get activityId {
+    final $$ActivitiesTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.activityId,
+      referencedTable: $db.activities,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
+          }) => $$ActivitiesTableFilterComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.activities,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3668,20 +3666,20 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$ProjectsTableOrderingComposer get projectId {
-    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+  $$ActivitiesTableOrderingComposer get activityId {
+    final $$ActivitiesTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.activityId,
+      referencedTable: $db.activities,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableOrderingComposer(
+          }) => $$ActivitiesTableOrderingComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.activities,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3736,20 +3734,20 @@ class $$HabitsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  $$ProjectsTableAnnotationComposer get projectId {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+  $$ActivitiesTableAnnotationComposer get activityId {
+    final $$ActivitiesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.activityId,
+      referencedTable: $db.activities,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
+          }) => $$ActivitiesTableAnnotationComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.activities,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3798,7 +3796,7 @@ class $$HabitsTableTableManager
           $$HabitsTableUpdateCompanionBuilder,
           (Habit, $$HabitsTableReferences),
           Habit,
-          PrefetchHooks Function({bool projectId, bool habitOccurrencesRefs})
+          PrefetchHooks Function({bool activityId, bool habitOccurrencesRefs})
         > {
   $$HabitsTableTableManager(_$AppDatabase db, $HabitsTable table)
     : super(
@@ -3814,7 +3812,7 @@ class $$HabitsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> projectId = const Value.absent(),
+                Value<int?> activityId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int> weekdayMask = const Value.absent(),
@@ -3825,7 +3823,7 @@ class $$HabitsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
-                projectId: projectId,
+                activityId: activityId,
                 name: name,
                 description: description,
                 weekdayMask: weekdayMask,
@@ -3838,7 +3836,7 @@ class $$HabitsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> projectId = const Value.absent(),
+                Value<int?> activityId = const Value.absent(),
                 required String name,
                 Value<String?> description = const Value.absent(),
                 required int weekdayMask,
@@ -3849,7 +3847,7 @@ class $$HabitsTableTableManager
                 required DateTime updatedAt,
               }) => HabitsCompanion.insert(
                 id: id,
-                projectId: projectId,
+                activityId: activityId,
                 name: name,
                 description: description,
                 weekdayMask: weekdayMask,
@@ -3868,7 +3866,7 @@ class $$HabitsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({projectId = false, habitOccurrencesRefs = false}) {
+              ({activityId = false, habitOccurrencesRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -3890,15 +3888,15 @@ class $$HabitsTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (projectId) {
+                        if (activityId) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.projectId,
+                                    currentColumn: table.activityId,
                                     referencedTable: $$HabitsTableReferences
-                                        ._projectIdTable(db),
+                                        ._activityIdTable(db),
                                     referencedColumn: $$HabitsTableReferences
-                                        ._projectIdTable(db)
+                                        ._activityIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -3949,7 +3947,7 @@ typedef $$HabitsTableProcessedTableManager =
       $$HabitsTableUpdateCompanionBuilder,
       (Habit, $$HabitsTableReferences),
       Habit,
-      PrefetchHooks Function({bool projectId, bool habitOccurrencesRefs})
+      PrefetchHooks Function({bool activityId, bool habitOccurrencesRefs})
     >;
 typedef $$HabitOccurrencesTableCreateCompanionBuilder =
     HabitOccurrencesCompanion Function({

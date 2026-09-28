@@ -36,7 +36,9 @@ class HabitOccurrenceNotifier extends AsyncNotifier<List<HabitOccurrence>> {
 
   @override
   Future<List<HabitOccurrence>> build() async {
-    final generationResult = await _generateOccurrences();
+    final generationResult = await _generateOccurrences(
+      from: DateTime.now(),
+    );
 
     final generationFailure = generationResult.fold(
       (failure) => failure,

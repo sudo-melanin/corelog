@@ -11,7 +11,7 @@ class HabitModel extends Habit {
     required super.isActive,
     required super.createdAt,
     required super.updatedAt,
-    super.projectId,
+    super.activityId,
     super.description,
     super.targetTime,
     super.targetDuration,
@@ -20,7 +20,7 @@ class HabitModel extends Habit {
   factory HabitModel.fromData(db.Habit data) {
     return HabitModel(
       id: data.id,
-      projectId: data.projectId,
+      activityId: data.activityId,
       name: data.name,
       description: data.description,
       weekdayMask: data.weekdayMask,
@@ -36,7 +36,7 @@ class HabitModel extends Habit {
 
   db.HabitsCompanion toCompanion() {
     return db.HabitsCompanion.insert(
-      projectId: Value(projectId),
+      activityId: Value(activityId),
       name: name,
       description: Value(description),
       weekdayMask: weekdayMask,
