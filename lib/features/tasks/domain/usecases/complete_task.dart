@@ -15,7 +15,7 @@ class CompleteTask {
 
     final completedTask = Task(
       id: task.id,
-      projectId: task.projectId,
+      activityId: task.activityId,
       title: task.title,
       description: task.description,
       status: TaskStatus.completed,

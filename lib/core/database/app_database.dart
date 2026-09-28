@@ -5,16 +5,16 @@ import 'tables/habit_occurrences.dart';
 import 'tables/habits.dart';
 import 'tables/projects.dart';
 import 'tables/tasks.dart';
-import 'tables/time_blocks.dart';
+import 'tables/activities.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Projects, Tasks, TimeBlocks, Habits, HabitOccurrences])
+@DriftDatabase(tables: [Projects, Tasks, Habits, HabitOccurrences, Activities,])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -29,13 +29,16 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(habits, habits.targetDurationMinutes);
       }
 
-      if (from < 4) {
-        await m.deleteTable('timeBlocks');
-        await m.createTable(timeBlocks);
+      if (from < 6) {
+        await m.createTable(activities);
       }
 
-      if (from < 5) {
-        await m.addColumn(timeBlocks, timeBlocks.description);
+      if (from < 7) {
+        await m.addColumn(tasks, tasks.activityId);
+      }
+
+      if (from < 8) {
+        await m.deleteTable('time_blocks');
       }
     },
   );

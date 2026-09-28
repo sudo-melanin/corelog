@@ -18,7 +18,7 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       final model = TaskModel(
         id: task.id,
-        projectId: task.projectId,
+        activityId: task.activityId,
         title: task.title,
         description: task.description,
         status: task.status,
@@ -94,11 +94,11 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, List<Task>>> getTasksByProject(int projectId) async {
+  Future<Either<Failure, List<Task>>> getTasksByActivity(int activityId) async {
     try {
       final data = await (_database.select(
         _database.tasks,
-      )..where((table) => table.projectId.equals(projectId))).get();
+      )..where((table) => table.activityId.equals(activityId))).get();
 
       final tasks = data
           .map(TaskModel.fromData)
@@ -125,7 +125,7 @@ class TaskRepositoryImpl implements TaskRepository {
             _database.tasks,
           )..where((table) => table.id.equals(task.id))).write(
             db.TasksCompanion(
-              projectId: Value(task.projectId),
+              activityId: Value(task.activityId),
               title: Value(task.title),
               description: Value(task.description),
               status: Value(task.status.name),

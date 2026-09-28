@@ -9,14 +9,14 @@ class Task extends Equatable {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-    this.projectId,
+    this.activityId,
     this.description,
     this.dueDate,
     this.completedAt,
   });
 
   final int id;
-  final int? projectId;
+  final int? activityId;
   final String title;
   final String? description;
   final TaskStatus status;
@@ -28,7 +28,7 @@ class Task extends Equatable {
   @override
   List<Object?> get props => [
     id,
-    projectId,
+    activityId,
     title,
     description,
     status,

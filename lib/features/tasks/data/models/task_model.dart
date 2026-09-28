@@ -11,16 +11,16 @@ class TaskModel extends Task {
     required super.status,
     required super.createdAt,
     required super.updatedAt,
-    super.projectId,
+    super.activityId,
     super.description,
     super.dueDate,
     super.completedAt,
+
   });
 
   factory TaskModel.fromData(db.Task data) {
     return TaskModel(
       id: data.id,
-      projectId: data.projectId,
       title: data.title,
       description: data.description,
       status: TaskStatus.values.byName(data.status),
@@ -28,12 +28,13 @@ class TaskModel extends Task {
       completedAt: data.completedAt,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
+      activityId: data.activityId
     );
   }
 
   db.TasksCompanion toCompanion() {
     return db.TasksCompanion.insert(
-      projectId: Value(projectId),
+      activityId: Value(activityId),
       title: title,
       description: Value(description),
       status: status.name,
