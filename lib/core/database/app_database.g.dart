@@ -879,6 +879,28 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _plannedStartMeta = const VerificationMeta(
+    'plannedStart',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedStart = GeneratedColumn<DateTime>(
+    'planned_start',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _plannedEndMeta = const VerificationMeta(
+    'plannedEnd',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedEnd = GeneratedColumn<DateTime>(
+    'planned_end',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _completedAtMeta = const VerificationMeta(
     'completedAt',
   );
@@ -888,6 +910,39 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skippedAtMeta = const VerificationMeta(
+    'skippedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> skippedAt = GeneratedColumn<DateTime>(
+    'skipped_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skipReasonMeta = const VerificationMeta(
+    'skipReason',
+  );
+  @override
+  late final GeneratedColumn<String> skipReason = GeneratedColumn<String>(
+    'skip_reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skipNoteMeta = const VerificationMeta(
+    'skipNote',
+  );
+  @override
+  late final GeneratedColumn<String> skipNote = GeneratedColumn<String>(
+    'skip_note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -920,7 +975,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     description,
     status,
     dueDate,
+    plannedStart,
+    plannedEnd,
     completedAt,
+    skippedAt,
+    skipReason,
+    skipNote,
     createdAt,
     updatedAt,
   ];
@@ -976,6 +1036,21 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
       );
     }
+    if (data.containsKey('planned_start')) {
+      context.handle(
+        _plannedStartMeta,
+        plannedStart.isAcceptableOrUnknown(
+          data['planned_start']!,
+          _plannedStartMeta,
+        ),
+      );
+    }
+    if (data.containsKey('planned_end')) {
+      context.handle(
+        _plannedEndMeta,
+        plannedEnd.isAcceptableOrUnknown(data['planned_end']!, _plannedEndMeta),
+      );
+    }
     if (data.containsKey('completed_at')) {
       context.handle(
         _completedAtMeta,
@@ -983,6 +1058,24 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
           data['completed_at']!,
           _completedAtMeta,
         ),
+      );
+    }
+    if (data.containsKey('skipped_at')) {
+      context.handle(
+        _skippedAtMeta,
+        skippedAt.isAcceptableOrUnknown(data['skipped_at']!, _skippedAtMeta),
+      );
+    }
+    if (data.containsKey('skip_reason')) {
+      context.handle(
+        _skipReasonMeta,
+        skipReason.isAcceptableOrUnknown(data['skip_reason']!, _skipReasonMeta),
+      );
+    }
+    if (data.containsKey('skip_note')) {
+      context.handle(
+        _skipNoteMeta,
+        skipNote.isAcceptableOrUnknown(data['skip_note']!, _skipNoteMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -1034,9 +1127,29 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}due_date'],
       ),
+      plannedStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_start'],
+      ),
+      plannedEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_end'],
+      ),
       completedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
+      ),
+      skippedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}skipped_at'],
+      ),
+      skipReason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skip_reason'],
+      ),
+      skipNote: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skip_note'],
       ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -1062,7 +1175,12 @@ class Task extends DataClass implements Insertable<Task> {
   final String? description;
   final String status;
   final DateTime? dueDate;
+  final DateTime? plannedStart;
+  final DateTime? plannedEnd;
   final DateTime? completedAt;
+  final DateTime? skippedAt;
+  final String? skipReason;
+  final String? skipNote;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Task({
@@ -1072,7 +1190,12 @@ class Task extends DataClass implements Insertable<Task> {
     this.description,
     required this.status,
     this.dueDate,
+    this.plannedStart,
+    this.plannedEnd,
     this.completedAt,
+    this.skippedAt,
+    this.skipReason,
+    this.skipNote,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -1091,8 +1214,23 @@ class Task extends DataClass implements Insertable<Task> {
     if (!nullToAbsent || dueDate != null) {
       map['due_date'] = Variable<DateTime>(dueDate);
     }
+    if (!nullToAbsent || plannedStart != null) {
+      map['planned_start'] = Variable<DateTime>(plannedStart);
+    }
+    if (!nullToAbsent || plannedEnd != null) {
+      map['planned_end'] = Variable<DateTime>(plannedEnd);
+    }
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    if (!nullToAbsent || skippedAt != null) {
+      map['skipped_at'] = Variable<DateTime>(skippedAt);
+    }
+    if (!nullToAbsent || skipReason != null) {
+      map['skip_reason'] = Variable<String>(skipReason);
+    }
+    if (!nullToAbsent || skipNote != null) {
+      map['skip_note'] = Variable<String>(skipNote);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -1113,9 +1251,24 @@ class Task extends DataClass implements Insertable<Task> {
       dueDate: dueDate == null && nullToAbsent
           ? const Value.absent()
           : Value(dueDate),
+      plannedStart: plannedStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plannedStart),
+      plannedEnd: plannedEnd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plannedEnd),
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
+      skippedAt: skippedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skippedAt),
+      skipReason: skipReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skipReason),
+      skipNote: skipNote == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skipNote),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1133,7 +1286,12 @@ class Task extends DataClass implements Insertable<Task> {
       description: serializer.fromJson<String?>(json['description']),
       status: serializer.fromJson<String>(json['status']),
       dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
+      plannedStart: serializer.fromJson<DateTime?>(json['plannedStart']),
+      plannedEnd: serializer.fromJson<DateTime?>(json['plannedEnd']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      skippedAt: serializer.fromJson<DateTime?>(json['skippedAt']),
+      skipReason: serializer.fromJson<String?>(json['skipReason']),
+      skipNote: serializer.fromJson<String?>(json['skipNote']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -1148,7 +1306,12 @@ class Task extends DataClass implements Insertable<Task> {
       'description': serializer.toJson<String?>(description),
       'status': serializer.toJson<String>(status),
       'dueDate': serializer.toJson<DateTime?>(dueDate),
+      'plannedStart': serializer.toJson<DateTime?>(plannedStart),
+      'plannedEnd': serializer.toJson<DateTime?>(plannedEnd),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'skippedAt': serializer.toJson<DateTime?>(skippedAt),
+      'skipReason': serializer.toJson<String?>(skipReason),
+      'skipNote': serializer.toJson<String?>(skipNote),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -1161,7 +1324,12 @@ class Task extends DataClass implements Insertable<Task> {
     Value<String?> description = const Value.absent(),
     String? status,
     Value<DateTime?> dueDate = const Value.absent(),
+    Value<DateTime?> plannedStart = const Value.absent(),
+    Value<DateTime?> plannedEnd = const Value.absent(),
     Value<DateTime?> completedAt = const Value.absent(),
+    Value<DateTime?> skippedAt = const Value.absent(),
+    Value<String?> skipReason = const Value.absent(),
+    Value<String?> skipNote = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Task(
@@ -1171,7 +1339,12 @@ class Task extends DataClass implements Insertable<Task> {
     description: description.present ? description.value : this.description,
     status: status ?? this.status,
     dueDate: dueDate.present ? dueDate.value : this.dueDate,
+    plannedStart: plannedStart.present ? plannedStart.value : this.plannedStart,
+    plannedEnd: plannedEnd.present ? plannedEnd.value : this.plannedEnd,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    skippedAt: skippedAt.present ? skippedAt.value : this.skippedAt,
+    skipReason: skipReason.present ? skipReason.value : this.skipReason,
+    skipNote: skipNote.present ? skipNote.value : this.skipNote,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1187,9 +1360,20 @@ class Task extends DataClass implements Insertable<Task> {
           : this.description,
       status: data.status.present ? data.status.value : this.status,
       dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      plannedStart: data.plannedStart.present
+          ? data.plannedStart.value
+          : this.plannedStart,
+      plannedEnd: data.plannedEnd.present
+          ? data.plannedEnd.value
+          : this.plannedEnd,
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
+      skippedAt: data.skippedAt.present ? data.skippedAt.value : this.skippedAt,
+      skipReason: data.skipReason.present
+          ? data.skipReason.value
+          : this.skipReason,
+      skipNote: data.skipNote.present ? data.skipNote.value : this.skipNote,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1204,7 +1388,12 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('description: $description, ')
           ..write('status: $status, ')
           ..write('dueDate: $dueDate, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
           ..write('completedAt: $completedAt, ')
+          ..write('skippedAt: $skippedAt, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('skipNote: $skipNote, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1219,7 +1408,12 @@ class Task extends DataClass implements Insertable<Task> {
     description,
     status,
     dueDate,
+    plannedStart,
+    plannedEnd,
     completedAt,
+    skippedAt,
+    skipReason,
+    skipNote,
     createdAt,
     updatedAt,
   );
@@ -1233,7 +1427,12 @@ class Task extends DataClass implements Insertable<Task> {
           other.description == this.description &&
           other.status == this.status &&
           other.dueDate == this.dueDate &&
+          other.plannedStart == this.plannedStart &&
+          other.plannedEnd == this.plannedEnd &&
           other.completedAt == this.completedAt &&
+          other.skippedAt == this.skippedAt &&
+          other.skipReason == this.skipReason &&
+          other.skipNote == this.skipNote &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1245,7 +1444,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String?> description;
   final Value<String> status;
   final Value<DateTime?> dueDate;
+  final Value<DateTime?> plannedStart;
+  final Value<DateTime?> plannedEnd;
   final Value<DateTime?> completedAt;
+  final Value<DateTime?> skippedAt;
+  final Value<String?> skipReason;
+  final Value<String?> skipNote;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const TasksCompanion({
@@ -1255,7 +1459,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.description = const Value.absent(),
     this.status = const Value.absent(),
     this.dueDate = const Value.absent(),
+    this.plannedStart = const Value.absent(),
+    this.plannedEnd = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.skippedAt = const Value.absent(),
+    this.skipReason = const Value.absent(),
+    this.skipNote = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1266,7 +1475,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.description = const Value.absent(),
     required String status,
     this.dueDate = const Value.absent(),
+    this.plannedStart = const Value.absent(),
+    this.plannedEnd = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.skippedAt = const Value.absent(),
+    this.skipReason = const Value.absent(),
+    this.skipNote = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : title = Value(title),
@@ -1280,7 +1494,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<String>? description,
     Expression<String>? status,
     Expression<DateTime>? dueDate,
+    Expression<DateTime>? plannedStart,
+    Expression<DateTime>? plannedEnd,
     Expression<DateTime>? completedAt,
+    Expression<DateTime>? skippedAt,
+    Expression<String>? skipReason,
+    Expression<String>? skipNote,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -1291,7 +1510,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (description != null) 'description': description,
       if (status != null) 'status': status,
       if (dueDate != null) 'due_date': dueDate,
+      if (plannedStart != null) 'planned_start': plannedStart,
+      if (plannedEnd != null) 'planned_end': plannedEnd,
       if (completedAt != null) 'completed_at': completedAt,
+      if (skippedAt != null) 'skipped_at': skippedAt,
+      if (skipReason != null) 'skip_reason': skipReason,
+      if (skipNote != null) 'skip_note': skipNote,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -1304,7 +1528,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<String?>? description,
     Value<String>? status,
     Value<DateTime?>? dueDate,
+    Value<DateTime?>? plannedStart,
+    Value<DateTime?>? plannedEnd,
     Value<DateTime?>? completedAt,
+    Value<DateTime?>? skippedAt,
+    Value<String?>? skipReason,
+    Value<String?>? skipNote,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
@@ -1315,7 +1544,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
       description: description ?? this.description,
       status: status ?? this.status,
       dueDate: dueDate ?? this.dueDate,
+      plannedStart: plannedStart ?? this.plannedStart,
+      plannedEnd: plannedEnd ?? this.plannedEnd,
       completedAt: completedAt ?? this.completedAt,
+      skippedAt: skippedAt ?? this.skippedAt,
+      skipReason: skipReason ?? this.skipReason,
+      skipNote: skipNote ?? this.skipNote,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -1342,8 +1576,23 @@ class TasksCompanion extends UpdateCompanion<Task> {
     if (dueDate.present) {
       map['due_date'] = Variable<DateTime>(dueDate.value);
     }
+    if (plannedStart.present) {
+      map['planned_start'] = Variable<DateTime>(plannedStart.value);
+    }
+    if (plannedEnd.present) {
+      map['planned_end'] = Variable<DateTime>(plannedEnd.value);
+    }
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (skippedAt.present) {
+      map['skipped_at'] = Variable<DateTime>(skippedAt.value);
+    }
+    if (skipReason.present) {
+      map['skip_reason'] = Variable<String>(skipReason.value);
+    }
+    if (skipNote.present) {
+      map['skip_note'] = Variable<String>(skipNote.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1363,7 +1612,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('description: $description, ')
           ..write('status: $status, ')
           ..write('dueDate: $dueDate, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
           ..write('completedAt: $completedAt, ')
+          ..write('skippedAt: $skippedAt, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('skipNote: $skipNote, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -2413,6 +2667,310 @@ class HabitOccurrencesCompanion extends UpdateCompanion<HabitOccurrence> {
   }
 }
 
+class $TaskExecutionSessionsTable extends TaskExecutionSessions
+    with TableInfo<$TaskExecutionSessionsTable, TaskExecutionSession> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TaskExecutionSessionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _taskIdMeta = const VerificationMeta('taskId');
+  @override
+  late final GeneratedColumn<int> taskId = GeneratedColumn<int>(
+    'task_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES tasks (id)',
+    ),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endedAtMeta = const VerificationMeta(
+    'endedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endedAt = GeneratedColumn<DateTime>(
+    'ended_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, taskId, startedAt, endedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'task_execution_sessions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TaskExecutionSession> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('task_id')) {
+      context.handle(
+        _taskIdMeta,
+        taskId.isAcceptableOrUnknown(data['task_id']!, _taskIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_taskIdMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedAtMeta);
+    }
+    if (data.containsKey('ended_at')) {
+      context.handle(
+        _endedAtMeta,
+        endedAt.isAcceptableOrUnknown(data['ended_at']!, _endedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TaskExecutionSession map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TaskExecutionSession(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      taskId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}task_id'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      endedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ended_at'],
+      ),
+    );
+  }
+
+  @override
+  $TaskExecutionSessionsTable createAlias(String alias) {
+    return $TaskExecutionSessionsTable(attachedDatabase, alias);
+  }
+}
+
+class TaskExecutionSession extends DataClass
+    implements Insertable<TaskExecutionSession> {
+  final int id;
+  final int taskId;
+  final DateTime startedAt;
+  final DateTime? endedAt;
+  const TaskExecutionSession({
+    required this.id,
+    required this.taskId,
+    required this.startedAt,
+    this.endedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['task_id'] = Variable<int>(taskId);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    if (!nullToAbsent || endedAt != null) {
+      map['ended_at'] = Variable<DateTime>(endedAt);
+    }
+    return map;
+  }
+
+  TaskExecutionSessionsCompanion toCompanion(bool nullToAbsent) {
+    return TaskExecutionSessionsCompanion(
+      id: Value(id),
+      taskId: Value(taskId),
+      startedAt: Value(startedAt),
+      endedAt: endedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedAt),
+    );
+  }
+
+  factory TaskExecutionSession.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TaskExecutionSession(
+      id: serializer.fromJson<int>(json['id']),
+      taskId: serializer.fromJson<int>(json['taskId']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      endedAt: serializer.fromJson<DateTime?>(json['endedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'taskId': serializer.toJson<int>(taskId),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'endedAt': serializer.toJson<DateTime?>(endedAt),
+    };
+  }
+
+  TaskExecutionSession copyWith({
+    int? id,
+    int? taskId,
+    DateTime? startedAt,
+    Value<DateTime?> endedAt = const Value.absent(),
+  }) => TaskExecutionSession(
+    id: id ?? this.id,
+    taskId: taskId ?? this.taskId,
+    startedAt: startedAt ?? this.startedAt,
+    endedAt: endedAt.present ? endedAt.value : this.endedAt,
+  );
+  TaskExecutionSession copyWithCompanion(TaskExecutionSessionsCompanion data) {
+    return TaskExecutionSession(
+      id: data.id.present ? data.id.value : this.id,
+      taskId: data.taskId.present ? data.taskId.value : this.taskId,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      endedAt: data.endedAt.present ? data.endedAt.value : this.endedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaskExecutionSession(')
+          ..write('id: $id, ')
+          ..write('taskId: $taskId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('endedAt: $endedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, taskId, startedAt, endedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TaskExecutionSession &&
+          other.id == this.id &&
+          other.taskId == this.taskId &&
+          other.startedAt == this.startedAt &&
+          other.endedAt == this.endedAt);
+}
+
+class TaskExecutionSessionsCompanion
+    extends UpdateCompanion<TaskExecutionSession> {
+  final Value<int> id;
+  final Value<int> taskId;
+  final Value<DateTime> startedAt;
+  final Value<DateTime?> endedAt;
+  const TaskExecutionSessionsCompanion({
+    this.id = const Value.absent(),
+    this.taskId = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.endedAt = const Value.absent(),
+  });
+  TaskExecutionSessionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int taskId,
+    required DateTime startedAt,
+    this.endedAt = const Value.absent(),
+  }) : taskId = Value(taskId),
+       startedAt = Value(startedAt);
+  static Insertable<TaskExecutionSession> custom({
+    Expression<int>? id,
+    Expression<int>? taskId,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? endedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (taskId != null) 'task_id': taskId,
+      if (startedAt != null) 'started_at': startedAt,
+      if (endedAt != null) 'ended_at': endedAt,
+    });
+  }
+
+  TaskExecutionSessionsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? taskId,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? endedAt,
+  }) {
+    return TaskExecutionSessionsCompanion(
+      id: id ?? this.id,
+      taskId: taskId ?? this.taskId,
+      startedAt: startedAt ?? this.startedAt,
+      endedAt: endedAt ?? this.endedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (taskId.present) {
+      map['task_id'] = Variable<int>(taskId.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (endedAt.present) {
+      map['ended_at'] = Variable<DateTime>(endedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TaskExecutionSessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('taskId: $taskId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('endedAt: $endedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2423,6 +2981,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HabitOccurrencesTable habitOccurrences = $HabitOccurrencesTable(
     this,
   );
+  late final $TaskExecutionSessionsTable taskExecutionSessions =
+      $TaskExecutionSessionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2433,6 +2993,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tasks,
     habits,
     habitOccurrences,
+    taskExecutionSessions,
   ];
 }
 
@@ -3058,7 +3619,12 @@ typedef $$TasksTableCreateCompanionBuilder =
       Value<String?> description,
       required String status,
       Value<DateTime?> dueDate,
+      Value<DateTime?> plannedStart,
+      Value<DateTime?> plannedEnd,
       Value<DateTime?> completedAt,
+      Value<DateTime?> skippedAt,
+      Value<String?> skipReason,
+      Value<String?> skipNote,
       required DateTime createdAt,
       required DateTime updatedAt,
     });
@@ -3070,7 +3636,12 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<String> status,
       Value<DateTime?> dueDate,
+      Value<DateTime?> plannedStart,
+      Value<DateTime?> plannedEnd,
       Value<DateTime?> completedAt,
+      Value<DateTime?> skippedAt,
+      Value<String?> skipReason,
+      Value<String?> skipNote,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -3093,6 +3664,31 @@ final class $$TasksTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $TaskExecutionSessionsTable,
+    List<TaskExecutionSession>
+  >
+  _taskExecutionSessionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.taskExecutionSessions,
+        aliasName: 'tasks__id__task_execution_sessions__task_id',
+      );
+
+  $$TaskExecutionSessionsTableProcessedTableManager
+  get taskExecutionSessionsRefs {
+    final manager = $$TaskExecutionSessionsTableTableManager(
+      $_db,
+      $_db.taskExecutionSessions,
+    ).filter((f) => f.taskId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _taskExecutionSessionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 }
@@ -3130,8 +3726,33 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get skippedAt => $composableBuilder(
+    column: $table.skippedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skipNote => $composableBuilder(
+    column: $table.skipNote,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3166,6 +3787,32 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
           ),
     );
     return composer;
+  }
+
+  Expression<bool> taskExecutionSessionsRefs(
+    Expression<bool> Function($$TaskExecutionSessionsTableFilterComposer f) f,
+  ) {
+    final $$TaskExecutionSessionsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.taskExecutionSessions,
+          getReferencedColumn: (t) => t.taskId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TaskExecutionSessionsTableFilterComposer(
+                $db: $db,
+                $table: $db.taskExecutionSessions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
   }
 }
 
@@ -3203,8 +3850,33 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get skippedAt => $composableBuilder(
+    column: $table.skippedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skipNote => $composableBuilder(
+    column: $table.skipNote,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -3268,10 +3940,31 @@ class $$TasksTableAnnotationComposer
   GeneratedColumn<DateTime> get dueDate =>
       $composableBuilder(column: $table.dueDate, builder: (column) => column);
 
+  GeneratedColumn<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get skippedAt =>
+      $composableBuilder(column: $table.skippedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get skipNote =>
+      $composableBuilder(column: $table.skipNote, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -3301,6 +3994,32 @@ class $$TasksTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> taskExecutionSessionsRefs<T extends Object>(
+    Expression<T> Function($$TaskExecutionSessionsTableAnnotationComposer a) f,
+  ) {
+    final $$TaskExecutionSessionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.taskExecutionSessions,
+          getReferencedColumn: (t) => t.taskId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TaskExecutionSessionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.taskExecutionSessions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$TasksTableTableManager
@@ -3316,7 +4035,10 @@ class $$TasksTableTableManager
           $$TasksTableUpdateCompanionBuilder,
           (Task, $$TasksTableReferences),
           Task,
-          PrefetchHooks Function({bool activityId})
+          PrefetchHooks Function({
+            bool activityId,
+            bool taskExecutionSessionsRefs,
+          })
         > {
   $$TasksTableTableManager(_$AppDatabase db, $TasksTable table)
     : super(
@@ -3337,7 +4059,12 @@ class $$TasksTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> dueDate = const Value.absent(),
+                Value<DateTime?> plannedStart = const Value.absent(),
+                Value<DateTime?> plannedEnd = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> skippedAt = const Value.absent(),
+                Value<String?> skipReason = const Value.absent(),
+                Value<String?> skipNote = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => TasksCompanion(
@@ -3347,7 +4074,12 @@ class $$TasksTableTableManager
                 description: description,
                 status: status,
                 dueDate: dueDate,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
                 completedAt: completedAt,
+                skippedAt: skippedAt,
+                skipReason: skipReason,
+                skipNote: skipNote,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -3359,7 +4091,12 @@ class $$TasksTableTableManager
                 Value<String?> description = const Value.absent(),
                 required String status,
                 Value<DateTime?> dueDate = const Value.absent(),
+                Value<DateTime?> plannedStart = const Value.absent(),
+                Value<DateTime?> plannedEnd = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> skippedAt = const Value.absent(),
+                Value<String?> skipReason = const Value.absent(),
+                Value<String?> skipNote = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
               }) => TasksCompanion.insert(
@@ -3369,7 +4106,12 @@ class $$TasksTableTableManager
                 description: description,
                 status: status,
                 dueDate: dueDate,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
                 completedAt: completedAt,
+                skippedAt: skippedAt,
+                skipReason: skipReason,
+                skipNote: skipNote,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -3381,47 +4123,72 @@ class $$TasksTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({activityId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (activityId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.activityId,
-                                referencedTable: $$TasksTableReferences
-                                    ._activityIdTable(db),
-                                referencedColumn: $$TasksTableReferences
-                                    ._activityIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({activityId = false, taskExecutionSessionsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (taskExecutionSessionsRefs) db.taskExecutionSessions,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (activityId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.activityId,
+                                    referencedTable: $$TasksTableReferences
+                                        ._activityIdTable(db),
+                                    referencedColumn: $$TasksTableReferences
+                                        ._activityIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (taskExecutionSessionsRefs)
+                        await $_getPrefetchedData<
+                          Task,
+                          $TasksTable,
+                          TaskExecutionSession
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TasksTableReferences
+                              ._taskExecutionSessionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TasksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).taskExecutionSessionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.taskId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -3438,7 +4205,7 @@ typedef $$TasksTableProcessedTableManager =
       $$TasksTableUpdateCompanionBuilder,
       (Task, $$TasksTableReferences),
       Task,
-      PrefetchHooks Function({bool activityId})
+      PrefetchHooks Function({bool activityId, bool taskExecutionSessionsRefs})
     >;
 typedef $$HabitsTableCreateCompanionBuilder =
     HabitsCompanion Function({
@@ -4292,6 +5059,323 @@ typedef $$HabitOccurrencesTableProcessedTableManager =
       HabitOccurrence,
       PrefetchHooks Function({bool habitId})
     >;
+typedef $$TaskExecutionSessionsTableCreateCompanionBuilder =
+    TaskExecutionSessionsCompanion Function({
+      Value<int> id,
+      required int taskId,
+      required DateTime startedAt,
+      Value<DateTime?> endedAt,
+    });
+typedef $$TaskExecutionSessionsTableUpdateCompanionBuilder =
+    TaskExecutionSessionsCompanion Function({
+      Value<int> id,
+      Value<int> taskId,
+      Value<DateTime> startedAt,
+      Value<DateTime?> endedAt,
+    });
+
+final class $$TaskExecutionSessionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $TaskExecutionSessionsTable,
+          TaskExecutionSession
+        > {
+  $$TaskExecutionSessionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $TasksTable _taskIdTable(_$AppDatabase db) =>
+      db.tasks.createAlias('task_execution_sessions__task_id__tasks__id');
+
+  $$TasksTableProcessedTableManager get taskId {
+    final $_column = $_itemColumn<int>('task_id')!;
+
+    final manager = $$TasksTableTableManager(
+      $_db,
+      $_db.tasks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_taskIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$TaskExecutionSessionsTableFilterComposer
+    extends Composer<_$AppDatabase, $TaskExecutionSessionsTable> {
+  $$TaskExecutionSessionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endedAt => $composableBuilder(
+    column: $table.endedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$TasksTableFilterComposer get taskId {
+    final $$TasksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableFilterComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TaskExecutionSessionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TaskExecutionSessionsTable> {
+  $$TaskExecutionSessionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endedAt => $composableBuilder(
+    column: $table.endedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$TasksTableOrderingComposer get taskId {
+    final $$TasksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableOrderingComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TaskExecutionSessionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TaskExecutionSessionsTable> {
+  $$TaskExecutionSessionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endedAt =>
+      $composableBuilder(column: $table.endedAt, builder: (column) => column);
+
+  $$TasksTableAnnotationComposer get taskId {
+    final $$TasksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.taskId,
+      referencedTable: $db.tasks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TasksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tasks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TaskExecutionSessionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TaskExecutionSessionsTable,
+          TaskExecutionSession,
+          $$TaskExecutionSessionsTableFilterComposer,
+          $$TaskExecutionSessionsTableOrderingComposer,
+          $$TaskExecutionSessionsTableAnnotationComposer,
+          $$TaskExecutionSessionsTableCreateCompanionBuilder,
+          $$TaskExecutionSessionsTableUpdateCompanionBuilder,
+          (TaskExecutionSession, $$TaskExecutionSessionsTableReferences),
+          TaskExecutionSession,
+          PrefetchHooks Function({bool taskId})
+        > {
+  $$TaskExecutionSessionsTableTableManager(
+    _$AppDatabase db,
+    $TaskExecutionSessionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TaskExecutionSessionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$TaskExecutionSessionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$TaskExecutionSessionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> taskId = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> endedAt = const Value.absent(),
+              }) => TaskExecutionSessionsCompanion(
+                id: id,
+                taskId: taskId,
+                startedAt: startedAt,
+                endedAt: endedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int taskId,
+                required DateTime startedAt,
+                Value<DateTime?> endedAt = const Value.absent(),
+              }) => TaskExecutionSessionsCompanion.insert(
+                id: id,
+                taskId: taskId,
+                startedAt: startedAt,
+                endedAt: endedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $TaskExecutionSessionsTable,
+                    TaskExecutionSession
+                  >(table),
+                  $$TaskExecutionSessionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({taskId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (taskId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.taskId,
+                                referencedTable:
+                                    $$TaskExecutionSessionsTableReferences
+                                        ._taskIdTable(db),
+                                referencedColumn:
+                                    $$TaskExecutionSessionsTableReferences
+                                        ._taskIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$TaskExecutionSessionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TaskExecutionSessionsTable,
+      TaskExecutionSession,
+      $$TaskExecutionSessionsTableFilterComposer,
+      $$TaskExecutionSessionsTableOrderingComposer,
+      $$TaskExecutionSessionsTableAnnotationComposer,
+      $$TaskExecutionSessionsTableCreateCompanionBuilder,
+      $$TaskExecutionSessionsTableUpdateCompanionBuilder,
+      (TaskExecutionSession, $$TaskExecutionSessionsTableReferences),
+      TaskExecutionSession,
+      PrefetchHooks Function({bool taskId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4306,4 +5390,6 @@ class $AppDatabaseManager {
       $$HabitsTableTableManager(_db, _db.habits);
   $$HabitOccurrencesTableTableManager get habitOccurrences =>
       $$HabitOccurrencesTableTableManager(_db, _db.habitOccurrences);
+  $$TaskExecutionSessionsTableTableManager get taskExecutionSessions =>
+      $$TaskExecutionSessionsTableTableManager(_db, _db.taskExecutionSessions);
 }

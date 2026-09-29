@@ -1,3 +1,4 @@
+import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,25 +46,33 @@ void main() {
   );
 }
 
-  Task createTask({
-    required int activityId,
-    String title = 'Build task repository',
-    TaskStatus status = TaskStatus.pending,
-  }) {
-    final now = DateTime(2026, 1, 1, 10);
+Task createTask({
+  required int activityId,
+  String title = 'Build task repository',
+  TaskStatus status = TaskStatus.pending,
+  DateTime? skippedAt,
+  TaskSkipReason? skipReason,
+  String? skipNote,
+}) {
+  final now = DateTime(2026, 1, 1, 10);
 
-    return Task(
-      id: 0,
-      activityId: activityId,
-      title: title,
-      description: 'Repository test task',
-      status: status,
-      dueDate: DateTime(2026, 1, 2, 10),
-      completedAt: null,
-      createdAt: now,
-      updatedAt: now,
-    );
-  }
+  return Task(
+    id: 0,
+    activityId: activityId,
+    title: title,
+    description: 'Repository test task',
+    status: status,
+    dueDate: DateTime(2026, 1, 2, 10),
+    plannedStart: DateTime(2026, 1, 1, 14),
+    plannedEnd: DateTime(2026, 1, 1, 15, 30),
+    completedAt: null,
+    createdAt: now,
+    updatedAt: now,
+    skippedAt: skippedAt,
+    skipReason: skipReason,
+    skipNote: skipNote,
+  );
+}
 
   test('createTask creates and returns a task', () async {
     final activity = await createActivity();
@@ -79,6 +88,10 @@ void main() {
         expect(task.activityId, activity.id);
         expect(task.title, 'Build task repository');
         expect(task.status, TaskStatus.pending);
+        expect(task.plannedStart, DateTime(2026, 1, 1, 14));
+        expect(task.plannedEnd, DateTime(2026, 1, 1, 15, 30));
+        expect(task.skippedAt, isNull); expect(task.skipReason, isNull); expect(task.skipNote, isNull);
+        
       },
     );
   });
@@ -207,6 +220,8 @@ void main() {
       completedAt: null,
       createdAt: task.createdAt,
       updatedAt: DateTime(2026, 1, 2, 10),
+      plannedStart: DateTime(2026, 1, 3, 9),
+      plannedEnd: DateTime(2026, 1, 3, 10, 30),
     );
 
     final result = await repository.updateTask(updatedTask);
@@ -218,6 +233,8 @@ void main() {
         expect(updated.title, 'Updated task');
         expect(updated.status, TaskStatus.inProgress);
         expect(updated.description, 'Updated description');
+        expect(updated.plannedStart, DateTime(2026, 1, 3, 9));
+        expect(updated.plannedEnd, DateTime(2026, 1, 3, 10, 30));
       },
     );
   });
@@ -275,4 +292,25 @@ void main() {
       (_) => fail('Expected deleteTask to fail.'),
     );
   });
+
+  test('createTask supports an unscheduled task', () async {
+  final result = await repository.createTask(
+    Task(
+      id: 0,
+      title: 'Unscheduled task',
+      status: TaskStatus.pending,
+      createdAt: DateTime(2026, 1, 1, 10),
+      updatedAt: DateTime(2026, 1, 1, 10),
+    ),
+  );
+
+  result.match(
+    (failure) => fail(failure.message),
+    (task) {
+      expect(task.id, greaterThan(0));
+      expect(task.plannedStart, isNull);
+      expect(task.plannedEnd, isNull);
+    },
+  );
+});
 }

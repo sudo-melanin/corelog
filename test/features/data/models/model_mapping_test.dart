@@ -1,3 +1,4 @@
+import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:drift/drift.dart' hide isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -86,6 +87,9 @@ void main() {
               completedAt: Value(completedAt),
               createdAt: createdAt,
               updatedAt: updatedAt,
+              skippedAt: Value(DateTime(2026, 1, 12, 14)),
+              skipReason: const Value('higherPriorityCameUp'),
+              skipNote: const Value('Urgent work came up'),
             ),
           );
 
@@ -99,6 +103,12 @@ void main() {
       expect(model.status, TaskStatus.inProgress);
       expect(model.dueDate, dueDate);
       expect(model.completedAt, completedAt);
+      expect(model.skippedAt, DateTime(2026, 1, 12, 14));
+      expect(
+        model.skipReason,
+        TaskSkipReason.higherPriorityCameUp,
+      );
+      expect(model.skipNote, 'Urgent work came up');
       expect(model.createdAt, createdAt);
       expect(model.updatedAt, updatedAt);
     });
@@ -119,7 +129,10 @@ void main() {
         completedAt: completedAt,
         createdAt: createdAt,
         updatedAt: updatedAt,
-      );
+        skippedAt: DateTime(2026, 1, 12, 14),
+        skipReason: TaskSkipReason.higherPriorityCameUp,
+        skipNote: 'Urgent work came up',
+              );
 
       final companion = model.toCompanion();
 
@@ -129,8 +142,21 @@ void main() {
       expect(companion.status.value, 'completed');
       expect(companion.dueDate.value, dueDate);
       expect(companion.completedAt.value, completedAt);
+      expect(
+        companion.skippedAt.value,
+        DateTime(2026, 1, 12, 14),
+      );
+      expect(
+        companion.skipReason.value,
+        'higherPriorityCameUp',
+      );
+      expect(
+        companion.skipNote.value,
+        'Urgent work came up',
+      );
       expect(companion.createdAt.value, createdAt);
       expect(companion.updatedAt.value, updatedAt);
+
     });
 
     test('toCompanion preserves nullable task fields', () {
@@ -150,6 +176,9 @@ void main() {
       expect(companion.description.value, isNull);
       expect(companion.dueDate.value, isNull);
       expect(companion.completedAt.value, isNull);
+      expect(companion.skippedAt.value, isNull);
+      expect(companion.skipReason.value, isNull);
+      expect(companion.skipNote.value, isNull);
     });
   });
 

@@ -18,3 +18,7 @@ class NotificationFailure extends Failure {
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
 }
+
+class ValidationFailure extends Failure {
+  const ValidationFailure(super.message);
+}

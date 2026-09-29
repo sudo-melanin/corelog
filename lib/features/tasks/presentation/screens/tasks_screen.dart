@@ -72,7 +72,84 @@ class TasksScreen extends ConsumerWidget {
                             );
                         }
                       },
-                    );
+
+                      onStart: () async {
+                        final success = await ref
+                            .read(taskNotifierProvider.notifier)
+                            .startTask(tasks[index]);
+
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Task started.' : 'Could not start task.',
+                              ),
+                            ),
+                          );
+                      },
+                      onPause: () async {
+                        final success = await ref
+                            .read(taskNotifierProvider.notifier)
+                            .pauseTask(tasks[index]);
+
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Task paused.' : 'Could not pause task.',
+                              ),
+                            ),
+                          );
+                      },
+                      onResume: () async {
+                        final success = await ref
+                            .read(taskNotifierProvider.notifier)
+                            .resumeTask(tasks[index]);
+
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Task resumed.' : 'Could not resume task.',
+                              ),
+                            ),
+                          );
+                      },
+                      onSkip: () async {
+                        final result = await showSkipTaskDialog(context);
+
+                        if (result == null || !context.mounted) return;
+
+                        final success = await ref
+                            .read(taskNotifierProvider.notifier)
+                            .skipTask(
+                              task: tasks[index],
+                              reason: result.reason,
+                              note: result.note,
+                            );
+
+                        if (!context.mounted) return;
+
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Task skipped.' : 'Could not skip task.',
+                              ),
+                            ),
+                          );
+                      },
+                                          );
                   },
                 ),
               );

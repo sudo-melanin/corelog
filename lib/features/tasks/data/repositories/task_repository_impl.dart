@@ -26,6 +26,11 @@ class TaskRepositoryImpl implements TaskRepository {
         completedAt: task.completedAt,
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
+        plannedStart: task.plannedStart,
+        plannedEnd: task.plannedEnd,
+        skippedAt: task.skippedAt,
+        skipReason: task.skipReason,
+        skipNote: task.skipNote
       );
 
       final id = await _database
@@ -130,9 +135,14 @@ class TaskRepositoryImpl implements TaskRepository {
               description: Value(task.description),
               status: Value(task.status.name),
               dueDate: Value(task.dueDate),
+              plannedStart: Value(task.plannedStart),
+              plannedEnd: Value(task.plannedEnd),
               completedAt: Value(task.completedAt),
               createdAt: Value(task.createdAt),
               updatedAt: Value(task.updatedAt),
+              skippedAt: Value(task.skippedAt),
+              skipReason: Value(task.skipReason?.name),
+              skipNote: Value(task.skipNote),
             ),
           );
 

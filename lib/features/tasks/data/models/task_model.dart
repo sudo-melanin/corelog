@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:corelog/core/database/app_database.dart' as db;
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
+import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 
 class TaskModel extends Task {
   const TaskModel({
@@ -15,6 +16,11 @@ class TaskModel extends Task {
     super.description,
     super.dueDate,
     super.completedAt,
+    super.skippedAt,
+    super.skipReason,
+    super.skipNote,
+    super.plannedStart,
+    super.plannedEnd,
 
   });
 
@@ -28,7 +34,14 @@ class TaskModel extends Task {
       completedAt: data.completedAt,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
-      activityId: data.activityId
+      activityId: data.activityId,
+      plannedStart: data.plannedStart,
+      plannedEnd: data.plannedEnd,
+      skippedAt: data.skippedAt,
+      skipNote: data.skipNote,
+      skipReason: data.skipReason == null
+      ? null
+      : TaskSkipReason.values.byName(data.skipReason!),
     );
   }
 
@@ -42,6 +55,11 @@ class TaskModel extends Task {
       completedAt: Value(completedAt),
       createdAt: createdAt,
       updatedAt: updatedAt,
+      plannedStart: Value(plannedStart),
+      plannedEnd: Value(plannedEnd),
+      skippedAt: Value(skippedAt),
+      skipReason: Value(skipReason?.name),
+      skipNote: Value(skipNote),
     );
   }
 }
