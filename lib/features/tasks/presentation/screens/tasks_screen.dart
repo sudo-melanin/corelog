@@ -10,7 +10,7 @@ class TasksScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasksAsync = ref.watch(taskNotifierProvider);
+    final tasksAsync = ref.watch(todayTasksProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tasks')),
@@ -22,134 +22,63 @@ class TasksScreen extends ConsumerWidget {
             error: (error, _) => TaskErrorState(
               message: _errorMessage(error),
               onRetry: () {
-                ref.read(taskNotifierProvider.notifier).refresh();
+                ref.invalidate(todayTasksProvider);
               },
             ),
             data: (tasks) {
-              if (tasks.isEmpty) {
+              final groups = TodayTaskGroups.fromTasks(
+                tasks,
+                currentTime: DateTime.now(),
+              );
+                if (tasks.isEmpty) {
                 return const TaskEmptyState();
               }
 
               return RefreshIndicator(
-                onRefresh: () {
-                  return ref.read(taskNotifierProvider.notifier).refresh();
-                },
-                child: ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: tasks.length,
-                  separatorBuilder: (_, _) =>
-                      const SizedBox(height: AppSpacing.sm),
-                  itemBuilder: (context, index) {
+               onRefresh: () async {
+                ref.invalidate(todayTasksProvider);
+                await ref.read(todayTasksProvider.future);
+              },
+                child: TodayTaskSections(
+                  nowTasks: groups.now,
+                  overdueTasks: groups.overdue,
+                  upNextTasks: groups.upNext,
+                  unscheduledTasks: groups.unscheduled,
+                  currentDate: DateTime.now(),
+                  taskBuilder: (task) {
                     return TaskCard(
-                      task: tasks[index],
-                      onComplete: () async {
-                        final success = await ref
-                            .read(taskNotifierProvider.notifier)
-                            .completeTask(tasks[index]);
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Task completed.' : 'Could not complete task.',
-                              ),
-                            ),
-                          );
-                      },
-                      onReopen: () async {
-                        await ref
-                            .read(taskNotifierProvider.notifier)
-                            .reopenTask(tasks[index]);
-
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              const SnackBar(content: Text('Task reopened.')),
-                            );
-                        }
-                      },
-
-                      onStart: () async {
-                        final success = await ref
-                            .read(taskNotifierProvider.notifier)
-                            .startTask(tasks[index]);
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Task started.' : 'Could not start task.',
-                              ),
-                            ),
-                          );
-                      },
-                      onPause: () async {
-                        final success = await ref
-                            .read(taskNotifierProvider.notifier)
-                            .pauseTask(tasks[index]);
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Task paused.' : 'Could not pause task.',
-                              ),
-                            ),
-                          );
-                      },
-                      onResume: () async {
-                        final success = await ref
-                            .read(taskNotifierProvider.notifier)
-                            .resumeTask(tasks[index]);
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Task resumed.' : 'Could not resume task.',
-                              ),
-                            ),
-                          );
-                      },
-                      onSkip: () async {
-                        final result = await showSkipTaskDialog(context);
-
-                        if (result == null || !context.mounted) return;
-
-                        final success = await ref
-                            .read(taskNotifierProvider.notifier)
-                            .skipTask(
-                              task: tasks[index],
-                              reason: result.reason,
-                              note: result.note,
-                            );
-
-                        if (!context.mounted) return;
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success ? 'Task skipped.' : 'Could not skip task.',
-                              ),
-                            ),
-                          );
-                      },
-                                          );
+                      task: task,
+                      onComplete: () => TaskCardActionHandlers.complete(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                      onReopen: () => TaskCardActionHandlers.reopen(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                      onStart: () => TaskCardActionHandlers.start(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                      onPause: () => TaskCardActionHandlers.pause(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                      onResume: () => TaskCardActionHandlers.resume(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                      onSkip: () => TaskCardActionHandlers.skip(
+                        context: context,
+                        ref: ref,
+                        task: task,
+                      ),
+                    );
                   },
                 ),
               );

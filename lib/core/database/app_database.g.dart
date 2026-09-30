@@ -2971,6 +2971,542 @@ class TaskExecutionSessionsCompanion
   }
 }
 
+class $ActivityHistoryTable extends ActivityHistory
+    with TableInfo<$ActivityHistoryTable, ActivityHistoryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ActivityHistoryTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _taskIdMeta = const VerificationMeta('taskId');
+  @override
+  late final GeneratedColumn<int> taskId = GeneratedColumn<int>(
+    'task_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _activityIdMeta = const VerificationMeta(
+    'activityId',
+  );
+  @override
+  late final GeneratedColumn<int> activityId = GeneratedColumn<int>(
+    'activity_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _taskTitleMeta = const VerificationMeta(
+    'taskTitle',
+  );
+  @override
+  late final GeneratedColumn<String> taskTitle = GeneratedColumn<String>(
+    'task_title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _plannedStartMeta = const VerificationMeta(
+    'plannedStart',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedStart = GeneratedColumn<DateTime>(
+    'planned_start',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _plannedEndMeta = const VerificationMeta(
+    'plannedEnd',
+  );
+  @override
+  late final GeneratedColumn<DateTime> plannedEnd = GeneratedColumn<DateTime>(
+    'planned_end',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actualDurationMinutesMeta =
+      const VerificationMeta('actualDurationMinutes');
+  @override
+  late final GeneratedColumn<int> actualDurationMinutes = GeneratedColumn<int>(
+    'actual_duration_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    taskId,
+    activityId,
+    taskTitle,
+    plannedStart,
+    plannedEnd,
+    completedAt,
+    actualDurationMinutes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'activity_history';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ActivityHistoryData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('task_id')) {
+      context.handle(
+        _taskIdMeta,
+        taskId.isAcceptableOrUnknown(data['task_id']!, _taskIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_taskIdMeta);
+    }
+    if (data.containsKey('activity_id')) {
+      context.handle(
+        _activityIdMeta,
+        activityId.isAcceptableOrUnknown(data['activity_id']!, _activityIdMeta),
+      );
+    }
+    if (data.containsKey('task_title')) {
+      context.handle(
+        _taskTitleMeta,
+        taskTitle.isAcceptableOrUnknown(data['task_title']!, _taskTitleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_taskTitleMeta);
+    }
+    if (data.containsKey('planned_start')) {
+      context.handle(
+        _plannedStartMeta,
+        plannedStart.isAcceptableOrUnknown(
+          data['planned_start']!,
+          _plannedStartMeta,
+        ),
+      );
+    }
+    if (data.containsKey('planned_end')) {
+      context.handle(
+        _plannedEndMeta,
+        plannedEnd.isAcceptableOrUnknown(data['planned_end']!, _plannedEndMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_completedAtMeta);
+    }
+    if (data.containsKey('actual_duration_minutes')) {
+      context.handle(
+        _actualDurationMinutesMeta,
+        actualDurationMinutes.isAcceptableOrUnknown(
+          data['actual_duration_minutes']!,
+          _actualDurationMinutesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_actualDurationMinutesMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ActivityHistoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ActivityHistoryData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      taskId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}task_id'],
+      )!,
+      activityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}activity_id'],
+      ),
+      taskTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}task_title'],
+      )!,
+      plannedStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_start'],
+      ),
+      plannedEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}planned_end'],
+      ),
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      )!,
+      actualDurationMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}actual_duration_minutes'],
+      )!,
+    );
+  }
+
+  @override
+  $ActivityHistoryTable createAlias(String alias) {
+    return $ActivityHistoryTable(attachedDatabase, alias);
+  }
+}
+
+class ActivityHistoryData extends DataClass
+    implements Insertable<ActivityHistoryData> {
+  final int id;
+
+  /// Historical reference only. Not a foreign key.
+  final int taskId;
+
+  /// Historical reference only. Not a foreign key.
+  final int? activityId;
+
+  /// Snapshot of the task title at completion time.
+  final String taskTitle;
+  final DateTime? plannedStart;
+  final DateTime? plannedEnd;
+  final DateTime completedAt;
+
+  /// Stored as minutes to keep the database representation simple.
+  final int actualDurationMinutes;
+  const ActivityHistoryData({
+    required this.id,
+    required this.taskId,
+    this.activityId,
+    required this.taskTitle,
+    this.plannedStart,
+    this.plannedEnd,
+    required this.completedAt,
+    required this.actualDurationMinutes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['task_id'] = Variable<int>(taskId);
+    if (!nullToAbsent || activityId != null) {
+      map['activity_id'] = Variable<int>(activityId);
+    }
+    map['task_title'] = Variable<String>(taskTitle);
+    if (!nullToAbsent || plannedStart != null) {
+      map['planned_start'] = Variable<DateTime>(plannedStart);
+    }
+    if (!nullToAbsent || plannedEnd != null) {
+      map['planned_end'] = Variable<DateTime>(plannedEnd);
+    }
+    map['completed_at'] = Variable<DateTime>(completedAt);
+    map['actual_duration_minutes'] = Variable<int>(actualDurationMinutes);
+    return map;
+  }
+
+  ActivityHistoryCompanion toCompanion(bool nullToAbsent) {
+    return ActivityHistoryCompanion(
+      id: Value(id),
+      taskId: Value(taskId),
+      activityId: activityId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activityId),
+      taskTitle: Value(taskTitle),
+      plannedStart: plannedStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plannedStart),
+      plannedEnd: plannedEnd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plannedEnd),
+      completedAt: Value(completedAt),
+      actualDurationMinutes: Value(actualDurationMinutes),
+    );
+  }
+
+  factory ActivityHistoryData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ActivityHistoryData(
+      id: serializer.fromJson<int>(json['id']),
+      taskId: serializer.fromJson<int>(json['taskId']),
+      activityId: serializer.fromJson<int?>(json['activityId']),
+      taskTitle: serializer.fromJson<String>(json['taskTitle']),
+      plannedStart: serializer.fromJson<DateTime?>(json['plannedStart']),
+      plannedEnd: serializer.fromJson<DateTime?>(json['plannedEnd']),
+      completedAt: serializer.fromJson<DateTime>(json['completedAt']),
+      actualDurationMinutes: serializer.fromJson<int>(
+        json['actualDurationMinutes'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'taskId': serializer.toJson<int>(taskId),
+      'activityId': serializer.toJson<int?>(activityId),
+      'taskTitle': serializer.toJson<String>(taskTitle),
+      'plannedStart': serializer.toJson<DateTime?>(plannedStart),
+      'plannedEnd': serializer.toJson<DateTime?>(plannedEnd),
+      'completedAt': serializer.toJson<DateTime>(completedAt),
+      'actualDurationMinutes': serializer.toJson<int>(actualDurationMinutes),
+    };
+  }
+
+  ActivityHistoryData copyWith({
+    int? id,
+    int? taskId,
+    Value<int?> activityId = const Value.absent(),
+    String? taskTitle,
+    Value<DateTime?> plannedStart = const Value.absent(),
+    Value<DateTime?> plannedEnd = const Value.absent(),
+    DateTime? completedAt,
+    int? actualDurationMinutes,
+  }) => ActivityHistoryData(
+    id: id ?? this.id,
+    taskId: taskId ?? this.taskId,
+    activityId: activityId.present ? activityId.value : this.activityId,
+    taskTitle: taskTitle ?? this.taskTitle,
+    plannedStart: plannedStart.present ? plannedStart.value : this.plannedStart,
+    plannedEnd: plannedEnd.present ? plannedEnd.value : this.plannedEnd,
+    completedAt: completedAt ?? this.completedAt,
+    actualDurationMinutes: actualDurationMinutes ?? this.actualDurationMinutes,
+  );
+  ActivityHistoryData copyWithCompanion(ActivityHistoryCompanion data) {
+    return ActivityHistoryData(
+      id: data.id.present ? data.id.value : this.id,
+      taskId: data.taskId.present ? data.taskId.value : this.taskId,
+      activityId: data.activityId.present
+          ? data.activityId.value
+          : this.activityId,
+      taskTitle: data.taskTitle.present ? data.taskTitle.value : this.taskTitle,
+      plannedStart: data.plannedStart.present
+          ? data.plannedStart.value
+          : this.plannedStart,
+      plannedEnd: data.plannedEnd.present
+          ? data.plannedEnd.value
+          : this.plannedEnd,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      actualDurationMinutes: data.actualDurationMinutes.present
+          ? data.actualDurationMinutes.value
+          : this.actualDurationMinutes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ActivityHistoryData(')
+          ..write('id: $id, ')
+          ..write('taskId: $taskId, ')
+          ..write('activityId: $activityId, ')
+          ..write('taskTitle: $taskTitle, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('actualDurationMinutes: $actualDurationMinutes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    taskId,
+    activityId,
+    taskTitle,
+    plannedStart,
+    plannedEnd,
+    completedAt,
+    actualDurationMinutes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ActivityHistoryData &&
+          other.id == this.id &&
+          other.taskId == this.taskId &&
+          other.activityId == this.activityId &&
+          other.taskTitle == this.taskTitle &&
+          other.plannedStart == this.plannedStart &&
+          other.plannedEnd == this.plannedEnd &&
+          other.completedAt == this.completedAt &&
+          other.actualDurationMinutes == this.actualDurationMinutes);
+}
+
+class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
+  final Value<int> id;
+  final Value<int> taskId;
+  final Value<int?> activityId;
+  final Value<String> taskTitle;
+  final Value<DateTime?> plannedStart;
+  final Value<DateTime?> plannedEnd;
+  final Value<DateTime> completedAt;
+  final Value<int> actualDurationMinutes;
+  const ActivityHistoryCompanion({
+    this.id = const Value.absent(),
+    this.taskId = const Value.absent(),
+    this.activityId = const Value.absent(),
+    this.taskTitle = const Value.absent(),
+    this.plannedStart = const Value.absent(),
+    this.plannedEnd = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.actualDurationMinutes = const Value.absent(),
+  });
+  ActivityHistoryCompanion.insert({
+    this.id = const Value.absent(),
+    required int taskId,
+    this.activityId = const Value.absent(),
+    required String taskTitle,
+    this.plannedStart = const Value.absent(),
+    this.plannedEnd = const Value.absent(),
+    required DateTime completedAt,
+    required int actualDurationMinutes,
+  }) : taskId = Value(taskId),
+       taskTitle = Value(taskTitle),
+       completedAt = Value(completedAt),
+       actualDurationMinutes = Value(actualDurationMinutes);
+  static Insertable<ActivityHistoryData> custom({
+    Expression<int>? id,
+    Expression<int>? taskId,
+    Expression<int>? activityId,
+    Expression<String>? taskTitle,
+    Expression<DateTime>? plannedStart,
+    Expression<DateTime>? plannedEnd,
+    Expression<DateTime>? completedAt,
+    Expression<int>? actualDurationMinutes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (taskId != null) 'task_id': taskId,
+      if (activityId != null) 'activity_id': activityId,
+      if (taskTitle != null) 'task_title': taskTitle,
+      if (plannedStart != null) 'planned_start': plannedStart,
+      if (plannedEnd != null) 'planned_end': plannedEnd,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (actualDurationMinutes != null)
+        'actual_duration_minutes': actualDurationMinutes,
+    });
+  }
+
+  ActivityHistoryCompanion copyWith({
+    Value<int>? id,
+    Value<int>? taskId,
+    Value<int?>? activityId,
+    Value<String>? taskTitle,
+    Value<DateTime?>? plannedStart,
+    Value<DateTime?>? plannedEnd,
+    Value<DateTime>? completedAt,
+    Value<int>? actualDurationMinutes,
+  }) {
+    return ActivityHistoryCompanion(
+      id: id ?? this.id,
+      taskId: taskId ?? this.taskId,
+      activityId: activityId ?? this.activityId,
+      taskTitle: taskTitle ?? this.taskTitle,
+      plannedStart: plannedStart ?? this.plannedStart,
+      plannedEnd: plannedEnd ?? this.plannedEnd,
+      completedAt: completedAt ?? this.completedAt,
+      actualDurationMinutes:
+          actualDurationMinutes ?? this.actualDurationMinutes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (taskId.present) {
+      map['task_id'] = Variable<int>(taskId.value);
+    }
+    if (activityId.present) {
+      map['activity_id'] = Variable<int>(activityId.value);
+    }
+    if (taskTitle.present) {
+      map['task_title'] = Variable<String>(taskTitle.value);
+    }
+    if (plannedStart.present) {
+      map['planned_start'] = Variable<DateTime>(plannedStart.value);
+    }
+    if (plannedEnd.present) {
+      map['planned_end'] = Variable<DateTime>(plannedEnd.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (actualDurationMinutes.present) {
+      map['actual_duration_minutes'] = Variable<int>(
+        actualDurationMinutes.value,
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ActivityHistoryCompanion(')
+          ..write('id: $id, ')
+          ..write('taskId: $taskId, ')
+          ..write('activityId: $activityId, ')
+          ..write('taskTitle: $taskTitle, ')
+          ..write('plannedStart: $plannedStart, ')
+          ..write('plannedEnd: $plannedEnd, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('actualDurationMinutes: $actualDurationMinutes')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2983,6 +3519,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $TaskExecutionSessionsTable taskExecutionSessions =
       $TaskExecutionSessionsTable(this);
+  late final $ActivityHistoryTable activityHistory = $ActivityHistoryTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2994,6 +3533,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     habits,
     habitOccurrences,
     taskExecutionSessions,
+    activityHistory,
   ];
 }
 
@@ -5376,6 +5916,288 @@ typedef $$TaskExecutionSessionsTableProcessedTableManager =
       TaskExecutionSession,
       PrefetchHooks Function({bool taskId})
     >;
+typedef $$ActivityHistoryTableCreateCompanionBuilder =
+    ActivityHistoryCompanion Function({
+      Value<int> id,
+      required int taskId,
+      Value<int?> activityId,
+      required String taskTitle,
+      Value<DateTime?> plannedStart,
+      Value<DateTime?> plannedEnd,
+      required DateTime completedAt,
+      required int actualDurationMinutes,
+    });
+typedef $$ActivityHistoryTableUpdateCompanionBuilder =
+    ActivityHistoryCompanion Function({
+      Value<int> id,
+      Value<int> taskId,
+      Value<int?> activityId,
+      Value<String> taskTitle,
+      Value<DateTime?> plannedStart,
+      Value<DateTime?> plannedEnd,
+      Value<DateTime> completedAt,
+      Value<int> actualDurationMinutes,
+    });
+
+class $$ActivityHistoryTableFilterComposer
+    extends Composer<_$AppDatabase, $ActivityHistoryTable> {
+  $$ActivityHistoryTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get taskId => $composableBuilder(
+    column: $table.taskId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get activityId => $composableBuilder(
+    column: $table.activityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get taskTitle => $composableBuilder(
+    column: $table.taskTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get actualDurationMinutes => $composableBuilder(
+    column: $table.actualDurationMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ActivityHistoryTableOrderingComposer
+    extends Composer<_$AppDatabase, $ActivityHistoryTable> {
+  $$ActivityHistoryTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get taskId => $composableBuilder(
+    column: $table.taskId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get activityId => $composableBuilder(
+    column: $table.activityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get taskTitle => $composableBuilder(
+    column: $table.taskTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get actualDurationMinutes => $composableBuilder(
+    column: $table.actualDurationMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ActivityHistoryTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ActivityHistoryTable> {
+  $$ActivityHistoryTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get taskId =>
+      $composableBuilder(column: $table.taskId, builder: (column) => column);
+
+  GeneratedColumn<int> get activityId => $composableBuilder(
+    column: $table.activityId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get taskTitle =>
+      $composableBuilder(column: $table.taskTitle, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get plannedStart => $composableBuilder(
+    column: $table.plannedStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get plannedEnd => $composableBuilder(
+    column: $table.plannedEnd,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get actualDurationMinutes => $composableBuilder(
+    column: $table.actualDurationMinutes,
+    builder: (column) => column,
+  );
+}
+
+class $$ActivityHistoryTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ActivityHistoryTable,
+          ActivityHistoryData,
+          $$ActivityHistoryTableFilterComposer,
+          $$ActivityHistoryTableOrderingComposer,
+          $$ActivityHistoryTableAnnotationComposer,
+          $$ActivityHistoryTableCreateCompanionBuilder,
+          $$ActivityHistoryTableUpdateCompanionBuilder,
+          (
+            ActivityHistoryData,
+            BaseReferences<
+              _$AppDatabase,
+              $ActivityHistoryTable,
+              ActivityHistoryData
+            >,
+          ),
+          ActivityHistoryData,
+          PrefetchHooks Function()
+        > {
+  $$ActivityHistoryTableTableManager(
+    _$AppDatabase db,
+    $ActivityHistoryTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ActivityHistoryTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ActivityHistoryTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ActivityHistoryTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> taskId = const Value.absent(),
+                Value<int?> activityId = const Value.absent(),
+                Value<String> taskTitle = const Value.absent(),
+                Value<DateTime?> plannedStart = const Value.absent(),
+                Value<DateTime?> plannedEnd = const Value.absent(),
+                Value<DateTime> completedAt = const Value.absent(),
+                Value<int> actualDurationMinutes = const Value.absent(),
+              }) => ActivityHistoryCompanion(
+                id: id,
+                taskId: taskId,
+                activityId: activityId,
+                taskTitle: taskTitle,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
+                completedAt: completedAt,
+                actualDurationMinutes: actualDurationMinutes,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int taskId,
+                Value<int?> activityId = const Value.absent(),
+                required String taskTitle,
+                Value<DateTime?> plannedStart = const Value.absent(),
+                Value<DateTime?> plannedEnd = const Value.absent(),
+                required DateTime completedAt,
+                required int actualDurationMinutes,
+              }) => ActivityHistoryCompanion.insert(
+                id: id,
+                taskId: taskId,
+                activityId: activityId,
+                taskTitle: taskTitle,
+                plannedStart: plannedStart,
+                plannedEnd: plannedEnd,
+                completedAt: completedAt,
+                actualDurationMinutes: actualDurationMinutes,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ActivityHistoryTable, ActivityHistoryData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ActivityHistoryTable,
+                    ActivityHistoryData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ActivityHistoryTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ActivityHistoryTable,
+      ActivityHistoryData,
+      $$ActivityHistoryTableFilterComposer,
+      $$ActivityHistoryTableOrderingComposer,
+      $$ActivityHistoryTableAnnotationComposer,
+      $$ActivityHistoryTableCreateCompanionBuilder,
+      $$ActivityHistoryTableUpdateCompanionBuilder,
+      (
+        ActivityHistoryData,
+        BaseReferences<
+          _$AppDatabase,
+          $ActivityHistoryTable,
+          ActivityHistoryData
+        >,
+      ),
+      ActivityHistoryData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5392,4 +6214,6 @@ class $AppDatabaseManager {
       $$HabitOccurrencesTableTableManager(_db, _db.habitOccurrences);
   $$TaskExecutionSessionsTableTableManager get taskExecutionSessions =>
       $$TaskExecutionSessionsTableTableManager(_db, _db.taskExecutionSessions);
+  $$ActivityHistoryTableTableManager get activityHistory =>
+      $$ActivityHistoryTableTableManager(_db, _db.activityHistory);
 }

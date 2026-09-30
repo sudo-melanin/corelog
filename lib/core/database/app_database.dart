@@ -7,15 +7,16 @@ import 'tables/projects.dart';
 import 'tables/tasks.dart';
 import 'tables/activities.dart';
 import 'tables/task_execution_sessions.dart';
+import 'tables/activity_history.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Projects, Tasks, Habits, HabitOccurrences, Activities,TaskExecutionSessions])
+@DriftDatabase(tables: [Projects, Tasks, Habits, HabitOccurrences, Activities,TaskExecutionSessions, ActivityHistory,])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -59,6 +60,10 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(tasks, tasks.skippedAt);
         await m.addColumn(tasks, tasks.skipReason);
         await m.addColumn(tasks, tasks.skipNote);
+      }
+
+      if (from < 13) {
+        await m.createTable(activityHistory);
       }
     },
   );

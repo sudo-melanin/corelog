@@ -1,24 +1,35 @@
-import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide Task;
 import 'package:mocktail/mocktail.dart';
 
 import 'package:corelog/core/error/error.dart';
+import 'package:corelog/features/history/domain/entities/activity_history.dart';
+import 'package:corelog/features/history/domain/repositories/activity_history_repository.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_execution_session.dart';
+import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
 import 'package:corelog/features/tasks/domain/repositories/task_execution_session_repository.dart';
 import 'package:corelog/features/tasks/domain/repositories/task_repository.dart';
+import 'package:corelog/features/tasks/domain/usecases/calculate_task_actual_duration.dart';
 import 'package:corelog/features/tasks/domain/usecases/complete_task.dart';
+
+class MockActivityHistoryRepository extends Mock
+    implements ActivityHistoryRepository {}
 
 class MockTaskRepository extends Mock implements TaskRepository {}
 
 class MockTaskExecutionSessionRepository extends Mock
     implements TaskExecutionSessionRepository {}
 
+class MockCalculateTaskActualDuration extends Mock
+    implements CalculateTaskActualDuration {}
+
 void main() {
   late MockTaskRepository taskRepository;
   late MockTaskExecutionSessionRepository sessionRepository;
+  late MockActivityHistoryRepository historyRepository;
+  late MockCalculateTaskActualDuration calculateActualDuration;
   late CompleteTask completeTask;
 
   setUpAll(() {
@@ -39,15 +50,29 @@ void main() {
         startedAt: DateTime(2026, 1, 1),
       ),
     );
+
+    registerFallbackValue(
+      ActivityHistory(
+        id: 0,
+        taskId: 0,
+        taskTitle: 'Fallback task',
+        completedAt: DateTime(2026, 1, 1),
+        actualDuration: Duration.zero,
+      ),
+    );
   });
 
   setUp(() {
     taskRepository = MockTaskRepository();
     sessionRepository = MockTaskExecutionSessionRepository();
+    historyRepository = MockActivityHistoryRepository();
+    calculateActualDuration = MockCalculateTaskActualDuration();
 
     completeTask = CompleteTask(
       taskRepository: taskRepository,
       sessionRepository: sessionRepository,
+      historyRepository: historyRepository,
+      calculateActualDuration: calculateActualDuration.call,
     );
   });
 
@@ -93,11 +118,18 @@ void main() {
           status: TaskStatus.pending,
         );
 
-
         when(() => taskRepository.updateTask(any()))
             .thenAnswer((invocation) async {
           return Right(invocation.positionalArguments.first as Task);
         });
+
+        when(() => historyRepository.createHistory(any()))
+          .thenAnswer((invocation) async {
+          return Right(
+          invocation.positionalArguments.first as ActivityHistory,
+          );
+          });
+
         final result = await completeTask(task);
 
         expect(result.isRight(), isTrue);
@@ -144,11 +176,22 @@ void main() {
           return Right(session);
         });
 
+        when(() => calculateActualDuration(task.id)).thenAnswer(
+          (_) async => const Right(Duration(minutes: 55)),
+        );
+
         when(() => taskRepository.updateTask(any()))
             .thenAnswer((invocation) async {
           final updatedTask = invocation.positionalArguments.first as Task;
 
           return Right(updatedTask);
+        });
+
+        when(() => historyRepository.createHistory(any()))
+            .thenAnswer((invocation) async {
+          return Right(
+            invocation.positionalArguments.first as ActivityHistory,
+          );
         });
 
         final result = await completeTask(task);
@@ -171,6 +214,9 @@ void main() {
           () => sessionRepository.endSession(any()),
         ).called(1);
         verify(
+          () => calculateActualDuration(task.id),
+        ).called(1);
+        verify(
           () => taskRepository.updateTask(any()),
         ).called(1);
       },
@@ -188,11 +234,22 @@ void main() {
         when(() => sessionRepository.getActiveSession(task.id))
             .thenAnswer((_) async => const Right(null));
 
+        when(() => calculateActualDuration(task.id)).thenAnswer(
+          (_) async => const Right(Duration(minutes: 30)),
+        );
+
         when(() => taskRepository.updateTask(any()))
             .thenAnswer((invocation) async {
           final updatedTask = invocation.positionalArguments.first as Task;
 
           return Right(updatedTask);
+        });
+
+        when(() => historyRepository.createHistory(any()))
+            .thenAnswer((invocation) async {
+          return Right(
+            invocation.positionalArguments.first as ActivityHistory,
+          );
         });
 
         final result = await completeTask(task);
@@ -214,6 +271,9 @@ void main() {
         verifyNever(
           () => sessionRepository.endSession(any()),
         );
+        verify(
+          () => calculateActualDuration(task.id),
+        ).called(1);
         verify(
           () => taskRepository.updateTask(any()),
         ).called(1);
@@ -385,6 +445,10 @@ void main() {
       when(() => sessionRepository.getActiveSession(task.id))
           .thenAnswer((_) async => const Right(null));
 
+      when(() => calculateActualDuration(task.id)).thenAnswer(
+        (_) async => const Right(Duration(minutes: 30)),
+      );
+
       when(() => taskRepository.updateTask(any()))
           .thenAnswer((_) async => const Left(failure));
 
@@ -402,8 +466,81 @@ void main() {
         () => sessionRepository.endSession(any()),
       );
       verify(
+        () => calculateActualDuration(task.id),
+      ).called(1);
+      verify(
         () => taskRepository.updateTask(any()),
       ).called(1);
     });
+
+    test(
+      'creates historical record when a scheduled task is completed',
+      () async {
+        final task = buildTask(
+          status: TaskStatus.inProgress,
+          activityId: 10,
+          title: 'Flutter development',
+          plannedStart: DateTime(2026, 1, 1, 14),
+          plannedEnd: DateTime(2026, 1, 1, 15, 30),
+        );
+
+        final session = TaskExecutionSession(
+          id: 1,
+          taskId: task.id,
+          startedAt: DateTime(2026, 1, 1, 14),
+        );
+
+        when(() => sessionRepository.getActiveSession(task.id)).thenAnswer(
+          (_) async => Right(session),
+        );
+
+        when(() => sessionRepository.endSession(any())).thenAnswer(
+          (invocation) async {
+            return Right(
+              invocation.positionalArguments.first as TaskExecutionSession,
+            );
+          },
+        );
+
+        when(() => calculateActualDuration(task.id)).thenAnswer(
+          (_) async => const Right(Duration(minutes: 90)),
+        );
+
+        when(() => taskRepository.updateTask(any())).thenAnswer(
+          (invocation) async {
+            return Right(
+              invocation.positionalArguments.first as Task,
+            );
+          },
+        );
+
+        when(() => historyRepository.createHistory(any())).thenAnswer(
+          (invocation) async {
+            return Right(
+              invocation.positionalArguments.first as ActivityHistory,
+            );
+          },
+        );
+
+        final result = await completeTask(task);
+
+        expect(result.isRight(), isTrue);
+
+        final captured = verify(
+          () => historyRepository.createHistory(captureAny()),
+        ).captured.single as ActivityHistory;
+
+        expect(captured.taskId, task.id);
+        expect(captured.activityId, task.activityId);
+        expect(captured.taskTitle, task.title);
+        expect(captured.plannedStart, task.plannedStart);
+        expect(captured.plannedEnd, task.plannedEnd);
+        expect(
+          captured.actualDuration,
+          const Duration(minutes: 90),
+        );
+        expect(captured.completedAt, isNotNull);
+      },
+    );
   });
 }

@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:corelog/features/tasks/presentation/widgets/task_status_chip.dart';
 import 'package:flutter/material.dart';
 
 import 'package:corelog/core/theme/theme.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
+import 'package:corelog/features/tasks/presentation/widgets/task_card_actions.dart';
 
 class TaskCard extends StatefulWidget {
   const TaskCard({
@@ -157,7 +159,16 @@ class _TaskCardState extends State<TaskCard> {
           const SizedBox(height: AppSpacing.sm),
           _buildSchedule(context),
           const SizedBox(height: AppSpacing.md),
-          _buildActions(),
+          TaskCardActions(
+            task: task,
+            onStart: widget.onStart,
+            onPause: widget.onPause,
+            onResume: widget.onResume,
+            onComplete: widget.onComplete,
+            onSkip: widget.onSkip,
+            onReopen: widget.onReopen,
+            isOverdue: _isOverdue,
+          ),
         ],
       ),
     );
@@ -202,88 +213,6 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
-  Widget _buildActions() {
-    final task = widget.task;
-
-    switch (task.status) {
-      case TaskStatus.pending:
-        return Row(
-          children: [
-            if (task.plannedStart != null && task.plannedEnd != null)
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: widget.onStart,
-                  child: Text(_isOverdue ? 'Start now' : 'Start'),
-                ),
-              ),
-            if (task.plannedStart == null && task.plannedEnd == null)
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: widget.onComplete,
-                  child: const Text('Complete'),
-                ),
-              ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: widget.onSkip,
-                child: const Text('Skip'),
-              ),
-            ),
-          ],
-        );
-
-      case TaskStatus.inProgress:
-        return Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: widget.onPause,
-                child: const Text('Pause'),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: widget.onComplete,
-                child: const Text('Complete'),
-              ),
-            ),
-          ],
-        );
-
-      case TaskStatus.paused:
-        return Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: widget.onResume,
-                child: const Text('Resume'),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: widget.onComplete,
-                child: const Text('Complete'),
-              ),
-            ),
-          ],
-        );
-
-      case TaskStatus.completed:
-        return SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: widget.onReopen,
-            child: const Text('Reopen'),
-          ),
-        );
-
-      case TaskStatus.skipped:
-        return const SizedBox.shrink();
-    }
-  }
 
   String _formatTime(DateTime value) {
     final hour = value.hour % 12 == 0 ? 12 : value.hour % 12;
@@ -312,40 +241,5 @@ class _TaskCardState extends State<TaskCard> {
     }
 
     return '${minutes}m';
-  }
-}
-
-class TaskStatusChip extends StatelessWidget {
-  const TaskStatusChip({
-    required this.status,
-    super.key,
-  });
-
-  final TaskStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = switch (status) {
-      TaskStatus.pending => 'Pending',
-      TaskStatus.inProgress => 'In Progress',
-      TaskStatus.paused => 'Paused',
-      TaskStatus.completed => 'Completed',
-      TaskStatus.skipped => 'Skipped',
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-        color: AppColors.surface,
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelMedium,
-      ),
-    );
   }
 }
