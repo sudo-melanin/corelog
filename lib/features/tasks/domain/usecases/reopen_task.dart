@@ -15,11 +15,13 @@ class ReopenTask {
 
     final reopenedTask = Task(
       id: task.id,
-      projectId: task.projectId,
+      activityId: task.activityId,
       title: task.title,
       description: task.description,
       status: TaskStatus.pending,
       dueDate: task.dueDate,
+      plannedStart: task.plannedStart,
+      plannedEnd: task.plannedEnd,
       completedAt: null,
       createdAt: task.createdAt,
       updatedAt: now,

@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
 
-import 'projects.dart';
+import 'activities.dart';
 
 class Habits extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get projectId => integer().nullable().references(Projects, #id)();
+  IntColumn get activityId => integer().nullable().references(Activities, #id)();
 
   TextColumn get name => text()();
 

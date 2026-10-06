@@ -18,7 +18,7 @@ class HabitRepositoryImpl implements HabitRepository {
     try {
       final model = HabitModel(
         id: habit.id,
-        projectId: habit.projectId,
+        activityId: habit.activityId,
         name: habit.name,
         description: habit.description,
         weekdayMask: habit.weekdayMask,
@@ -101,7 +101,7 @@ class HabitRepositoryImpl implements HabitRepository {
             _database.habits,
           )..where((table) => table.id.equals(habit.id))).write(
             db.HabitsCompanion(
-              projectId: Value(habit.projectId),
+              activityId: Value(habit.activityId),
               name: Value(habit.name),
               description: Value(habit.description),
               weekdayMask: Value(habit.weekdayMask),

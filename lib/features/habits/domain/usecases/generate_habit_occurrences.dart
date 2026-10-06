@@ -16,84 +16,117 @@ class GenerateHabitOccurrences {
   final HabitRepository _habitRepository;
   final HabitOccurrenceRepository _occurrenceRepository;
 
-  Future<Either<Failure, Unit>> call({DateTime? from}) async {
+  Future<Either<Failure, List<HabitOccurrence>>> call({
+    required DateTime from,
+  }) async {
     final habitsResult = await _habitRepository.getHabits();
 
-    return habitsResult.fold(Left.new, (habits) async {
-      final startDate = _startOfDay(from ?? DateTime.now());
+    return habitsResult.fold(
+      Left.new,
+      (habits) => _generateForHabits(habits, from),
+    );
+  }
 
-      for (final habit in habits) {
-        if (!habit.isActive) {
+  Future<Either<Failure, List<HabitOccurrence>>> _generateForHabits(
+    List<Habit> habits,
+    DateTime from,
+  ) async {
+    final createdOccurrences = <HabitOccurrence>[];
+
+    final startDate = DateTime(from.year, from.month, from.day);
+    final endDate = startDate.add(const Duration(days: 7));
+
+    for (final habit in habits) {
+      if (!habit.isActive) {
+        continue;
+      }
+
+      var currentDate = startDate;
+
+      while (currentDate.isBefore(endDate)) {
+        if (!_isScheduledForWeekday(habit, currentDate)) {
+          currentDate = currentDate.add(const Duration(days: 1));
           continue;
         }
 
-        for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
-          final date = startDate.add(Duration(days: dayOffset));
+        final existingResult =
+            await _occurrenceRepository.getOccurrenceByHabitAndDate(
+          habit.id,
+          currentDate,
+        );
 
-          if (!_isScheduledForDate(habit, date)) {
-            continue;
-          }
+        final existing = existingResult.fold(
+          (failure) => returnLeftFailure(failure),
+          (occurrence) => occurrence,
+        );
 
-          final result = await _ensureOccurrence(habit, date);
-
-          if (result.isLeft()) {
-            return result;
-          }
+        if (existing is _FailureResult) {
+          return Left(existing.failure);
         }
+
+        if ((existing as HabitOccurrence?) == null) {
+          final occurrence = HabitOccurrence(
+            id: 0,
+            habitId: habit.id,
+            scheduledDate: _scheduledDateFor(habit, currentDate),
+            status: HabitOccurrenceStatus.pending,
+            createdAt: DateTime.now(),
+          );
+
+          final createResult =
+              await _occurrenceRepository.createOccurrence(occurrence);
+
+          final created = createResult.fold(
+            (failure) => returnLeftFailure(failure),
+            (occurrence) => occurrence,
+          );
+
+          if (created is _FailureResult) {
+            return Left(created.failure);
+          }
+
+          createdOccurrences.add(created as HabitOccurrence);
+        }
+
+        currentDate = currentDate.add(const Duration(days: 1));
       }
+    }
 
-      return const Right(unit);
-    });
+    return Right(createdOccurrences);
   }
 
-  Future<Either<Failure, Unit>> _ensureOccurrence(
-    Habit habit,
-    DateTime date,
-  ) async {
-    final existingResult = await _occurrenceRepository
-        .getOccurrenceByHabitAndDate(habit.id, date);
-
-    return existingResult.fold(Left.new, (existing) async {
-      if (existing != null) {
-        return const Right(unit);
-      }
-
-      final occurrence = HabitOccurrence(
-        id: 0,
-        habitId: habit.id,
-        scheduledDate: _scheduledDate(date, habit.targetTime),
-        status: HabitOccurrenceStatus.pending,
-        createdAt: DateTime.now(),
-      );
-
-      final createResult = await _occurrenceRepository.createOccurrence(
-        occurrence,
-      );
-
-      return createResult.fold(
-        (failure) => Left(failure),
-        (_) => const Right(unit),
-      );
-    });
+  bool _isScheduledForWeekday(Habit habit, DateTime date) {
+    final weekdayBit = 1 << (date.weekday - 1);
+    return habit.weekdayMask & weekdayBit != 0;
   }
 
-  bool _isScheduledForDate(Habit habit, DateTime date) {
-    final bit = 1 << (date.weekday - 1);
+  DateTime _scheduledDateFor(Habit habit, DateTime date) {
+    final targetTime = habit.targetTime;
 
-    return (habit.weekdayMask & bit) != 0;
-  }
+    if (targetTime == null) {
+      return date;
+    }
 
-  DateTime _scheduledDate(DateTime date, DateTime? targetTime) {
     return DateTime(
       date.year,
       date.month,
       date.day,
-      targetTime?.hour ?? 0,
-      targetTime?.minute ?? 0,
+      targetTime.hour,
+      targetTime.minute,
+      targetTime.second,
+      targetTime.millisecond,
+      targetTime.microsecond,
     );
   }
+}
 
-  DateTime _startOfDay(DateTime date) {
-    return DateTime(date.year, date.month, date.day);
-  }
+class _FailureResult {
+  const _FailureResult(this.failure);
+
+  final Failure failure;
+}
+
+// ignore: library_private_types_in_public_api
+_FailureResult returnLeftFailure(Failure failure) {
+  return _FailureResult(failure);
 }

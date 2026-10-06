@@ -18,14 +18,12 @@ void main() {
   test('database creates all tables successfully', () async {
   final projects = await database.select(database.projects).get();
   final tasks = await database.select(database.tasks).get();
-  final timeBlocks = await database.select(database.timeBlocks).get();
   final habits = await database.select(database.habits).get();
   final habitOccurrences =
       await database.select(database.habitOccurrences).get();
 
   expect(projects, isEmpty);
   expect(tasks, isEmpty);
-  expect(timeBlocks, isEmpty);
   expect(habits, isEmpty);
   expect(habitOccurrences, isEmpty);
 });

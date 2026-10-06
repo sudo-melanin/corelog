@@ -1,9 +1,13 @@
+import 'package:corelog/features/metrics/presentation/screens/metrics_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/app_shell.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/habits/presentation/screens/habits_screen.dart';
 import '../../features/tasks/presentation/screens/tasks_screen.dart';
+import '../../features/tasks/domain/entities/task.dart';
+import '../../features/tasks/presentation/screens/task_details_screen.dart';
+import '../../features/history/presentation/screens/history_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -40,10 +44,34 @@ final appRouter = GoRouter(
               builder: (context, state) {
                 return const TasksScreen();
               },
+              routes: [
+                GoRoute(
+                  path: 'details',
+                  builder: (context, state) {
+                    final task = state.extra as Task;
+
+                    return TaskDetailsScreen(task: task);
+                  }
+                )
+              ]
             ),
           ],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/history',
+      builder: (context, state) {
+        return const HistoryScreen();
+      },
+    ),
+
+    GoRoute(
+    path: '/metrics',
+    builder: (context, state) {
+      return const MetricsScreen();
+      },
     ),
   ],
 );

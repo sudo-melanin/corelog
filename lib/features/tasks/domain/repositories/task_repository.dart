@@ -10,7 +10,7 @@ abstract interface class TaskRepository {
 
   Future<Either<Failure, List<Task>>> getTasks();
 
-  Future<Either<Failure, List<Task>>> getTasksByProject(int projectId);
+  Future<Either<Failure, List<Task>>> getTasksByActivity(int activityId);
 
   Future<Either<Failure, Task>> updateTask(Task task);
 

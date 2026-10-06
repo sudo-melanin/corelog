@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'task_status.dart';
+import 'task_skip_reason.dart';
 
 class Task extends Equatable {
   const Task({
@@ -9,14 +10,19 @@ class Task extends Equatable {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-    this.projectId,
+    this.activityId,
     this.description,
     this.dueDate,
     this.completedAt,
+    this.plannedStart,
+    this.plannedEnd,
+    this.skippedAt,
+    this.skipReason,
+    this.skipNote,
   });
 
   final int id;
-  final int? projectId;
+  final int? activityId;
   final String title;
   final String? description;
   final TaskStatus status;
@@ -24,11 +30,16 @@ class Task extends Equatable {
   final DateTime? completedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? plannedStart;
+  final DateTime? plannedEnd;
+  final DateTime? skippedAt;
+  final TaskSkipReason? skipReason;
+  final String? skipNote;
 
   @override
   List<Object?> get props => [
     id,
-    projectId,
+    activityId,
     title,
     description,
     status,
@@ -36,5 +47,10 @@ class Task extends Equatable {
     completedAt,
     createdAt,
     updatedAt,
+    plannedStart,
+    plannedEnd,
+    skippedAt,
+    skipReason,
+    skipNote,
   ];
 }
