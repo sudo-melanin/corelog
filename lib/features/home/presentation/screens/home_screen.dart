@@ -21,7 +21,14 @@ class HomeScreen extends ConsumerWidget {
             onPressed: () {
               context.push('/history');
             },
-            icon: const Icon(Icons.history_rounded),)
+            icon: const Icon(Icons.history_rounded),),
+          IconButton(
+            onPressed: () {
+              context.push('/metrics');
+            },
+            icon: const Icon(Icons.insights_rounded),
+            tooltip: 'Productivity',
+          ),
         ]
       ),
       body: SafeArea(

@@ -1,3 +1,4 @@
+import 'package:corelog/features/metrics/presentation/screens/metrics_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/app_shell.dart';
@@ -63,6 +64,13 @@ final appRouter = GoRouter(
       path: '/history',
       builder: (context, state) {
         return const HistoryScreen();
+      },
+    ),
+
+    GoRoute(
+    path: '/metrics',
+    builder: (context, state) {
+      return const MetricsScreen();
       },
     ),
   ],

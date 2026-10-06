@@ -27,6 +27,8 @@ class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository {
         outcome: history.outcome,
         occurredAt: history.occurredAt,
         actualDuration: history.actualDuration,
+        skipReason: history.skipReason,
+        skipNote: history.skipNote,
       );
 
       final id = await _database
