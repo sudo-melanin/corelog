@@ -9,15 +9,24 @@ class ActivityHistory extends Table {
   /// Historical reference only. Not a foreign key.
   IntColumn get activityId => integer().nullable()();
 
-  /// Snapshot of the task title at completion time.
+  /// Snapshot of the task title at the time of the outcome.
   TextColumn get taskTitle => text()();
 
   DateTimeColumn get plannedStart => dateTime().nullable()();
 
   DateTimeColumn get plannedEnd => dateTime().nullable()();
 
-  DateTimeColumn get completedAt => dateTime()();
+  /// completed / skipped
+  TextColumn get outcome => text()();
 
-  /// Stored as minutes to keep the database representation simple.
+  /// Completion time or skip time.
+  DateTimeColumn get occurredAt => dateTime()();
+
+  /// Stored as minutes.
   IntColumn get actualDurationMinutes => integer()();
+
+  /// Stored as the enum name when the outcome is skipped.
+  TextColumn get skipReason => text().nullable()();
+
+  TextColumn get skipNote => text().nullable()();
 }

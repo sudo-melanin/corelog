@@ -49,5 +49,8 @@ class Task extends Equatable {
     updatedAt,
     plannedStart,
     plannedEnd,
+    skippedAt,
+    skipReason,
+    skipNote,
   ];
 }

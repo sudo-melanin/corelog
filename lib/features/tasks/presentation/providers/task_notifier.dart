@@ -6,8 +6,6 @@ import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:corelog/features/tasks/domain/repositories/task_repository.dart';
 import 'package:corelog/features/tasks/domain/usecases/usecases.dart';
-
-import '../../domain/usecases/resume_task.dart';
 import 'task_providers.dart';
 
 final taskNotifierProvider = AsyncNotifierProvider<TaskNotifier, List<Task>>(

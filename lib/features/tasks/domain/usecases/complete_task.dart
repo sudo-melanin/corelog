@@ -1,3 +1,4 @@
+import 'package:corelog/features/history/domain/entities/history_outcome.dart';
 import 'package:fpdart/fpdart.dart' hide Task;
 
 import 'package:corelog/core/error/error.dart';
@@ -63,8 +64,7 @@ class CompleteTask {
         Left.new,
         (updatedTask) async {
           final historyResult = await _createHistory(
-            task: task,
-            completedAt: now,
+            task: updatedTask,
             actualDuration: Duration.zero,
           );
 
@@ -132,8 +132,7 @@ class CompleteTask {
               Left.new,
               (updatedTask) async {
                 final historyResult = await _createHistory(
-                  task: task,
-                  completedAt: now,
+                  task: updatedTask,
                   actualDuration: actualDuration,
                 );
 
@@ -150,21 +149,21 @@ class CompleteTask {
   }
 
   Future<Either<Failure, ActivityHistory>> _createHistory({
-    required Task task,
-    required DateTime completedAt,
-    required Duration actualDuration,
-  }) {
-    return _historyRepository.createHistory(
-      ActivityHistory(
-        id: 0,
-        taskId: task.id,
-        activityId: task.activityId,
-        taskTitle: task.title,
-        plannedStart: task.plannedStart,
-        plannedEnd: task.plannedEnd,
-        completedAt: completedAt,
-        actualDuration: actualDuration,
-      ),
-    );
-  }
+  required Task task,
+  required Duration actualDuration,
+}) {
+  return _historyRepository.createHistory(
+    ActivityHistory(
+      id: 0,
+      taskId: task.id,
+      activityId: task.activityId,
+      taskTitle: task.title,
+      plannedStart: task.plannedStart,
+      plannedEnd: task.plannedEnd,
+      outcome: HistoryOutcome.completed,
+      occurredAt: task.completedAt!,
+      actualDuration: actualDuration,
+    ),
+  );
+}
 }

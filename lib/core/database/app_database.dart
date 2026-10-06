@@ -16,7 +16,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -64,6 +64,61 @@ class AppDatabase extends _$AppDatabase {
 
       if (from < 13) {
         await m.createTable(activityHistory);
+      }
+
+      if (from < 14) {
+        await customStatement('''
+          CREATE TABLE activity_history_new (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            task_id INTEGER NOT NULL,
+            activity_id INTEGER,
+            task_title TEXT NOT NULL,
+            planned_start INTEGER,
+            planned_end INTEGER,
+            outcome TEXT NOT NULL,
+            occurred_at INTEGER NOT NULL,
+            actual_duration_minutes INTEGER NOT NULL,
+            skip_reason TEXT,
+            skip_note TEXT
+          )
+        ''');
+
+        await customStatement('''
+          INSERT INTO activity_history_new (
+            id,
+            task_id,
+            activity_id,
+            task_title,
+            planned_start,
+            planned_end,
+            outcome,
+            occurred_at,
+            actual_duration_minutes,
+            skip_reason,
+            skip_note
+          )
+          SELECT
+            id,
+            task_id,
+            activity_id,
+            task_title,
+            planned_start,
+            planned_end,
+            'completed',
+            completed_at,
+            actual_duration_minutes,
+            NULL,
+            NULL
+          FROM activity_history
+        ''');
+
+        await customStatement(
+          'DROP TABLE activity_history',
+        );
+
+        await customStatement(
+          'ALTER TABLE activity_history_new RENAME TO activity_history',
+        );
       }
     },
   );

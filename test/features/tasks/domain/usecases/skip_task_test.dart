@@ -3,6 +3,9 @@ import 'package:fpdart/fpdart.dart' hide Task;
 import 'package:mocktail/mocktail.dart';
 
 import 'package:corelog/core/error/error.dart';
+import 'package:corelog/features/history/domain/entities/activity_history.dart';
+import 'package:corelog/features/history/domain/entities/history_outcome.dart';
+import 'package:corelog/features/history/domain/repositories/activity_history_repository.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
@@ -11,8 +14,12 @@ import 'package:corelog/features/tasks/domain/usecases/skip_task.dart';
 
 class MockTaskRepository extends Mock implements TaskRepository {}
 
+class MockActivityHistoryRepository extends Mock
+    implements ActivityHistoryRepository {}
+
 void main() {
   late MockTaskRepository taskRepository;
+  late MockActivityHistoryRepository historyRepository;
   late SkipTask skipTask;
 
   setUpAll(() {
@@ -25,11 +32,28 @@ void main() {
         updatedAt: DateTime(2026, 1, 1),
       ),
     );
+
+    registerFallbackValue(
+      ActivityHistory(
+        id: 0,
+        taskId: 0,
+        taskTitle: 'Fallback task',
+        outcome: HistoryOutcome.skipped,
+        occurredAt: DateTime(2026, 1, 1),
+        actualDuration: Duration.zero,
+        skipReason: TaskSkipReason.other,
+      ),
+    );
   });
 
   setUp(() {
     taskRepository = MockTaskRepository();
-    skipTask = SkipTask(taskRepository);
+    historyRepository = MockActivityHistoryRepository();
+
+    skipTask = SkipTask(
+      taskRepository: taskRepository,
+      historyRepository: historyRepository,
+    );
   });
 
   Task buildTask({
@@ -37,14 +61,8 @@ void main() {
     TaskStatus status = TaskStatus.pending,
     int? activityId,
     String title = 'Test task',
-    String? description = 'Test description',
-    DateTime? dueDate,
     DateTime? plannedStart,
     DateTime? plannedEnd,
-    DateTime? completedAt,
-    DateTime? skippedAt,
-    TaskSkipReason? skipReason,
-    String? skipNote,
   }) {
     final now = DateTime(2026, 1, 1, 10);
 
@@ -52,42 +70,43 @@ void main() {
       id: id,
       activityId: activityId,
       title: title,
-      description: description,
       status: status,
-      dueDate: dueDate,
-      plannedStart: plannedStart,
-      plannedEnd: plannedEnd,
-      completedAt: completedAt,
-      skippedAt: skippedAt,
-      skipReason: skipReason,
-      skipNote: skipNote,
       createdAt: now,
       updatedAt: now,
+      plannedStart: plannedStart,
+      plannedEnd: plannedEnd,
     );
   }
 
   group('SkipTask', () {
     test(
-      'skips pending task and records reason, note, and timestamp',
+      'skips pending task and creates skipped history',
       () async {
         final task = buildTask(
-          status: TaskStatus.pending,
-          plannedStart: DateTime(2026, 1, 12, 14),
-          plannedEnd: DateTime(2026, 1, 12, 15),
+          activityId: 10,
+          title: 'Flutter development',
+          plannedStart: DateTime(2026, 1, 1, 14),
+          plannedEnd: DateTime(2026, 1, 1, 15),
         );
 
         when(() => taskRepository.updateTask(any()))
             .thenAnswer((invocation) async {
-          final skippedTask =
-              invocation.positionalArguments.first as Task;
+          return Right(
+            invocation.positionalArguments.first as Task,
+          );
+        });
 
-          return Right(skippedTask);
+        when(() => historyRepository.createHistory(any()))
+            .thenAnswer((invocation) async {
+          return Right(
+            invocation.positionalArguments.first as ActivityHistory,
+          );
         });
 
         final result = await skipTask(
           task: task,
           reason: TaskSkipReason.higherPriorityCameUp,
-          note: 'Urgent work came up',
+          note: 'Production issue came up.',
         );
 
         expect(result.isRight(), isTrue);
@@ -102,49 +121,27 @@ void main() {
           skippedTask.skipReason,
           TaskSkipReason.higherPriorityCameUp,
         );
-        expect(skippedTask.skipNote, 'Urgent work came up');
-        expect(skippedTask.plannedStart, task.plannedStart);
-        expect(skippedTask.plannedEnd, task.plannedEnd);
+        expect(skippedTask.skipNote, 'Production issue came up.');
 
-        verify(
-          () => taskRepository.updateTask(any()),
-        ).called(1);
+        final captured = verify(
+          () => historyRepository.createHistory(captureAny()),
+        ).captured.single as ActivityHistory;
+
+        expect(captured.taskId, task.id);
+        expect(captured.activityId, task.activityId);
+        expect(captured.taskTitle, task.title);
+        expect(captured.plannedStart, task.plannedStart);
+        expect(captured.plannedEnd, task.plannedEnd);
+        expect(captured.outcome, HistoryOutcome.skipped);
+        expect(captured.occurredAt, skippedTask.skippedAt);
+        expect(captured.actualDuration, Duration.zero);
+        expect(
+          captured.skipReason,
+          TaskSkipReason.higherPriorityCameUp,
+        );
+        expect(captured.skipNote, 'Production issue came up.');
       },
     );
-
-    test('skips pending task without a note', () async {
-      final task = buildTask(
-        status: TaskStatus.pending,
-      );
-
-      when(() => taskRepository.updateTask(any()))
-          .thenAnswer((invocation) async {
-        final skippedTask =
-            invocation.positionalArguments.first as Task;
-
-        return Right(skippedTask);
-      });
-
-      final result = await skipTask(
-        task: task,
-        reason: TaskSkipReason.notEnoughTime,
-      );
-
-      expect(result.isRight(), isTrue);
-
-      final skippedTask = result.getOrElse(
-        (_) => throw StateError('Expected skip to succeed.'),
-      );
-
-      expect(skippedTask.status, TaskStatus.skipped);
-      expect(skippedTask.skipReason, TaskSkipReason.notEnoughTime);
-      expect(skippedTask.skipNote, isNull);
-      expect(skippedTask.skippedAt, isNotNull);
-
-      verify(
-        () => taskRepository.updateTask(any()),
-      ).called(1);
-    });
 
     test('rejects in-progress task', () async {
       final task = buildTask(
@@ -153,14 +150,13 @@ void main() {
 
       final result = await skipTask(
         task: task,
-        reason: TaskSkipReason.lostFocus,
+        reason: TaskSkipReason.other,
       );
 
       expect(result.isLeft(), isTrue);
 
-      verifyNever(
-        () => taskRepository.updateTask(any()),
-      );
+      verifyNever(() => taskRepository.updateTask(any()));
+      verifyNever(() => historyRepository.createHistory(any()));
     });
 
     test('rejects paused task', () async {
@@ -170,60 +166,54 @@ void main() {
 
       final result = await skipTask(
         task: task,
-        reason: TaskSkipReason.lostFocus,
-      );
-
-      expect(result.isLeft(), isTrue);
-
-      verifyNever(
-        () => taskRepository.updateTask(any()),
-      );
-    });
-
-    test('rejects completed task', () async {
-      final task = buildTask(
-        status: TaskStatus.completed,
-      );
-
-      final result = await skipTask(
-        task: task,
         reason: TaskSkipReason.other,
       );
 
       expect(result.isLeft(), isTrue);
 
-      verifyNever(
-        () => taskRepository.updateTask(any()),
-      );
+      verifyNever(() => taskRepository.updateTask(any()));
+      verifyNever(() => historyRepository.createHistory(any()));
     });
 
-    test('rejects already skipped task', () async {
-      final task = buildTask(
-        status: TaskStatus.skipped,
-      );
-
-      final result = await skipTask(
-        task: task,
-        reason: TaskSkipReason.other,
-      );
-
-      expect(result.isLeft(), isTrue);
-
-      verifyNever(
-        () => taskRepository.updateTask(any()),
-      );
-    });
-
-    test('propagates task repository failure', () async {
-      final task = buildTask(
-        status: TaskStatus.pending,
-      );
+    test('propagates task update failure', () async {
+      final task = buildTask();
 
       const failure = DatabaseFailure(
         'Failed to update task.',
       );
 
       when(() => taskRepository.updateTask(any()))
+          .thenAnswer((_) async => const Left(failure));
+
+      final result = await skipTask(
+        task: task,
+        reason: TaskSkipReason.notEnoughTime,
+      );
+
+      expect(
+        result,
+        const Left<Failure, Task>(failure),
+      );
+
+      verify(() => taskRepository.updateTask(any())).called(1);
+      verifyNever(() => historyRepository.createHistory(any()));
+    });
+
+    test('propagates history creation failure', () async {
+      final task = buildTask();
+
+      const failure = DatabaseFailure(
+        'Failed to create history.',
+      );
+
+      when(() => taskRepository.updateTask(any()))
+          .thenAnswer((invocation) async {
+        return Right(
+          invocation.positionalArguments.first as Task,
+        );
+      });
+
+      when(() => historyRepository.createHistory(any()))
           .thenAnswer((_) async => const Left(failure));
 
       final result = await skipTask(
@@ -236,9 +226,8 @@ void main() {
         const Left<Failure, Task>(failure),
       );
 
-      verify(
-        () => taskRepository.updateTask(any()),
-      ).called(1);
+      verify(() => taskRepository.updateTask(any())).called(1);
+      verify(() => historyRepository.createHistory(any())).called(1);
     });
   });
 }

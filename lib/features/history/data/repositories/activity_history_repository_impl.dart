@@ -24,7 +24,8 @@ class ActivityHistoryRepositoryImpl implements ActivityHistoryRepository {
         taskTitle: history.taskTitle,
         plannedStart: history.plannedStart,
         plannedEnd: history.plannedEnd,
-        completedAt: history.completedAt,
+        outcome: history.outcome,
+        occurredAt: history.occurredAt,
         actualDuration: history.actualDuration,
       );
 

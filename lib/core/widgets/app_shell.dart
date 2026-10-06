@@ -1,29 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/home/presentation/providers/providers.dart';
 import '../theme/theme.dart';
 
-class CoreLogShell extends StatelessWidget {
+class CoreLogShell extends ConsumerWidget {
   const CoreLogShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
-  void _onDestinationSelected(int index) {
+  void _onDestinationSelected(int index, WidgetRef ref) {
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,
     );
+
+    if (index == 0) {
+      ref.invalidate(homeDashboardProvider);
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(child: navigationShell),
 
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: _onDestinationSelected,
+        onDestinationSelected: (index) {
+          _onDestinationSelected(index, ref);
+        },
         backgroundColor: AppColors.success,
         indicatorColor: AppColors.primary,
         destinations: const [

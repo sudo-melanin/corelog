@@ -3043,12 +3043,23 @@ class $ActivityHistoryTable extends ActivityHistory
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _completedAtMeta = const VerificationMeta(
-    'completedAt',
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
   );
   @override
-  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
-    'completed_at',
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occurredAtMeta = const VerificationMeta(
+    'occurredAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> occurredAt = GeneratedColumn<DateTime>(
+    'occurred_at',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
@@ -3064,6 +3075,28 @@ class $ActivityHistoryTable extends ActivityHistory
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _skipReasonMeta = const VerificationMeta(
+    'skipReason',
+  );
+  @override
+  late final GeneratedColumn<String> skipReason = GeneratedColumn<String>(
+    'skip_reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skipNoteMeta = const VerificationMeta(
+    'skipNote',
+  );
+  @override
+  late final GeneratedColumn<String> skipNote = GeneratedColumn<String>(
+    'skip_note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3072,8 +3105,11 @@ class $ActivityHistoryTable extends ActivityHistory
     taskTitle,
     plannedStart,
     plannedEnd,
-    completedAt,
+    outcome,
+    occurredAt,
     actualDurationMinutes,
+    skipReason,
+    skipNote,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3127,16 +3163,21 @@ class $ActivityHistoryTable extends ActivityHistory
         plannedEnd.isAcceptableOrUnknown(data['planned_end']!, _plannedEndMeta),
       );
     }
-    if (data.containsKey('completed_at')) {
+    if (data.containsKey('outcome')) {
       context.handle(
-        _completedAtMeta,
-        completedAt.isAcceptableOrUnknown(
-          data['completed_at']!,
-          _completedAtMeta,
-        ),
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
       );
     } else if (isInserting) {
-      context.missing(_completedAtMeta);
+      context.missing(_outcomeMeta);
+    }
+    if (data.containsKey('occurred_at')) {
+      context.handle(
+        _occurredAtMeta,
+        occurredAt.isAcceptableOrUnknown(data['occurred_at']!, _occurredAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_occurredAtMeta);
     }
     if (data.containsKey('actual_duration_minutes')) {
       context.handle(
@@ -3148,6 +3189,18 @@ class $ActivityHistoryTable extends ActivityHistory
       );
     } else if (isInserting) {
       context.missing(_actualDurationMinutesMeta);
+    }
+    if (data.containsKey('skip_reason')) {
+      context.handle(
+        _skipReasonMeta,
+        skipReason.isAcceptableOrUnknown(data['skip_reason']!, _skipReasonMeta),
+      );
+    }
+    if (data.containsKey('skip_note')) {
+      context.handle(
+        _skipNoteMeta,
+        skipNote.isAcceptableOrUnknown(data['skip_note']!, _skipNoteMeta),
+      );
     }
     return context;
   }
@@ -3182,14 +3235,26 @@ class $ActivityHistoryTable extends ActivityHistory
         DriftSqlType.dateTime,
         data['${effectivePrefix}planned_end'],
       ),
-      completedAt: attachedDatabase.typeMapping.read(
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      )!,
+      occurredAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}completed_at'],
+        data['${effectivePrefix}occurred_at'],
       )!,
       actualDurationMinutes: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}actual_duration_minutes'],
       )!,
+      skipReason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skip_reason'],
+      ),
+      skipNote: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skip_note'],
+      ),
     );
   }
 
@@ -3209,14 +3274,23 @@ class ActivityHistoryData extends DataClass
   /// Historical reference only. Not a foreign key.
   final int? activityId;
 
-  /// Snapshot of the task title at completion time.
+  /// Snapshot of the task title at the time of the outcome.
   final String taskTitle;
   final DateTime? plannedStart;
   final DateTime? plannedEnd;
-  final DateTime completedAt;
 
-  /// Stored as minutes to keep the database representation simple.
+  /// completed / skipped
+  final String outcome;
+
+  /// Completion time or skip time.
+  final DateTime occurredAt;
+
+  /// Stored as minutes.
   final int actualDurationMinutes;
+
+  /// Stored as the enum name when the outcome is skipped.
+  final String? skipReason;
+  final String? skipNote;
   const ActivityHistoryData({
     required this.id,
     required this.taskId,
@@ -3224,8 +3298,11 @@ class ActivityHistoryData extends DataClass
     required this.taskTitle,
     this.plannedStart,
     this.plannedEnd,
-    required this.completedAt,
+    required this.outcome,
+    required this.occurredAt,
     required this.actualDurationMinutes,
+    this.skipReason,
+    this.skipNote,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3242,8 +3319,15 @@ class ActivityHistoryData extends DataClass
     if (!nullToAbsent || plannedEnd != null) {
       map['planned_end'] = Variable<DateTime>(plannedEnd);
     }
-    map['completed_at'] = Variable<DateTime>(completedAt);
+    map['outcome'] = Variable<String>(outcome);
+    map['occurred_at'] = Variable<DateTime>(occurredAt);
     map['actual_duration_minutes'] = Variable<int>(actualDurationMinutes);
+    if (!nullToAbsent || skipReason != null) {
+      map['skip_reason'] = Variable<String>(skipReason);
+    }
+    if (!nullToAbsent || skipNote != null) {
+      map['skip_note'] = Variable<String>(skipNote);
+    }
     return map;
   }
 
@@ -3261,8 +3345,15 @@ class ActivityHistoryData extends DataClass
       plannedEnd: plannedEnd == null && nullToAbsent
           ? const Value.absent()
           : Value(plannedEnd),
-      completedAt: Value(completedAt),
+      outcome: Value(outcome),
+      occurredAt: Value(occurredAt),
       actualDurationMinutes: Value(actualDurationMinutes),
+      skipReason: skipReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skipReason),
+      skipNote: skipNote == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skipNote),
     );
   }
 
@@ -3278,10 +3369,13 @@ class ActivityHistoryData extends DataClass
       taskTitle: serializer.fromJson<String>(json['taskTitle']),
       plannedStart: serializer.fromJson<DateTime?>(json['plannedStart']),
       plannedEnd: serializer.fromJson<DateTime?>(json['plannedEnd']),
-      completedAt: serializer.fromJson<DateTime>(json['completedAt']),
+      outcome: serializer.fromJson<String>(json['outcome']),
+      occurredAt: serializer.fromJson<DateTime>(json['occurredAt']),
       actualDurationMinutes: serializer.fromJson<int>(
         json['actualDurationMinutes'],
       ),
+      skipReason: serializer.fromJson<String?>(json['skipReason']),
+      skipNote: serializer.fromJson<String?>(json['skipNote']),
     );
   }
   @override
@@ -3294,8 +3388,11 @@ class ActivityHistoryData extends DataClass
       'taskTitle': serializer.toJson<String>(taskTitle),
       'plannedStart': serializer.toJson<DateTime?>(plannedStart),
       'plannedEnd': serializer.toJson<DateTime?>(plannedEnd),
-      'completedAt': serializer.toJson<DateTime>(completedAt),
+      'outcome': serializer.toJson<String>(outcome),
+      'occurredAt': serializer.toJson<DateTime>(occurredAt),
       'actualDurationMinutes': serializer.toJson<int>(actualDurationMinutes),
+      'skipReason': serializer.toJson<String?>(skipReason),
+      'skipNote': serializer.toJson<String?>(skipNote),
     };
   }
 
@@ -3306,8 +3403,11 @@ class ActivityHistoryData extends DataClass
     String? taskTitle,
     Value<DateTime?> plannedStart = const Value.absent(),
     Value<DateTime?> plannedEnd = const Value.absent(),
-    DateTime? completedAt,
+    String? outcome,
+    DateTime? occurredAt,
     int? actualDurationMinutes,
+    Value<String?> skipReason = const Value.absent(),
+    Value<String?> skipNote = const Value.absent(),
   }) => ActivityHistoryData(
     id: id ?? this.id,
     taskId: taskId ?? this.taskId,
@@ -3315,8 +3415,11 @@ class ActivityHistoryData extends DataClass
     taskTitle: taskTitle ?? this.taskTitle,
     plannedStart: plannedStart.present ? plannedStart.value : this.plannedStart,
     plannedEnd: plannedEnd.present ? plannedEnd.value : this.plannedEnd,
-    completedAt: completedAt ?? this.completedAt,
+    outcome: outcome ?? this.outcome,
+    occurredAt: occurredAt ?? this.occurredAt,
     actualDurationMinutes: actualDurationMinutes ?? this.actualDurationMinutes,
+    skipReason: skipReason.present ? skipReason.value : this.skipReason,
+    skipNote: skipNote.present ? skipNote.value : this.skipNote,
   );
   ActivityHistoryData copyWithCompanion(ActivityHistoryCompanion data) {
     return ActivityHistoryData(
@@ -3332,12 +3435,17 @@ class ActivityHistoryData extends DataClass
       plannedEnd: data.plannedEnd.present
           ? data.plannedEnd.value
           : this.plannedEnd,
-      completedAt: data.completedAt.present
-          ? data.completedAt.value
-          : this.completedAt,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      occurredAt: data.occurredAt.present
+          ? data.occurredAt.value
+          : this.occurredAt,
       actualDurationMinutes: data.actualDurationMinutes.present
           ? data.actualDurationMinutes.value
           : this.actualDurationMinutes,
+      skipReason: data.skipReason.present
+          ? data.skipReason.value
+          : this.skipReason,
+      skipNote: data.skipNote.present ? data.skipNote.value : this.skipNote,
     );
   }
 
@@ -3350,8 +3458,11 @@ class ActivityHistoryData extends DataClass
           ..write('taskTitle: $taskTitle, ')
           ..write('plannedStart: $plannedStart, ')
           ..write('plannedEnd: $plannedEnd, ')
-          ..write('completedAt: $completedAt, ')
-          ..write('actualDurationMinutes: $actualDurationMinutes')
+          ..write('outcome: $outcome, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('actualDurationMinutes: $actualDurationMinutes, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('skipNote: $skipNote')
           ..write(')'))
         .toString();
   }
@@ -3364,8 +3475,11 @@ class ActivityHistoryData extends DataClass
     taskTitle,
     plannedStart,
     plannedEnd,
-    completedAt,
+    outcome,
+    occurredAt,
     actualDurationMinutes,
+    skipReason,
+    skipNote,
   );
   @override
   bool operator ==(Object other) =>
@@ -3377,8 +3491,11 @@ class ActivityHistoryData extends DataClass
           other.taskTitle == this.taskTitle &&
           other.plannedStart == this.plannedStart &&
           other.plannedEnd == this.plannedEnd &&
-          other.completedAt == this.completedAt &&
-          other.actualDurationMinutes == this.actualDurationMinutes);
+          other.outcome == this.outcome &&
+          other.occurredAt == this.occurredAt &&
+          other.actualDurationMinutes == this.actualDurationMinutes &&
+          other.skipReason == this.skipReason &&
+          other.skipNote == this.skipNote);
 }
 
 class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
@@ -3388,8 +3505,11 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
   final Value<String> taskTitle;
   final Value<DateTime?> plannedStart;
   final Value<DateTime?> plannedEnd;
-  final Value<DateTime> completedAt;
+  final Value<String> outcome;
+  final Value<DateTime> occurredAt;
   final Value<int> actualDurationMinutes;
+  final Value<String?> skipReason;
+  final Value<String?> skipNote;
   const ActivityHistoryCompanion({
     this.id = const Value.absent(),
     this.taskId = const Value.absent(),
@@ -3397,8 +3517,11 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
     this.taskTitle = const Value.absent(),
     this.plannedStart = const Value.absent(),
     this.plannedEnd = const Value.absent(),
-    this.completedAt = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.occurredAt = const Value.absent(),
     this.actualDurationMinutes = const Value.absent(),
+    this.skipReason = const Value.absent(),
+    this.skipNote = const Value.absent(),
   });
   ActivityHistoryCompanion.insert({
     this.id = const Value.absent(),
@@ -3407,11 +3530,15 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
     required String taskTitle,
     this.plannedStart = const Value.absent(),
     this.plannedEnd = const Value.absent(),
-    required DateTime completedAt,
+    required String outcome,
+    required DateTime occurredAt,
     required int actualDurationMinutes,
+    this.skipReason = const Value.absent(),
+    this.skipNote = const Value.absent(),
   }) : taskId = Value(taskId),
        taskTitle = Value(taskTitle),
-       completedAt = Value(completedAt),
+       outcome = Value(outcome),
+       occurredAt = Value(occurredAt),
        actualDurationMinutes = Value(actualDurationMinutes);
   static Insertable<ActivityHistoryData> custom({
     Expression<int>? id,
@@ -3420,8 +3547,11 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
     Expression<String>? taskTitle,
     Expression<DateTime>? plannedStart,
     Expression<DateTime>? plannedEnd,
-    Expression<DateTime>? completedAt,
+    Expression<String>? outcome,
+    Expression<DateTime>? occurredAt,
     Expression<int>? actualDurationMinutes,
+    Expression<String>? skipReason,
+    Expression<String>? skipNote,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3430,9 +3560,12 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
       if (taskTitle != null) 'task_title': taskTitle,
       if (plannedStart != null) 'planned_start': plannedStart,
       if (plannedEnd != null) 'planned_end': plannedEnd,
-      if (completedAt != null) 'completed_at': completedAt,
+      if (outcome != null) 'outcome': outcome,
+      if (occurredAt != null) 'occurred_at': occurredAt,
       if (actualDurationMinutes != null)
         'actual_duration_minutes': actualDurationMinutes,
+      if (skipReason != null) 'skip_reason': skipReason,
+      if (skipNote != null) 'skip_note': skipNote,
     });
   }
 
@@ -3443,8 +3576,11 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
     Value<String>? taskTitle,
     Value<DateTime?>? plannedStart,
     Value<DateTime?>? plannedEnd,
-    Value<DateTime>? completedAt,
+    Value<String>? outcome,
+    Value<DateTime>? occurredAt,
     Value<int>? actualDurationMinutes,
+    Value<String?>? skipReason,
+    Value<String?>? skipNote,
   }) {
     return ActivityHistoryCompanion(
       id: id ?? this.id,
@@ -3453,9 +3589,12 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
       taskTitle: taskTitle ?? this.taskTitle,
       plannedStart: plannedStart ?? this.plannedStart,
       plannedEnd: plannedEnd ?? this.plannedEnd,
-      completedAt: completedAt ?? this.completedAt,
+      outcome: outcome ?? this.outcome,
+      occurredAt: occurredAt ?? this.occurredAt,
       actualDurationMinutes:
           actualDurationMinutes ?? this.actualDurationMinutes,
+      skipReason: skipReason ?? this.skipReason,
+      skipNote: skipNote ?? this.skipNote,
     );
   }
 
@@ -3480,13 +3619,22 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
     if (plannedEnd.present) {
       map['planned_end'] = Variable<DateTime>(plannedEnd.value);
     }
-    if (completedAt.present) {
-      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (occurredAt.present) {
+      map['occurred_at'] = Variable<DateTime>(occurredAt.value);
     }
     if (actualDurationMinutes.present) {
       map['actual_duration_minutes'] = Variable<int>(
         actualDurationMinutes.value,
       );
+    }
+    if (skipReason.present) {
+      map['skip_reason'] = Variable<String>(skipReason.value);
+    }
+    if (skipNote.present) {
+      map['skip_note'] = Variable<String>(skipNote.value);
     }
     return map;
   }
@@ -3500,8 +3648,11 @@ class ActivityHistoryCompanion extends UpdateCompanion<ActivityHistoryData> {
           ..write('taskTitle: $taskTitle, ')
           ..write('plannedStart: $plannedStart, ')
           ..write('plannedEnd: $plannedEnd, ')
-          ..write('completedAt: $completedAt, ')
-          ..write('actualDurationMinutes: $actualDurationMinutes')
+          ..write('outcome: $outcome, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('actualDurationMinutes: $actualDurationMinutes, ')
+          ..write('skipReason: $skipReason, ')
+          ..write('skipNote: $skipNote')
           ..write(')'))
         .toString();
   }
@@ -5924,8 +6075,11 @@ typedef $$ActivityHistoryTableCreateCompanionBuilder =
       required String taskTitle,
       Value<DateTime?> plannedStart,
       Value<DateTime?> plannedEnd,
-      required DateTime completedAt,
+      required String outcome,
+      required DateTime occurredAt,
       required int actualDurationMinutes,
+      Value<String?> skipReason,
+      Value<String?> skipNote,
     });
 typedef $$ActivityHistoryTableUpdateCompanionBuilder =
     ActivityHistoryCompanion Function({
@@ -5935,8 +6089,11 @@ typedef $$ActivityHistoryTableUpdateCompanionBuilder =
       Value<String> taskTitle,
       Value<DateTime?> plannedStart,
       Value<DateTime?> plannedEnd,
-      Value<DateTime> completedAt,
+      Value<String> outcome,
+      Value<DateTime> occurredAt,
       Value<int> actualDurationMinutes,
+      Value<String?> skipReason,
+      Value<String?> skipNote,
     });
 
 class $$ActivityHistoryTableFilterComposer
@@ -5978,13 +6135,28 @@ class $$ActivityHistoryTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
     builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<int> get actualDurationMinutes => $composableBuilder(
     column: $table.actualDurationMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skipNote => $composableBuilder(
+    column: $table.skipNote,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6028,13 +6200,28 @@ class $$ActivityHistoryTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
     builder: (column) => ColumnOrderings(column),
   );
 
   ColumnOrderings<int> get actualDurationMinutes => $composableBuilder(
     column: $table.actualDurationMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skipNote => $composableBuilder(
+    column: $table.skipNote,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -6072,8 +6259,11 @@ class $$ActivityHistoryTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
     builder: (column) => column,
   );
 
@@ -6081,6 +6271,14 @@ class $$ActivityHistoryTableAnnotationComposer
     column: $table.actualDurationMinutes,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get skipReason => $composableBuilder(
+    column: $table.skipReason,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get skipNote =>
+      $composableBuilder(column: $table.skipNote, builder: (column) => column);
 }
 
 class $$ActivityHistoryTableTableManager
@@ -6126,8 +6324,11 @@ class $$ActivityHistoryTableTableManager
                 Value<String> taskTitle = const Value.absent(),
                 Value<DateTime?> plannedStart = const Value.absent(),
                 Value<DateTime?> plannedEnd = const Value.absent(),
-                Value<DateTime> completedAt = const Value.absent(),
+                Value<String> outcome = const Value.absent(),
+                Value<DateTime> occurredAt = const Value.absent(),
                 Value<int> actualDurationMinutes = const Value.absent(),
+                Value<String?> skipReason = const Value.absent(),
+                Value<String?> skipNote = const Value.absent(),
               }) => ActivityHistoryCompanion(
                 id: id,
                 taskId: taskId,
@@ -6135,8 +6336,11 @@ class $$ActivityHistoryTableTableManager
                 taskTitle: taskTitle,
                 plannedStart: plannedStart,
                 plannedEnd: plannedEnd,
-                completedAt: completedAt,
+                outcome: outcome,
+                occurredAt: occurredAt,
                 actualDurationMinutes: actualDurationMinutes,
+                skipReason: skipReason,
+                skipNote: skipNote,
               ),
           createCompanionCallback:
               ({
@@ -6146,8 +6350,11 @@ class $$ActivityHistoryTableTableManager
                 required String taskTitle,
                 Value<DateTime?> plannedStart = const Value.absent(),
                 Value<DateTime?> plannedEnd = const Value.absent(),
-                required DateTime completedAt,
+                required String outcome,
+                required DateTime occurredAt,
                 required int actualDurationMinutes,
+                Value<String?> skipReason = const Value.absent(),
+                Value<String?> skipNote = const Value.absent(),
               }) => ActivityHistoryCompanion.insert(
                 id: id,
                 taskId: taskId,
@@ -6155,8 +6362,11 @@ class $$ActivityHistoryTableTableManager
                 taskTitle: taskTitle,
                 plannedStart: plannedStart,
                 plannedEnd: plannedEnd,
-                completedAt: completedAt,
+                outcome: outcome,
+                occurredAt: occurredAt,
                 actualDurationMinutes: actualDurationMinutes,
+                skipReason: skipReason,
+                skipNote: skipNote,
               ),
           withReferenceMapper: (p0) => p0
               .map(

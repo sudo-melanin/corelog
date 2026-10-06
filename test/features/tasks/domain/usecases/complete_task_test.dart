@@ -13,6 +13,7 @@ import 'package:corelog/features/tasks/domain/repositories/task_execution_sessio
 import 'package:corelog/features/tasks/domain/repositories/task_repository.dart';
 import 'package:corelog/features/tasks/domain/usecases/calculate_task_actual_duration.dart';
 import 'package:corelog/features/tasks/domain/usecases/complete_task.dart';
+import 'package:corelog/features/history/domain/entities/history_outcome.dart';
 
 class MockActivityHistoryRepository extends Mock
     implements ActivityHistoryRepository {}
@@ -56,7 +57,8 @@ void main() {
         id: 0,
         taskId: 0,
         taskTitle: 'Fallback task',
-        completedAt: DateTime(2026, 1, 1),
+        outcome: HistoryOutcome.completed,
+        occurredAt: DateTime(2026, 1, 1),
         actualDuration: Duration.zero,
       ),
     );
@@ -539,7 +541,10 @@ void main() {
           captured.actualDuration,
           const Duration(minutes: 90),
         );
-        expect(captured.completedAt, isNotNull);
+        expect(captured.outcome, HistoryOutcome.completed);
+        expect(captured.occurredAt, isNotNull);
+        expect(captured.skipReason, isNull);
+        expect(captured.skipNote, isNull);
       },
     );
   });

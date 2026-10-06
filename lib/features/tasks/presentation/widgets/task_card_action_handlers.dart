@@ -30,6 +30,7 @@ class TaskCardActionHandlers {
     required Task task,
   }) async {
     await _runMutation(
+      executionSessionTaskId: task.id,
       context: context,
       ref: ref,
       action: () => ref
@@ -46,6 +47,7 @@ class TaskCardActionHandlers {
     required Task task,
   }) async {
     await _runMutation(
+      executionSessionTaskId: task.id,
       context: context,
       ref: ref,
       action: () => ref
@@ -62,6 +64,7 @@ class TaskCardActionHandlers {
     required Task task,
   }) async {
     await _runMutation(
+      executionSessionTaskId: task.id,
       context: context,
       ref: ref,
       action: () => ref
@@ -127,12 +130,13 @@ class TaskCardActionHandlers {
   }
 
   static Future<void> _runMutation({
-    required BuildContext context,
-    required WidgetRef ref,
-    required Future<bool> Function() action,
-    required String successMessage,
-    required String failureMessage,
-  }) async {
+  required BuildContext context,
+  required WidgetRef ref,
+  required Future<bool> Function() action,
+  required String successMessage,
+  required String failureMessage,
+  int? executionSessionTaskId,
+}) async {
     final success = await action();
 
     if (!context.mounted) {
@@ -150,7 +154,13 @@ class TaskCardActionHandlers {
       );
 
     if (success) {
-      ref.invalidate(todayTasksProvider);
-    }
+  ref.invalidate(todayTasksProvider);
+
+  if (executionSessionTaskId != null) {
+    ref.invalidate(
+      taskExecutionSessionsProvider(executionSessionTaskId),
+    );
+  }
+}
   }
 }

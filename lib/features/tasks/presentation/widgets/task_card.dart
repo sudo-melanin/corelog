@@ -1,14 +1,14 @@
-import 'dart:async';
-
-import 'package:corelog/features/tasks/presentation/widgets/task_status_chip.dart';
 import 'package:flutter/material.dart';
 
 import 'package:corelog/core/theme/theme.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
+import 'package:corelog/features/tasks/presentation/helpers/task_timing.dart';
 import 'package:corelog/features/tasks/presentation/widgets/task_card_actions.dart';
+import 'package:corelog/features/tasks/presentation/widgets/task_card_timing.dart';
+import 'package:corelog/features/tasks/presentation/widgets/task_status_chip.dart';
 
-class TaskCard extends StatefulWidget {
+class TaskCard extends StatelessWidget {
   const TaskCard({
     required this.task,
     required this.onStart,
@@ -28,111 +28,50 @@ class TaskCard extends StatefulWidget {
   final VoidCallback onSkip;
   final VoidCallback onReopen;
 
-  @override
-  State<TaskCard> createState() => _TaskCardState();
-}
+  Color _borderColor() {
+    final now = DateTime.now();
 
-class _TaskCardState extends State<TaskCard> {
-  Timer? _timer;
-  DateTime _now = DateTime.now();
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  @override
-  void didUpdateWidget(covariant TaskCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.task.status != widget.task.status ||
-        oldWidget.task.plannedEnd != widget.task.plannedEnd) {
-      _startTimer();
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-
-    if (!_needsLiveTime(widget.task)) {
-      return;
+    if (TaskTiming.isOverdue(task, now: now)) {
+      return AppColors.error;
     }
 
-    _now = DateTime.now();
+    switch (task.status) {
+      case TaskStatus.inProgress:
+        return AppColors.success;
 
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) {
-        if (!mounted) return;
+      case TaskStatus.paused:
+        return AppColors.warning;
 
-        setState(() {
-          _now = DateTime.now();
-        });
-      },
-    );
-  }
+      case TaskStatus.pending:
+        final isUnscheduled =
+            task.plannedStart == null && task.plannedEnd == null;
 
-  bool _needsLiveTime(Task task) {
-    return task.plannedEnd != null &&
-        (task.status == TaskStatus.pending ||
-            task.status == TaskStatus.inProgress);
-  }
+        if (isUnscheduled) {
+          return AppColors.divider;
+        }
 
-  bool get _isOverdue {
-    final plannedEnd = widget.task.plannedEnd;
+        if (task.plannedStart != null &&
+            task.plannedStart!.isAfter(now)) {
+          return AppColors.warning;
+        }
 
-    if (plannedEnd == null) {
-      return false;
+        return AppColors.divider;
+
+      case TaskStatus.completed:
+      case TaskStatus.skipped:
+        return AppColors.divider;
     }
-
-    return widget.task.status == TaskStatus.pending &&
-        _now.isAfter(plannedEnd);
-  }
-
-  Duration? get _remaining {
-    final plannedEnd = widget.task.plannedEnd;
-
-    if (plannedEnd == null) {
-      return null;
-    }
-
-    final difference = plannedEnd.difference(_now);
-
-    if (difference.isNegative) {
-      return Duration.zero;
-    }
-
-    return difference;
-  }
-
-  Duration? get _overdueDuration {
-    final plannedEnd = widget.task.plannedEnd;
-
-    if (plannedEnd == null || !_isOverdue) {
-      return null;
-    }
-
-    return _now.difference(plannedEnd);
   }
 
   @override
   Widget build(BuildContext context) {
-    final task = widget.task;
-
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
-          color: _isOverdue ? AppColors.warning : AppColors.divider,
+          color: _borderColor(),
         ),
       ),
       child: Column(
@@ -157,89 +96,19 @@ class _TaskCardState extends State<TaskCard> {
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
-          _buildSchedule(context),
+          TaskCardTiming(task: task),
           const SizedBox(height: AppSpacing.md),
           TaskCardActions(
             task: task,
-            onStart: widget.onStart,
-            onPause: widget.onPause,
-            onResume: widget.onResume,
-            onComplete: widget.onComplete,
-            onSkip: widget.onSkip,
-            onReopen: widget.onReopen,
-            isOverdue: _isOverdue,
+            onStart: onStart,
+            onPause: onPause,
+            onResume: onResume,
+            onComplete: onComplete,
+            onSkip: onSkip,
+            onReopen: onReopen,
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildSchedule(BuildContext context) {
-    final task = widget.task;
-
-    if (task.plannedStart == null || task.plannedEnd == null) {
-      return Text(
-        'Unscheduled',
-        style: Theme.of(context).textTheme.bodySmall,
-      );
-    }
-
-    if (_isOverdue) {
-      return Text(
-        'Overdue by ${_formatDuration(_overdueDuration!)}',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.warning,
-              fontWeight: FontWeight.w600,
-            ),
-      );
-    }
-
-    if (task.status == TaskStatus.inProgress) {
-      return Text(
-        '${_formatTime(task.plannedStart!)} - '
-        '${_formatTime(task.plannedEnd!)} • '
-        '${_formatDuration(_remaining!)} remaining',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
-      );
-    }
-
-    return Text(
-      '${_formatTime(task.plannedStart!)} - '
-      '${_formatTime(task.plannedEnd!)}',
-      style: Theme.of(context).textTheme.bodySmall,
-    );
-  }
-
-
-  String _formatTime(DateTime value) {
-    final hour = value.hour % 12 == 0 ? 12 : value.hour % 12;
-    final minute = value.minute.toString().padLeft(2, '0');
-    final period = value.hour >= 12 ? 'PM' : 'AM';
-
-    return '$hour:$minute $period';
-  }
-
-  String _formatDuration(Duration duration) {
-    final totalMinutes = duration.inMinutes;
-
-    if (totalMinutes < 1) {
-      return '<1m';
-    }
-
-    final hours = totalMinutes ~/ 60;
-    final minutes = totalMinutes % 60;
-
-    if (hours > 0) {
-      if (minutes == 0) {
-        return '${hours}h';
-      }
-
-      return '${hours}h ${minutes}m';
-    }
-
-    return '${minutes}m';
   }
 }

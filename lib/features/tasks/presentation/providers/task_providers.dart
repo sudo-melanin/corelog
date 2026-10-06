@@ -1,7 +1,6 @@
-import 'package:corelog/features/tasks/domain/usecases/resume_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:corelog/core/database/database.dart' hide Task;
+import 'package:corelog/core/database/database.dart' hide Task, TaskExecutionSession;
 import 'package:corelog/features/tasks/data/repositories/task_repository_impl.dart';
 import 'package:corelog/features/tasks/domain/repositories/task_repository.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
@@ -10,6 +9,7 @@ import 'package:corelog/features/tasks/data/repositories/task_execution_session_
 import 'package:corelog/features/tasks/domain/repositories/task_execution_session_repository.dart';
 import 'package:corelog/features/history/data/repositories/activity_history_repository_impl.dart';
 import 'package:corelog/features/history/domain/repositories/activity_history_repository.dart';
+import 'package:corelog/features/tasks/domain/entities/task_execution_session.dart';
 
 final taskRepositoryProvider = Provider<TaskRepository>((ref) {
   final database = ref.watch(databaseProvider);
@@ -41,6 +41,22 @@ final taskExecutionSessionRepositoryProvider =
   return TaskExecutionSessionRepositoryImpl(database);
 });
 
+final taskExecutionSessionsProvider =
+    FutureProvider.autoDispose.family<List<TaskExecutionSession>, int>(
+  (ref, taskId) async {
+    final repository = ref.watch(
+      taskExecutionSessionRepositoryProvider,
+    );
+
+    final result = await repository.getSessionsByTask(taskId);
+
+    return result.fold(
+      (failure) => throw failure,
+      (sessions) => sessions,
+    );
+  },
+);
+
 final reopenTaskProvider = Provider<ReopenTask>((ref) {
   final repository = ref.watch(taskRepositoryProvider);
 
@@ -48,9 +64,12 @@ final reopenTaskProvider = Provider<ReopenTask>((ref) {
 });
 
 final skipTaskProvider = Provider<SkipTask>((ref) {
-  final repository = ref.watch(taskRepositoryProvider);
-
-  return SkipTask(repository);
+  return SkipTask(
+    taskRepository: ref.watch(taskRepositoryProvider),
+    historyRepository: ref.watch(
+      activityHistoryRepositoryProvider,
+    ),
+  );
 });
 
 final startTaskProvider = Provider<StartTask>((ref) {
@@ -117,5 +136,7 @@ final todayTasksProvider =
     (failure) => throw failure,
     (tasks) => tasks,
   );
+
+  
 });
 

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:corelog/core/database/app_database.dart';
 import 'package:corelog/features/history/data/repositories/activity_history_repository_impl.dart';
 import 'package:corelog/features/history/domain/entities/activity_history.dart';
+import 'package:corelog/features/history/domain/entities/history_outcome.dart';
 
 void main() {
   late AppDatabase database;
@@ -26,7 +27,8 @@ void main() {
       taskTitle: 'Flutter development',
       plannedStart: DateTime(2026, 1, 1, 14),
       plannedEnd: DateTime(2026, 1, 1, 15, 30),
-      completedAt: DateTime(2026, 1, 1, 15, 45),
+      outcome: HistoryOutcome.completed,
+      occurredAt: DateTime(2026, 1, 1, 15, 45),
       actualDuration: const Duration(minutes: 90),
     );
 
@@ -43,7 +45,7 @@ void main() {
     expect(createdHistory.taskTitle, history.taskTitle);
     expect(createdHistory.plannedStart, history.plannedStart);
     expect(createdHistory.plannedEnd, history.plannedEnd);
-    expect(createdHistory.completedAt, history.completedAt);
+    expect(createdHistory.occurredAt, history.occurredAt);
     expect(createdHistory.actualDuration, history.actualDuration);
 
     final getResult = await repository.getHistoryById(createdHistory.id);
@@ -61,7 +63,7 @@ void main() {
     expect(retrievedHistory.taskTitle, history.taskTitle);
     expect(retrievedHistory.plannedStart, history.plannedStart);
     expect(retrievedHistory.plannedEnd, history.plannedEnd);
-    expect(retrievedHistory.completedAt, history.completedAt);
+    expect(retrievedHistory.occurredAt, history.occurredAt);
     expect(retrievedHistory.actualDuration, history.actualDuration);
   });
 
@@ -83,7 +85,8 @@ void main() {
       taskId: 1,
       activityId: 10,
       taskTitle: 'Flutter development',
-      completedAt: DateTime(2026, 1, 1, 15),
+      outcome: HistoryOutcome.completed,
+      occurredAt: DateTime(2026, 1, 1, 15),
       actualDuration: const Duration(minutes: 60),
     );
 
@@ -92,7 +95,8 @@ void main() {
       taskId: 2,
       activityId: 20,
       taskTitle: 'Trading',
-      completedAt: DateTime(2026, 1, 1, 16),
+      outcome: HistoryOutcome.completed,
+      occurredAt: DateTime(2026, 1, 1, 16),
       actualDuration: const Duration(minutes: 30),
     );
 
@@ -119,7 +123,8 @@ void main() {
       taskId: 1,
       activityId: 10,
       taskTitle: 'Flutter development',
-      completedAt: DateTime(2026, 1, 1, 15),
+      outcome: HistoryOutcome.completed,
+      occurredAt: DateTime(2026, 1, 1, 15),
       actualDuration: const Duration(minutes: 60),
     );
 
@@ -128,7 +133,8 @@ void main() {
       taskId: 2,
       activityId: 10,
       taskTitle: 'Write documentation',
-      completedAt: DateTime(2026, 1, 1, 16),
+      outcome: HistoryOutcome.completed,
+      occurredAt: DateTime(2026, 1, 1, 16),
       actualDuration: const Duration(minutes: 30),
     );
 

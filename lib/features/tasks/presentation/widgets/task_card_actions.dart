@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:corelog/core/theme/theme.dart';
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
+import 'package:corelog/features/tasks/presentation/helpers/task_timing.dart';
 
 class TaskCardActions extends StatelessWidget {
   const TaskCardActions({
@@ -13,7 +14,6 @@ class TaskCardActions extends StatelessWidget {
     required this.onComplete,
     required this.onSkip,
     required this.onReopen,
-    required this.isOverdue,
     super.key,
   });
 
@@ -24,7 +24,6 @@ class TaskCardActions extends StatelessWidget {
   final VoidCallback onComplete;
   final VoidCallback onSkip;
   final VoidCallback onReopen;
-  final bool isOverdue;
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +49,20 @@ class TaskCardActions extends StatelessWidget {
     final isScheduled =
         task.plannedStart != null && task.plannedEnd != null;
 
+    final isOverdue = TaskTiming.isOverdue(
+      task,
+      now: DateTime.now(),
+    );
+
     return Row(
       children: [
         if (isScheduled)
           Expanded(
             child: OutlinedButton(
               onPressed: onStart,
-              child: Text(isOverdue ? 'Start now' : 'Start'),
+              child: Text(
+                isOverdue ? 'Start now' : 'Start',
+              ),
             ),
           )
         else

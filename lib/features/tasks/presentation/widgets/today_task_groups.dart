@@ -1,5 +1,6 @@
 import 'package:corelog/features/tasks/domain/entities/task.dart';
 import 'package:corelog/features/tasks/domain/entities/task_status.dart';
+import 'package:corelog/features/tasks/presentation/helpers/task_timing.dart';
 
 class TodayTaskGroups {
   const TodayTaskGroups({
@@ -52,6 +53,10 @@ class TodayTaskGroups {
     DateTime currentTime,
   ) {
     return tasks.where((task) {
+      if (TaskTiming.isOverdue(task, now: currentTime)) {
+        return false;
+      }
+
       if (task.status == TaskStatus.inProgress ||
           task.status == TaskStatus.paused) {
         return true;
@@ -72,13 +77,14 @@ class TodayTaskGroups {
     List<Task> tasks,
     DateTime currentTime,
   ) {
-    return tasks.where((task) {
-      final plannedEnd = task.plannedEnd;
-
-      return task.status == TaskStatus.pending &&
-          plannedEnd != null &&
-          currentTime.isAfter(plannedEnd);
-    }).toList();
+    return tasks
+        .where(
+          (task) => TaskTiming.isOverdue(
+            task,
+            now: currentTime,
+          ),
+        )
+        .toList();
   }
 
   static List<Task> _upNextTasks(
@@ -90,7 +96,11 @@ class TodayTaskGroups {
 
       return task.status == TaskStatus.pending &&
           plannedStart != null &&
-          plannedStart.isAfter(currentTime);
+          plannedStart.isAfter(currentTime) &&
+          !TaskTiming.isOverdue(
+            task,
+            now: currentTime,
+          );
     }).toList();
   }
 

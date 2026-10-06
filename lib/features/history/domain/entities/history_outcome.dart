@@ -1,0 +1,4 @@
+enum HistoryOutcome {
+  completed,
+  skipped,
+}

@@ -1,38 +1,34 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:corelog/features/history/domain/entities/history_outcome.dart';
+import 'package:corelog/features/tasks/domain/entities/task_skip_reason.dart';
+
 class ActivityHistory extends Equatable {
   const ActivityHistory({
     required this.id,
     required this.taskId,
     required this.taskTitle,
-    required this.completedAt,
+    required this.outcome,
+    required this.occurredAt,
     required this.actualDuration,
     this.activityId,
     this.plannedStart,
     this.plannedEnd,
+    this.skipReason,
+    this.skipNote,
   });
 
   final int id;
-
-  /// Original task reference. It is intentionally not a foreign key.
   final int taskId;
-
-  /// Original activity reference. It is intentionally not a foreign key.
   final int? activityId;
-
-  /// Snapshot of the task title at completion time.
   final String taskTitle;
-
-  /// Snapshot of the planned start time.
   final DateTime? plannedStart;
-
-  /// Snapshot of the planned end time.
   final DateTime? plannedEnd;
-
-  final DateTime completedAt;
-
-  /// Total active execution time recorded by execution sessions.
+  final HistoryOutcome outcome;
+  final DateTime occurredAt;
   final Duration actualDuration;
+  final TaskSkipReason? skipReason;
+  final String? skipNote;
 
   @override
   List<Object?> get props => [
@@ -42,7 +38,10 @@ class ActivityHistory extends Equatable {
         taskTitle,
         plannedStart,
         plannedEnd,
-        completedAt,
+        outcome,
+        occurredAt,
         actualDuration,
+        skipReason,
+        skipNote,
       ];
 }
