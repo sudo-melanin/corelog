@@ -33,8 +33,12 @@ void main() {
     test('places in-progress tasks in Now', () {
       final task = createTask(
         status: TaskStatus.inProgress,
-        plannedStart: currentTime.subtract(const Duration(hours: 1)),
-        plannedEnd: currentTime.subtract(const Duration(minutes: 30)),
+        plannedStart: currentTime.subtract(
+          const Duration(minutes: 15),
+        ),
+        plannedEnd: currentTime.add(
+          const Duration(minutes: 30),
+        ),
       );
 
       final groups = TodayTaskGroups.fromTasks(
@@ -51,8 +55,12 @@ void main() {
     test('places paused tasks in Now', () {
       final task = createTask(
         status: TaskStatus.paused,
-        plannedStart: currentTime.subtract(const Duration(hours: 1)),
-        plannedEnd: currentTime.subtract(const Duration(minutes: 30)),
+        plannedStart: currentTime.subtract(
+          const Duration(minutes: 15),
+        ),
+        plannedEnd: currentTime.add(
+          const Duration(minutes: 30),
+        ),
       );
 
       final groups = TodayTaskGroups.fromTasks(
